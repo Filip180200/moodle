@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Ekspert Statystyczny - Elementy Graficzne</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #e2e8f0;
+            font-family: 'Rajdhani', sans-serif;
+            padding: 40px;
+            margin: 0;
+        }
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+        
+        .neon-card {
+            background: linear-gradient(145deg, #0a0f1a, #111827);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
+        }
+
+        .chip-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 140px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 50px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: 1px solid #06b6d4;
+            background: #0a192f;
+            color: #22d3ee;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        .chip-desc {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #94a3b8;
+            line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Kolory Skal */
+        .scale-nominal { border: 1px solid #fbbf24; color: #fbbf24; }
+        .scale-ordinal { border: 1px solid #f97316; color: #f97316; }
+        .scale-interval { border: 1px solid #0ea5e9; color: #0ea5e9; }
+        .scale-ratio { border: 1px solid #22c55e; color: #22c55e; }
+
+        .drop-zone-placeholder {
+            margin-top: 20px;
+            flex-grow: 1;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.4;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .example-text {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .header-glow {
+            text-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+        }
+
+        .grid-bg {
+            background-image: radial-gradient(circle, #1e293b 0.5px, transparent 0.5px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="grid-bg">
+
+    <div class="max-w-7xl mx-auto space-y-16">
+        
+        <!-- NAGŁÓWEK -->
+        <div class="text-center">
+            <h1 class="orbitron text-5xl font-bold text-cyan-400 header-glow tracking-[0.2em] uppercase">Ekspert Statystyczny</h1>
+            <div class="h-1 w-32 bg-cyan-500 mx-auto mt-4 shadow-[0_0_10px_#06b6d4]"></div>
+        </div>
+
+        <!-- SEKCJA 1: KARTY SKAL -->
+        <section>
+            <div class="flex items-center gap-4 mb-8">
+                <div class="h-px flex-1 bg-slate-800"></div>
+                <h2 class="orbitron text-xs text-slate-400 tracking-[0.3em] uppercase">01. Strefy Analizy</h2>
+                <div class="h-px flex-1 bg-slate-800"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                <div class="neon-card p-6 scale-nominal">
+                    <div class="orbitron text-lg font-bold">NOMINALNA</div>
+                    <div class="example-text italic text-slate-300">np. Płeć, Grupa krwi</div>
+                    <div class="drop-zone-placeholder">Dozwolone miary</div>
+                </div>
+
+                <div class="neon-card p-6 scale-ordinal">
+                    <div class="orbitron text-lg font-bold">PORZĄDKOWA</div>
+                    <div class="example-text italic text-slate-300">np. Wykształcenie, Ranga</div>
+                    <div class="drop-zone-placeholder">Dozwolone miary</div>
+                </div>
+
+                <div class="neon-card p-6 scale-interval">
+                    <div class="orbitron text-lg font-bold">PRZEDZIAŁOWA</div>
+                    <div class="example-text italic text-slate-300">np. Temperatura °C, Rok</div>
+                    <div class="drop-zone-placeholder">Dozwolone miary</div>
+                </div>
+
+                <div class="neon-card p-6 scale-ratio">
+                    <div class="orbitron text-lg font-bold">ILORAZOWA</div>
+                    <div class="example-text italic text-slate-300">np. Dochód, Waga, Czas</div>
+                    <div class="drop-zone-placeholder">Dozwolone miary</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEKCJA 2: MODUŁY STATYSTYCZNE -->
+        <section>
+            <div class="flex items-center gap-4 mb-8">
+                <div class="h-px flex-1 bg-slate-800"></div>
+                <h2 class="orbitron text-xs text-slate-400 tracking-[0.3em] uppercase">02. Moduły Statystyczne</h2>
+                <div class="h-px flex-1 bg-slate-800"></div>
+            </div>
+            
+            <!-- Grupa 1: Miary Położenia -->
+            <h3 class="orbitron text-[10px] text-cyan-600 mb-4 tracking-[0.2em]">KATEGORIA: MIARY POŁOŻENIA</h3>
+            <div class="flex flex-wrap justify-center gap-8 mb-12">
+                <div class="chip-container">
+                    <div class="chip">Mo</div>
+                    <div class="chip-desc">Dominanta<br>(Wartość najczęstsza)</div>
+                </div>
+                <div class="chip-container">
+                    <div class="chip">Mdn</div>
+                    <div class="chip-desc">Mediana<br>(Wartość środkowa)</div>
+                </div>
+                <div class="chip-container">
+                    <div class="chip">M</div>
+                    <div class="chip-desc">Średnia arytmetyczna</div>
+                </div>
+            </div>
+
+            <!-- Grupa 2: Wartości Brzegowe i Rozproszenie -->
+            <h3 class="orbitron text-[10px] text-orange-600 mb-4 tracking-[0.2em]">KATEGORIA: WARTOŚCI I ROZPROSZENIE</h3>
+            <div class="flex flex-wrap justify-center gap-8 mb-12">
+                <div class="chip-container">
+                    <div class="chip">Min</div>
+                    <div class="chip-desc">Wartość minimalna</div>
+                </div>
+                <div class="chip-container">
+                    <div class="chip">Max</div>
+                    <div class="chip-desc">Wartość maksymalna</div>
+                </div>
+                <div class="chip-container">
+                    <div class="chip">SD</div>
+                    <div class="chip-desc">Odchylenie standardowe</div>
+                </div>
+            </div>
+
+            <!-- Grupa 3: Kształt Rozkładu -->
+            <h3 class="orbitron text-[10px] text-green-600 mb-4 tracking-[0.2em]">KATEGORIA: KSZTAŁT ROZKŁADU</h3>
+            <div class="flex flex-wrap justify-center gap-8">
+                <div class="chip-container">
+                    <div class="chip">Sk</div>
+                    <div class="chip-desc">Skośność<br>(Asymetria)</div>
+                </div>
+                <div class="chip-container">
+                    <div class="chip">Kurt</div>
+                    <div class="chip-desc">Kurtoza<br>(Smukłość/Koncentracja)</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="mt-24 text-center text-slate-700 text-[10px] orbitron tracking-[0.5em] pb-10">
+        © 2025 Filip Liebersbach. Wszelkie prawa zastrzeżone.
+    </footer>
+
+</body>
+</html>
