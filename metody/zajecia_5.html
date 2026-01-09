@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socjometria: Szablon Badawczy (Smart)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .handwritten { font-family: 'Indie Flower', cursive; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .node { transition: all 0.3s ease; cursor: pointer; }
+        .node:hover circle { stroke-width: 4px; }
+        .node text { pointer-events: none; }
+        
+        .matrix-cell { transition: all 0.1s; cursor: pointer; }
+        .matrix-cell:hover { background-color: #f1f5f9; }
+        .matrix-cell.selected { background-color: #dbeafe; color: #1d4ed8; font-weight: bold; }
+        .matrix-cell.correct { background-color: #dcfce7 !important; color: #15803d !important; border: 1px solid #15803d; }
+        .matrix-cell.missed { background-color: #fee2e2 !important; color: #b91c1c !important; border: 1px dashed #b91c1c; }
+        .matrix-cell.wrong { background-color: #fef2f2 !important; color: #991b1b !important; text-decoration: line-through; }
+        
+        .scroller::-webkit-scrollbar { width: 8px; height: 8px; }
+        .scroller::-webkit-scrollbar-track { background: #f1f5f9; }
+        .scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .scroller::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen p-2 md:p-6">
+
+    <div id="lobby-screen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4 transition-transform duration-500">
+        <div class="max-w-5xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[80vh]">
+            <div class="md:w-1/3 bg-indigo-900 p-8 text-white flex flex-col justify-center relative">
+                <h1 class="text-3xl font-bold mb-4">🕵️ Panel Badacza</h1>
+                <p class="mb-6 opacity-90 text-sm">Wybierz scenariusz, aby rozpocząć analizę.</p>
+                <div class="bg-indigo-800/50 p-4 rounded-lg border border-indigo-700 backdrop-blur-sm relative z-10 text-sm space-y-3">
+                    <div class="font-bold border-b border-indigo-600 pb-1 mb-2">Procedura Badania:</div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-white text-indigo-900 font-bold w-6 h-6 flex items-center justify-center rounded-full text-xs">0</span>
+                        <span>Definicje Ról i Struktur</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-white text-indigo-900 font-bold w-6 h-6 flex items-center justify-center rounded-full text-xs">1</span>
+                        <span>Analiza Ankiet (Jawne)</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-indigo-700 text-white font-bold w-6 h-6 flex items-center justify-center rounded-full text-xs">2</span>
+                        <span>Wypełnij Macierz <span class="text-indigo-300 ml-1 text-xs">(Kod)</span></span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-indigo-700 text-white font-bold w-6 h-6 flex items-center justify-center rounded-full text-xs">3</span>
+                        <span>Odblokuj Wykres <span class="text-indigo-300 ml-1 text-xs">(Kod)</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="md:w-2/3 p-6 bg-slate-50 overflow-y-auto scroller">
+                <h2 class="text-xl font-bold text-slate-800 mb-6">Dostępne Scenariusze:</h2>
+                <div class="grid grid-cols-1 gap-3" id="scenario-list">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden flex flex-col min-h-[90vh]">
+        <div class="bg-white border-b border-slate-200 p-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div id="header-icon" class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl">?</div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800" id="header-title">...</h1>
+                    <button onclick="showLobby()" class="text-xs text-indigo-600 hover:underline">← Zmień grupę</button>
+                </div>
+            </div>
+            <div class="bg-slate-100 p-1 rounded-lg flex">
+                <button onclick="switchCriterion('task')" id="btn-crit-task" class="px-4 py-2 rounded text-sm font-bold transition-all">💼 Utylitarne</button>
+                <button onclick="switchCriterion('emotion')" id="btn-crit-emotion" class="px-4 py-2 rounded text-sm font-bold transition-all">🎉 Afektywne</button>
+            </div>
+        </div>
+
+        <div class="bg-indigo-50 border-b border-indigo-100 p-3 text-center">
+            <p class="text-indigo-900 font-serif italic text-lg" id="question-text">...</p>
+        </div>
+
+        <div class="flex border-b border-slate-200 bg-white overflow-x-auto">
+            <button onclick="setStep(0)" id="tab-0" class="flex-1 py-3 font-bold text-sm text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50 min-w-[100px]">0. Definicje</button>
+            <button onclick="setStep(1)" id="tab-1" class="flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-600 min-w-[100px]">1. Ankiety</button>
+            <button onclick="setStep(2)" id="tab-2" class="flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-600 flex justify-center items-center gap-2 min-w-[120px]">2. Macierz <span id="lock-2">🔒</span><span id="check-2" class="hidden text-green-600">✓</span></button>
+            <button onclick="setStep(3)" id="tab-3" class="flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-600 flex justify-center items-center gap-2 min-w-[120px]">3. Socjogram <span id="lock-3">🔒</span></button>
+        </div>
+
+        <div class="flex-1 bg-slate-50 p-4 relative overflow-hidden">
+            
+            <div id="step-0" class="step-content active h-full overflow-auto scroller">
+                <div class="max-w-6xl mx-auto space-y-8 pb-8">
+                    
+                    <div>
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded shadow-sm mb-4">
+                            <h3 class="font-bold text-blue-800 text-lg mb-1">🎭 Role Grupowe (Jednostki)</h3>
+                            <p class="text-blue-700 text-sm">Klasyfikacja członków grupy na podstawie liczby i rodzaju otrzymanych wyborów.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-xl">⭐</div>
+                                    <h4 class="font-bold text-slate-800">Gwiazda Socjometryczna</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Osoba z największą liczbą wyborów. Lider opinii, osoba najbardziej lubiana lub szanowana.
+                                </p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">👑</div>
+                                    <h4 class="font-bold text-slate-800">Szara Eminencja</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Osoba, która nie jest Gwiazdą (ma mało wyborów), ale jest wybrana przez Gwiazdę. Ma realny wpływ na lidera.
+                                </p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-xl">🌉</div>
+                                    <h4 class="font-bold text-slate-800">Most (Łącznik)</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Osoba, która łączy dwie odrębne podgrupy. Jej odejście grozi rozpadem grupy na dwa obce obozy.
+                                </p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl">👥</div>
+                                    <h4 class="font-bold text-slate-800">Przeciętny</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Większość członków grupy – mają kilka wyborów, są akceptowani.
+                                </p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-xl">👻</div>
+                                    <h4 class="font-bold text-slate-800">Izolant (Samotnik)</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Osoba bez wyborów, która sama też nikogo nie wybiera (lub wybiera rzadko). Jest na marginesie, "niewidzialna".
+                                </p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-xl">👎</div>
+                                    <h4 class="font-bold text-slate-800">Odrzucony</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Osoba, która otrzymała najwięcej wyborów negatywnych (jeśli takie były badane).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t-2 border-slate-200">
+                        <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded shadow-sm mb-4">
+                            <h3 class="font-bold text-indigo-900 text-lg mb-1">📐 Układy relacji (Geometria grupy)</h3>
+                            <p class="text-indigo-800 text-sm">Typowe struktury tworzone przez powiązania między członkami grupy.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-xl text-green-600 font-bold">↔️</div>
+                                    <h4 class="font-bold text-slate-800">Para</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Wzajemny wybór dwóch osób (A wybiera B, B wybiera A). Najmniejsza komórka społeczna.
+                                </p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-xl text-orange-600 font-bold">🔺</div>
+                                    <h4 class="font-bold text-slate-800">Trójkąt</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Zamknięty układ trzech osób (A->B->C->A). Bardzo stabilny, trudny do rozbicia.
+                                </p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-xl text-slate-600 font-bold">🔗</div>
+                                    <h4 class="font-bold text-slate-800">Łańcuch</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    A wybiera B, B wybiera C, C wybiera D. Informacja/plotka płynie tylko w jedną stronę.
+                                </p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-xl text-rose-600 font-bold">🏰</div>
+                                    <h4 class="font-bold text-slate-800">Klika</h4>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Zamknięta podgrupa, której członkowie wybierają się nawzajem, ignorując resztę grupy.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="step-1" class="step-content h-full overflow-auto scroller">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3" id="cards-container"></div>
+            </div>
+
+            <div id="step-2" class="step-content h-full overflow-auto scroller">
+                <div class="max-w-4xl mx-auto bg-white rounded-lg shadow border border-slate-200 p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-slate-700">Wypełnij Macierz</h3>
+                        <button onclick="verifyMatrixAttempt()" id="btn-verify" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow text-sm font-bold">Sprawdź</button>
+                    </div>
+                    <div class="overflow-x-auto pb-2">
+                        <table class="w-full text-center border-collapse text-xs select-none"><thead class="bg-slate-100 text-slate-600"><tr><th class="p-2 border">Kto \ Kogo</th><th class="p-2 border w-8">A</th><th class="p-2 border w-8">B</th><th class="p-2 border w-8">C</th><th class="p-2 border w-8">D</th><th class="p-2 border w-8">E</th><th class="p-2 border w-8">F</th><th class="p-2 border w-8">G</th><th class="p-2 border w-8">H</th><th class="p-2 border w-8">I</th><th class="p-2 border w-8">J</th></tr></thead><tbody id="interactive-matrix-body"></tbody></table>
+                    </div>
+                    <div id="matrix-legend" class="hidden mt-4 pt-3 border-t flex gap-4 justify-center text-xs">
+                        <div class="flex items-center text-green-700 font-bold">✓ Dobrze</div>
+                        <div class="flex items-center text-red-600 font-bold dashed border border-red-600 px-1">! Brakowało</div>
+                        <div class="flex items-center text-red-800 line-through">x Niepotrzebne</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step-3" class="step-content h-full">
+                <div id="graph-lock-overlay" class="absolute inset-0 bg-slate-50 z-10 flex flex-col items-center justify-center p-6">
+                    <div class="text-5xl mb-4">🔒</div>
+                    <button onclick="unlockGraphAttempt()" class="bg-indigo-600 text-white px-6 py-2 rounded font-bold hover:bg-indigo-700">Odblokuj Analizę</button>
+                </div>
+                <div class="flex flex-col lg:flex-row gap-4 h-full relative z-0">
+                    <div class="flex-1 bg-white rounded-lg shadow border border-slate-200 relative overflow-hidden flex items-center justify-center min-h-[400px]" id="graph-container">
+                        <svg id="socjogram" width="600" height="600" viewBox="-320 -320 640 640" class="w-full h-full max-h-[600px]">
+                            <defs><marker id="arrow-main" markerWidth="10" markerHeight="7" refX="26" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" /></marker></defs>
+                            <g id="edges-group"></g><g id="nodes-group"></g>
+                        </svg>
+                        <div class="absolute bottom-2 left-2 text-[10px] text-slate-400 pointer-events-none">Kliknij w osobę, aby podświetlić relacje.<br>Kliknij w tło, aby zresetować.</div>
+                        <div class="absolute bottom-2 right-2 bg-white/95 p-2 rounded border shadow text-[10px] space-y-1">
+                            <div class="font-bold border-b pb-1">Legenda:</div>
+                            <div class="flex items-center"><span class="w-2 h-2 rounded-full bg-yellow-400 border border-yellow-600 mr-1"></span> Gwiazda</div>
+                            <div class="flex items-center"><span class="w-2 h-2 rounded-full bg-purple-500 border border-purple-700 mr-1"></span> Szara Em.</div>
+                            <div class="flex items-center"><span class="w-2 h-2 rounded-full bg-teal-400 border border-teal-600 mr-1"></span> Most</div>
+                            <div class="flex items-center"><span class="w-2 h-2 rounded-full bg-red-100 border border-red-500 mr-1"></span> Izolant</div>
+                        </div>
+                    </div>
+                    <div class="lg:w-64 bg-white p-3 rounded-lg shadow border border-slate-200 h-full overflow-y-auto scroller">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2 border-b pb-2">Analiza Ról</h3>
+                        <div class="space-y-3" id="roles-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full text-center">
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Podaj Hasło</h3>
+            <input type="password" id="password-input" class="w-full px-4 py-2 rounded border border-slate-300 mb-3 text-center text-lg tracking-widest outline-none focus:border-indigo-500">
+            <button onclick="submitPassword()" class="w-full bg-indigo-600 text-white font-bold py-2 rounded hover:bg-indigo-700">Zatwierdź</button>
+            <p id="password-error" class="text-red-500 text-xs mt-2 hidden">Błędne hasło!</p>
+            <button onclick="closeModal()" class="mt-3 text-slate-400 text-xs hover:text-slate-600">Anuluj</button>
+        </div>
+    </div>
+
+    <script>
+        const people = [ {id:0,name:'Anna'},{id:1,name:'Bartek'},{id:2,name:'Celina'},{id:3,name:'Darek'},{id:4,name:'Ewa'},{id:5,name:'Filip'},{id:6,name:'Gosia'},{id:7,name:'Hela'},{id:8,name:'Igor'},{id:9,name:'Jan'} ];
+
+        // Scenarios
+         const scenarios = {
+    'school': {
+        name: '1. Klasa Szkolna',
+        icon: '🏫',
+        task: {
+            q: 'Z kim przygotujesz prezentację na ocenę?',
+            // Gwiazda: 0 (Anna) - wszyscy chcą z nią pracować.
+            // Szara Eminencja: 3 (Darek) - Anna wybiera tylko jego i Celinę.
+            // Most: 5 (Filip) - łączy grupę "kujonów" z resztą.
+            // Izolant: 9 (Jan) - wybiera gwiazdy, ale nikt nie wybiera jego.
+            choices: [
+                [0, 3], [0, 2],       // Anna (Gwiazda) wybiera Darka (GE)
+                [1, 0], [1, 2],
+                [2, 0], [2, 3],
+                [3, 0], [3, 4],
+                [4, 0], [4, 5],
+                [5, 4], [5, 6],       // Filip (Most)
+                [6, 5], [6, 7],
+                [7, 0], [7, 6],
+                [8, 0], [8, 7],
+                [9, 0], [9, 5]        // Jan (Izolant) wybiera, ale nikt jego
+            ]
+        },
+        emotion: {
+            q: 'Kogo zaprosisz na urodziny?',
+            // Gwiazda: 5 (Filip).
+            // Izolant: 0 (Anna) - w zadaniach gwiazda, tu nikt jej nie chce.
+            choices: [
+                [0, 5], [0, 2],       // Anna (Izolant) wybiera, nikt jej
+                [1, 5], [1, 3],
+                [2, 5], [2, 1],
+                [3, 5], [3, 1],
+                [4, 5], [4, 6],
+                [5, 6], [5, 8],
+                [6, 5], [6, 4],
+                [7, 5], [7, 8],
+                [8, 7], [8, 9],
+                [9, 5], [9, 8]
+            ]
+        }
+    },
+    'corp': {
+        name: '2. Korporacja',
+        icon: '🏢',
+        task: {
+            q: 'Kto ma najwyższe kompetencje techniczne?',
+            // Dwie Gwiazdy: 1 (Bartek) i 8 (Igor).
+            // Most: 4 (Ewa).
+            // Izolant: 9 (Jan).
+            choices: [
+                [0, 1], [0, 8],
+                [1, 2], [1, 3],       // Gwiazda A
+                [2, 1], [2, 0],
+                [3, 1], [3, 2],
+                [4, 1], [4, 8],       // Most łączy 1 i 8
+                [5, 8], [5, 6],
+                [6, 8], [6, 7],
+                [7, 8], [7, 6],
+                [8, 7], [8, 5],       // Gwiazda B
+                [9, 1], [9, 8]        // Izolant wybiera liderów
+            ]
+        },
+        emotion: {
+            q: 'Z kim pójdziesz na papierosa/kawę?',
+            // Gwiazda: 6 (Gosia).
+            // Szara Eminencja: 2 (Celina) - Gosia ją wybiera.
+            choices: [
+                [0, 6], [0, 1],
+                [1, 6], [1, 0],
+                [2, 6], [2, 3],       // Celina (GE)
+                [3, 6], [3, 2],
+                [4, 6], [4, 5],
+                [5, 6], [5, 4],
+                [6, 2], [6, 7],       // Gwiazda wybiera GE
+                [7, 6], [7, 8],
+                [8, 7], [8, 6],
+                [9, 6], [9, 7]        // Izolant
+            ]
+        }
+    },
+    'hospital': {
+        name: '3. Szpital',
+        icon: '🏥',
+        task: {
+            q: 'Komu powierzysz pacjenta w stanie krytycznym?',
+            // Gwiazda: 2 (Celina).
+            // Most: 5 (Filip).
+            choices: [
+                [0, 2], [0, 1],
+                [1, 2], [1, 0],
+                [2, 3], [2, 5],       // Gwiazda wybiera Most
+                [3, 2], [3, 4],
+                [4, 2], [4, 3],
+                [5, 2], [5, 6],       // Most łączy górę z dołem
+                [6, 5], [6, 7],
+                [7, 6], [7, 8],
+                [8, 2], [8, 7],
+                [9, 2], [9, 5]        // Izolant
+            ]
+        },
+        emotion: {
+            q: 'Kto najbardziej wspiera cię psychicznie?',
+            // Gwiazda: 7 (Hela).
+            // Izolant: 2 (Celina) - szefowa, nikt jej nie lubi prywatnie.
+            choices: [
+                [0, 7], [0, 1],
+                [1, 7], [1, 0],
+                [2, 7], [2, 3],       // Celina (Izolant) wybiera, nikt jej
+                [3, 7], [3, 4],
+                [4, 7], [4, 5],
+                [5, 7], [5, 6],
+                [6, 7], [6, 5],
+                [7, 8], [7, 9],
+                [8, 7], [8, 9],
+                [9, 7], [9, 8]
+            ]
+        }
+    },
+    'sports': {
+        name: '4. Drużyna',
+        icon: '⚽',
+        task: {
+            q: 'Komu podasz piłkę w kluczowej akcji?',
+            // Gwiazda: 9 (Jan).
+            // Szara Eminencja: 0 (Anna).
+            choices: [
+                [0, 9], [0, 1],
+                [1, 9], [1, 0],
+                [2, 9], [2, 3],
+                [3, 9], [3, 2],
+                [4, 9], [4, 5],
+                [5, 9], [5, 4],
+                [6, 9], [6, 5],
+                [7, 9], [7, 8],
+                [8, 9], [8, 7],
+                [9, 0], [9, 1]        // Gwiazda wybiera Annę (GE)
+            ]
+        },
+        emotion: {
+            q: 'Z kim najchętniej mieszkasz na zgrupowaniu?',
+            // Dwie silne kliki (1-4 i 5-9).
+            // Most: 0 (Anna).
+            choices: [
+                [0, 1], [0, 5],       // Anna (Most)
+                [1, 2], [1, 3],
+                [2, 1], [2, 3],
+                [3, 1], [3, 2],
+                [4, 1], [4, 2],       // Izolant wewnątrz grupy (nikt nie wybiera 4)
+                [5, 6], [5, 7],
+                [6, 5], [6, 7],
+                [7, 5], [7, 8],
+                [8, 7], [8, 9],
+                [9, 8], [9, 5]
+            ]
+        }
+    },
+    'kitchen': {
+        name: '5. Kuchnia',
+        icon: '🍳',
+        task: {
+            q: 'Kto najlepiej zarządza serwisem?',
+            // Gwiazda: 0 (Anna).
+            // Most: 5 (Filip).
+            // Izolant: 9 (Jan).
+            choices: [
+                [0, 1], [0, 2],
+                [1, 0], [1, 2],
+                [2, 0], [2, 3],
+                [3, 0], [3, 2],
+                [4, 0], [4, 5],
+                [5, 0], [5, 6],       // Most
+                [6, 5], [6, 7],
+                [7, 6], [7, 8],
+                [8, 7], [8, 0],
+                [9, 0], [9, 5]        // Jan (Izolant)
+            ]
+        },
+        emotion: {
+            q: 'Z kim wyskoczysz tylnym wyjściem?',
+            // Gwiazda: 3 (Darek).
+            // Szara Eminencja: 8 (Igor).
+            choices: [
+                [0, 3], [0, 1],
+                [1, 3], [1, 4],
+                [2, 3], [2, 1],
+                [3, 8], [3, 4],       // Gwiazda wybiera Igora (GE)
+                [4, 3], [4, 1],
+                [5, 3], [5, 6],       // Izolant (nikt nie wybiera 5)
+                [6, 3], [6, 7],
+                [7, 8], [7, 6],
+                [8, 7], [8, 9],
+                [9, 3], [9, 8]
+            ]
+        }
+    },
+    'expedition': {
+        name: '6. Góry',
+        icon: '🏔️',
+        task: {
+            q: 'Komu powierzysz asekurację?',
+            // Gwiazda: 4 (Ewa).
+            // Izolant: 0 (Anna) - brak zaufania.
+            choices: [
+                [0, 4], [0, 1],       // Izolant wybiera
+                [1, 4], [1, 2],
+                [2, 4], [2, 3],
+                [3, 4], [3, 2],
+                [4, 5], [4, 6],
+                [5, 4], [5, 6],
+                [6, 4], [6, 5],
+                [7, 4], [7, 8],
+                [8, 4], [8, 7],
+                [9, 4], [9, 8]
+            ]
+        },
+        emotion: {
+            q: 'Z kim chcesz utknąć w namiocie?',
+            // Gwiazda: 1 (Bartek).
+            // Most: 9 (Jan).
+            choices: [
+                [0, 1], [0, 2],
+                [1, 2], [1, 3],
+                [2, 1], [2, 3],
+                [3, 1], [3, 2],
+                [4, 1], [4, 5],       // Izolant (4)
+                [5, 1], [5, 6],
+                [6, 5], [6, 7],
+                [7, 8], [7, 6],
+                [8, 7], [8, 9],
+                [9, 8], [9, 1]        // Most (9) łączy 8 i 1
+            ]
+        }
+    },
+    'theatre': {
+        name: '7. Teatr',
+        icon: '🎭',
+        task: {
+            q: 'Kto powinien grać główną rolę?',
+            // Gwiazda: 6 (Gosia).
+            // Szara Eminencja: 2 (Celina).
+            choices: [
+                [0, 6], [0, 1],
+                [1, 6], [1, 0],
+                [2, 6], [2, 3],
+                [3, 6], [3, 4],
+                [4, 6], [4, 5],
+                [5, 6], [5, 4],
+                [6, 2], [6, 7],       // Gwiazda wybiera GE (2)
+                [7, 6], [7, 8],
+                [8, 6], [8, 7],
+                [9, 6], [9, 8]        // Izolant (9)
+            ]
+        },
+        emotion: {
+            q: 'Z kim czujesz "chemię"?',
+            // Sieć rozproszona (pary).
+            // Most: 4 (Ewa).
+            choices: [
+                [0, 1], [0, 2],
+                [1, 0], [1, 2],
+                [2, 0], [2, 1],
+                [3, 2], [3, 4],       // Izolant (3)
+                [4, 2], [4, 5],       // Most (4)
+                [5, 4], [5, 6],
+                [6, 5], [6, 7],
+                [7, 6], [7, 8],
+                [8, 7], [8, 9],
+                [9, 8], [9, 7]
+            ]
+        }
+    },
+    'heist': {
+        name: '8. Włam',
+        icon: '💰',
+        task: {
+            q: 'Kto trzyma klucze do sejfu?',
+            // Gwiazda: 7 (Hela).
+            // Izolant: 2 (Celina).
+            choices: [
+                [0, 7], [0, 1],
+                [1, 7], [1, 0],
+                [2, 7], [2, 3],       // Izolant wybiera
+                [3, 7], [3, 4],
+                [4, 7], [4, 3],
+                [5, 7], [5, 6],
+                [6, 7], [6, 5],
+                [7, 0], [7, 1],
+                [8, 7], [8, 9],
+                [9, 7], [9, 8]
+            ]
+        },
+        emotion: {
+            q: 'Za kogo dasz się złapać?',
+            // Gwiazda: 3 (Darek).
+            // Szara Eminencja: 0 (Anna).
+            choices: [
+                [0, 3], [0, 1],
+                [1, 3], [1, 0],
+                [2, 3], [2, 1],       // Izolant (2)
+                [3, 0], [3, 4],       // Gwiazda wybiera GE (0)
+                [4, 3], [4, 5],
+                [5, 3], [5, 4],
+                [6, 3], [6, 5],
+                [7, 3], [7, 6],
+                [8, 3], [8, 7],
+                [9, 3], [9, 8]
+            ]
+        }
+    }
+};
+
+        
+        let currentScenario = null, currentCriterion = 'task';
+        let userMatrix = Array(10).fill().map(() => Array(10).fill(0));
+        let matrixLocked = false, graphLocked = true, pendingAction = null;
+        let highlightedNode = null;
+
+        function initLobby() {
+            const list = document.getElementById('scenario-list');
+            list.innerHTML = '';
+            for (const [key, data] of Object.entries(scenarios)) {
+                const btn = document.createElement('button');
+                btn.className = "group p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md transition text-left flex items-center gap-3";
+                btn.onclick = () => selectScenario(key);
+                btn.innerHTML = `<div class="text-2xl bg-slate-100 w-10 h-10 flex items-center justify-center rounded-lg">${data.icon}</div><div><div class="font-bold text-slate-700">${data.name}</div></div>`;
+                list.appendChild(btn);
+            }
+        }
+
+        function showLobby() { document.getElementById('lobby-screen').classList.remove('-translate-y-full'); }
+        
+        function selectScenario(key) {
+            currentScenario = scenarios[key];
+            document.getElementById('header-title').innerText = currentScenario.name;
+            document.getElementById('header-icon').innerText = currentScenario.icon;
+            document.getElementById('lobby-screen').classList.add('-translate-y-full');
+            resetState();
+            switchCriterion('task');
+            setStep(0); // ZMIANA: Start od kroku 0 (Definicje)
+        }
+
+        function resetState() {
+            userMatrix = Array(10).fill().map(() => Array(10).fill(0));
+            matrixLocked = false; graphLocked = true; highlightedNode = null;
+            document.getElementById('interactive-matrix-body').classList.remove('pointer-events-none', 'opacity-80');
+            document.getElementById('btn-verify').classList.remove('hidden');
+            document.getElementById('matrix-legend').classList.add('hidden');
+            document.getElementById('lock-2').classList.remove('hidden');
+            document.getElementById('check-2').classList.add('hidden');
+            document.getElementById('graph-lock-overlay').classList.remove('hidden');
+            document.getElementById('lock-3').classList.remove('hidden');
+        }
+
+        function switchCriterion(type) {
+            currentCriterion = type;
+            const isTask = type === 'task';
+            document.getElementById('btn-crit-task').className = isTask ? "px-4 py-2 rounded text-sm font-bold transition-all bg-indigo-600 shadow text-white" : "px-4 py-2 rounded text-sm font-bold transition-all text-slate-500 hover:bg-white/50";
+            document.getElementById('btn-crit-emotion').className = !isTask ? "px-4 py-2 rounded text-sm font-bold transition-all bg-pink-600 shadow text-white" : "px-4 py-2 rounded text-sm font-bold transition-all text-slate-500 hover:bg-white/50";
+            document.getElementById('question-text').innerText = `"${currentScenario[type].q}"`;
+            document.getElementById('question-text').className = isTask ? "text-indigo-900 font-serif italic text-lg" : "text-pink-900 font-serif italic text-lg";
+            resetState();
+            renderStep1(); renderStep2();
+        }
+
+        function renderStep1() {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+            const choices = currentScenario[currentCriterion].choices;
+            const color = currentCriterion === 'task' ? 'text-indigo-600' : 'text-pink-600';
+            people.forEach((p, idx) => {
+                const myChoices = choices.filter(c => c[0] === idx).map(c => people[c[1]].name);
+                const card = document.createElement('div');
+                card.className = "bg-white border p-3 rounded shadow-sm relative overflow-hidden";
+                card.innerHTML = `<div class="text-[10px] text-slate-400 font-bold uppercase">Ankieta #${p.id + 1}</div><div class="font-bold text-slate-800 border-b pb-1 mb-1 text-sm">${p.name}</div><div class="handwritten ${color} text-sm leading-tight">${myChoices.length ? myChoices.join(', ') : '<span class="text-slate-300">Brak</span>'}</div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function renderStep2() {
+            const tbody = document.getElementById('interactive-matrix-body');
+            tbody.innerHTML = '';
+            people.forEach((p, r) => {
+                const tr = document.createElement('tr'); tr.className = "border-b";
+                tr.innerHTML = `<td class="p-2 font-bold text-left bg-white text-xs sticky left-0 z-10 border-r">${p.name}</td>`;
+                people.forEach((_, c) => {
+                    const td = document.createElement('td');
+                    td.className = "border-l p-1 matrix-cell";
+                    if (r === c) { td.className += " bg-slate-100 text-slate-300 cursor-default"; td.innerText = "x"; }
+                    else {
+                        if (userMatrix[r][c] === 1) { td.classList.add('selected'); td.innerText = "1"; } else { td.innerText = "0"; td.classList.add('text-slate-300'); }
+                        td.onclick = () => { if (matrixLocked) return; userMatrix[r][c] = userMatrix[r][c] === 0 ? 1 : 0; renderStep2(); };
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function verifyMatrixAttempt() { openModal('matrix'); }
+        function unlockGraphAttempt() { openModal('graph'); }
+
+        function submitPassword() {
+            const val = document.getElementById('password-input').value;
+            if (pendingAction === 'matrix' && val === '2015') {
+                matrixLocked = true;
+                const correctData = currentScenario[currentCriterion].choices;
+                const correctGrid = Array(10).fill().map(() => Array(10).fill(0));
+                correctData.forEach(([f, t]) => correctGrid[f][t] = 1);
+                const tbody = document.getElementById('interactive-matrix-body');
+                const rows = tbody.getElementsByTagName('tr');
+                for (let r = 0; r < 10; r++) {
+                    const cells = rows[r].getElementsByTagName('td');
+                    for (let c = 0; c < 10; c++) {
+                        if (r === c) continue;
+                        const cell = cells[c + 1];
+                        const u = userMatrix[r][c], corr = correctGrid[r][c];
+                        cell.className = "border-l p-1 matrix-cell cursor-default";
+                        cell.innerText = corr === 1 ? "1" : "0";
+                        if (u === 1 && corr === 1) cell.classList.add('correct');
+                        else if (u === 0 && corr === 1) cell.classList.add('missed');
+                        else if (u === 1 && corr === 0) cell.classList.add('wrong');
+                        else cell.classList.add('text-slate-300');
+                        cell.onclick = null;
+                    }
+                }
+                document.getElementById('btn-verify').classList.add('hidden');
+                document.getElementById('matrix-legend').classList.remove('hidden');
+                document.getElementById('lock-2').classList.add('hidden');
+                document.getElementById('check-2').classList.remove('hidden');
+                closeModal();
+            } else if (pendingAction === 'graph' && val === '2025') {
+                graphLocked = false;
+                document.getElementById('graph-lock-overlay').classList.add('hidden');
+                document.getElementById('lock-3').classList.add('hidden');
+                renderStep3();
+                closeModal();
+            } else {
+                document.getElementById('password-error').classList.remove('hidden');
+            }
+        }
+
+        // --- ALGORITHM: Betweenness Centrality for "Most" (Bridge) Detection ---
+        function calculateBetweenness(n, choices) {
+            const adj = Array.from({length: n}, () => []);
+            // Treated as undirected for "Structural Bridge" detection
+            choices.forEach(([u, v]) => {
+                if(!adj[u].includes(v)) adj[u].push(v);
+                if(!adj[v].includes(u)) adj[v].push(u);
+            });
+
+            const CB = Array(n).fill(0);
+            for (let s = 0; s < n; s++) {
+                const S = [];
+                const P = Array.from({length: n}, () => []);
+                const sigma = Array(n).fill(0); sigma[s] = 1;
+                const d = Array(n).fill(-1); d[s] = 0;
+                const Q = [s];
+
+                while (Q.length) {
+                    const v = Q.shift();
+                    S.push(v);
+                    for (const w of adj[v]) {
+                        if (d[w] < 0) {
+                            Q.push(w);
+                            d[w] = d[v] + 1;
+                        }
+                        if (d[w] === d[v] + 1) {
+                            sigma[w] += sigma[v];
+                            P[w].push(v);
+                        }
+                    }
+                }
+
+                const delta = Array(n).fill(0);
+                while (S.length) {
+                    const w = S.pop();
+                    for (const v of P[w]) {
+                        delta[v] += (sigma[v] / sigma[w]) * (1 + delta[w]);
+                    }
+                    if (w !== s) CB[w] += delta[w];
+                }
+            }
+            return CB;
+        }
+
+        function renderStep3() {
+            const choices = currentScenario[currentCriterion].choices;
+            const incoming = new Array(10).fill(0);
+            choices.forEach(([f, t]) => incoming[t]++);
+            const maxVotes = Math.max(...incoming);
+            const stars = people.filter((_, i) => incoming[i] === maxVotes && maxVotes > 0).map(p => p.id);
+            
+            // Advanced Bridge Logic
+            const betweenness = calculateBetweenness(10, choices);
+            let maxB = -1;
+            let potentialBridges = [];
+            people.forEach((_, i) => {
+                if (!stars.includes(i) && betweenness[i] > maxB) maxB = betweenness[i];
+            });
+            if (maxB > 0) {
+                potentialBridges = people.filter((_, i) => !stars.includes(i) && betweenness[i] === maxB && betweenness[i] > 2).map(p => p.id);
+            }
+
+            const roles = people.map((p, id) => {
+                let role = 'Przeciętny', color = '#ffffff', stroke = '#94a3b8';
+                const chosenByStar = choices.some(([f, t]) => stars.includes(f) && t === id);
+                
+                if (incoming[id] === 0) { role = 'Izolant'; color = '#fee2e2'; stroke = '#ef4444'; }
+                else if (stars.includes(id)) { role = 'Gwiazda'; color = '#facc15'; stroke = '#ca8a04'; }
+                else if (potentialBridges.includes(id)) { role = 'Most'; color = '#2dd4bf'; stroke = '#0d9488'; }
+                else if (chosenByStar && incoming[id] <= 2) { role = 'Szara Eminencja'; color = '#d8b4fe'; stroke = '#7e22ce'; }
+                
+                return { ...p, role, color, stroke, votes: incoming[id] };
+            });
+
+            const nodesG = document.getElementById('nodes-group');
+            const edgesG = document.getElementById('edges-group');
+            nodesG.innerHTML = ''; edgesG.innerHTML = '';
+            const radius = 220, lineColor = currentCriterion === 'task' ? '#93c5fd' : '#f9a8d4';
+
+            const getPoint = (idx) => { const angle = (idx / 10) * 2 * Math.PI - (Math.PI / 2); return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius }; };
+
+            choices.forEach(([f, t]) => {
+                let opacity = 1, width = 1;
+                if (highlightedNode !== null) {
+                    if (f === highlightedNode || t === highlightedNode) { opacity = 1; width = 3; } 
+                    else { opacity = 0.1; }
+                }
+                const p1 = getPoint(f), p2 = getPoint(t);
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", p1.x); line.setAttribute("y1", p1.y); line.setAttribute("x2", p2.x); line.setAttribute("y2", p2.y);
+                line.setAttribute("stroke", lineColor); line.setAttribute("stroke-width", width); line.setAttribute("marker-end", "url(#arrow-main)");
+                line.setAttribute("opacity", opacity);
+                edgesG.appendChild(line);
+            });
+
+            roles.forEach((p, idx) => {
+                const pt = getPoint(idx);
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("transform", `translate(${pt.x}, ${pt.y})`);
+                g.classList.add('node');
+                
+                if (highlightedNode !== null) {
+                    const isConnected = choices.some(([f, t]) => (f === highlightedNode && t === idx) || (f === idx && t === highlightedNode));
+                    if (idx !== highlightedNode && !isConnected) g.setAttribute("opacity", "0.2");
+                }
+                g.onclick = (e) => { e.stopPropagation(); toggleHighlight(idx); };
+
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("r", 15 + (p.votes * 3)); circle.setAttribute("fill", p.color); circle.setAttribute("stroke", p.stroke); circle.setAttribute("stroke-width", "2");
+                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                txt.setAttribute("dy", "4"); txt.setAttribute("text-anchor", "middle"); txt.setAttribute("font-size", "10"); txt.setAttribute("font-weight", "bold"); txt.textContent = p.name;
+                g.appendChild(circle); g.appendChild(txt);
+                if (p.role !== 'Przeciętny') {
+                    const b = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    b.setAttribute("dy", -(15 + (p.votes * 3)) - 4); b.setAttribute("text-anchor", "middle"); b.setAttribute("font-size", "8"); b.setAttribute("fill", p.stroke); b.setAttribute("font-weight", "bold"); b.textContent = p.role.substring(0,4).toUpperCase();
+                    g.appendChild(b);
+                }
+                nodesG.appendChild(g);
+            });
+
+            const list = document.getElementById('roles-list'); list.innerHTML = '';
+            const grps = {}; roles.forEach(p => { if(!grps[p.role]) grps[p.role]=[]; grps[p.role].push(p.name); });
+            for(const [r,n] of Object.entries(grps)) {
+                if(r==='Przeciętny')continue;
+                let c = 'text-slate-600';
+                if(r==='Gwiazda') c='text-yellow-700 bg-yellow-50 border-yellow-200';
+                if(r==='Szara Eminencja') c='text-purple-700 bg-purple-50 border-purple-200';
+                if(r==='Izolant') c='text-red-700 bg-red-50 border-red-200';
+                if(r==='Most') c='text-teal-700 bg-teal-50 border-teal-200';
+                list.innerHTML += `<div class="p-2 border rounded text-xs ${c}"><strong>${r}:</strong> ${n.join(', ')}</div>`;
+            }
+        }
+
+        function toggleHighlight(id) { highlightedNode = (highlightedNode === id) ? null : id; renderStep3(); }
+        document.getElementById('graph-container').onclick = () => { if(highlightedNode !== null) toggleHighlight(null); };
+
+        function openModal(action) { pendingAction = action; document.getElementById('password-modal').classList.remove('hidden'); document.getElementById('password-input').value = ''; document.getElementById('password-input').focus(); document.getElementById('password-error').classList.add('hidden'); }
+        function closeModal() { document.getElementById('password-modal').classList.add('hidden'); pendingAction = null; }
+        
+        function setStep(step) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${step}`).classList.add('active');
+            
+            for(let i=0; i<=3; i++) {
+                const tab = document.getElementById(`tab-${i}`);
+                if (!tab) continue;
+                
+                let baseClass = "flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-600";
+                if(i === 2 || i === 3) baseClass += " flex justify-center items-center gap-2";
+                
+                if (i === step) {
+                    tab.className = baseClass.replace("text-slate-500 hover:text-indigo-600", "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50");
+                } else {
+                    tab.className = baseClass;
+                }
+            }
+        }
+        document.getElementById('password-input').addEventListener('keyup', (e) => { if(e.key==="Enter") submitPassword(); });
+        
+        initLobby();
+    </script>
+</body>
+</html>
