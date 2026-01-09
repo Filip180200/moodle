@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techniki Skojarzeniowe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans', sans-serif; background-color: #faf5ff; color: #334155; overflow: hidden; }
+        
+        .step-content { display: none; height: 100%; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .step-content.active { display: block; opacity: 1; }
+        
+        .scroller::-webkit-scrollbar { width: 8px; height: 8px; }
+        .scroller::-webkit-scrollbar-thumb { background: #d8b4fe; border-radius: 4px; }
+        .scroller::-webkit-scrollbar-track { background: transparent; }
+
+        /* Animacje */
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; transform: translateY(10px); }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Polaroid Effect */
+        .polaroid {
+            background: white;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+            transition: transform 0.3s;
+        }
+        .polaroid:hover { transform: rotate(0deg) scale(1.02); z-index: 10; }
+    </style>
+</head>
+<body class="h-screen flex flex-col relative">
+
+    <!-- EKRAN LOBBY -->
+    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4 transition-transform duration-500">
+        <div class="max-w-6xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh]">
+            <!-- Lewy panel -->
+            <div class="md:w-1/3 bg-slate-800 p-8 text-white flex flex-col justify-center relative overflow-hidden">
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <!-- Abstract shapes -->
+                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <circle cx="20" cy="80" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+                        <circle cx="80" cy="20" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 to-pink-600"></div>
+                
+                <h1 class="text-3xl font-bold mb-2 font-serif relative z-10">Techniki Skojarzeniowe</h1>
+                <p class="text-xs text-purple-300 font-mono mb-6 relative z-10 uppercase tracking-widest">Projekcja i Ekspresja</p>
+
+                <p class="mb-8 opacity-80 text-sm leading-relaxed relative z-10">Metody pozwalające dotrzeć do ukrytych postaw, emocji i potrzeb poprzez pracę z obrazem oraz słowem.</p>
+                
+                <div class="space-y-4 text-sm relative z-10">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-purple-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-purple-400">1</span> 
+                        <div><span class="font-bold block text-purple-100">PhotoVoice</span><span class="text-xs opacity-60">Skojarzenia wizualne</span></div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-pink-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-pink-400">2</span> 
+                        <div><span class="font-bold block text-pink-100">Zdania Niedokończone</span><span class="text-xs opacity-60">Technika uzupełniania</span></div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-slate-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-slate-400">3</span> 
+                        <div><span class="font-bold block text-slate-200">Test Plam (Rorschach)</span><span class="text-xs opacity-60">Kontrowersje</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prawy panel (Lista) -->
+            <div class="md:w-2/3 p-8 bg-slate-50 overflow-y-auto scroller">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2 border-slate-200">Wybierz Metodę:</h2>
+                <div class="grid grid-cols-1 gap-4" id="tech-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EKRAN APLIKACJI -->
+    <div id="app-screen" class="flex-1 flex flex-col h-full transition-opacity duration-500 opacity-0 pointer-events-none">
+        
+        <!-- Header -->
+        <div class="bg-white border-b border-slate-200 p-4 shadow-sm z-20 flex flex-col sm:flex-row justify-between items-center px-6 shrink-0 h-auto sm:h-20 gap-4">
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+                <div class="w-12 h-12 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center text-2xl shadow-sm border border-purple-100" id="header-icon">📸</div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800 leading-tight" id="header-title">...</h1>
+                    <button onclick="showLobby()" class="text-xs text-purple-600 hover:text-purple-800 hover:underline font-bold uppercase tracking-wide mt-1 block flex items-center gap-1">
+                        ← Powrót do menu
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 w-full sm:w-auto justify-center">
+                <button onclick="setStep(1)" id="tab-1" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all bg-white text-purple-700 shadow-sm">1. Zasady</button>
+                <button onclick="setStep(2)" id="tab-2" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">2. Procedura</button>
+                <button onclick="setStep(3)" id="tab-3" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">3. Zadanie</button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 relative overflow-hidden bg-white flex flex-col">
+            <div id="step-1" class="step-content active p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-theory"></div></div>
+            <div id="step-2" class="step-content p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-method"></div></div>
+            <div id="step-3" class="step-content p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-result"></div></div>
+        </div>
+    </div>
+
+    <script>
+        const techniques = [
+            {
+                id: 'photovoice',
+                title: "PhotoVoice",
+                subtitle: "Technika Skojarzeń Wizualnych",
+                icon: "📸",
+                color: "purple",
+                theory: `
+                    <div class="mb-6 border-b pb-4 border-slate-100">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Co to jest PhotoVoice?</h2>
+                    </div>
+                    <p class="text-lg text-slate-700 mb-6">Metoda badawcza dająca uczestnikom możliwość identyfikowania, reprezentowania i wzmacniania swojej społeczności poprzez technikę fotograficzną.</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
+                            <h3 class="font-bold text-purple-900 mb-4 text-xl">Kluczowe pytania:</h3>
+                            <ul class="space-y-4">
+                                <li class="flex items-center gap-3 bg-white p-3 rounded shadow-sm">
+                                    <span class="text-2xl">👀</span>
+                                    <span class="font-bold text-slate-700">Co widzisz?</span>
+                                </li>
+                                <li class="flex items-center gap-3 bg-white p-3 rounded shadow-sm">
+                                    <span class="text-2xl">🛑</span>
+                                    <span class="font-bold text-slate-700">Co Ci przeszkadza?</span>
+                                </li>
+                                <li class="flex items-center gap-3 bg-white p-3 rounded shadow-sm">
+                                    <span class="text-2xl">💚</span>
+                                    <span class="font-bold text-slate-700">Co Ci pomaga?</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="relative h-64 flex justify-center items-center">
+                            <!-- Visual representation -->
+                            <div class="polaroid absolute top-0 left-10 w-40 h-48 bg-white z-10">
+                                <div class="bg-slate-200 w-full h-32 mb-2 flex items-center justify-center text-3xl">🚫</div>
+                                <div class="text-center font-handwriting text-xs text-slate-500">To przeszkadza</div>
+                            </div>
+                            <div class="polaroid absolute top-4 right-10 w-40 h-48 bg-white z-20" style="transform: rotate(3deg);">
+                                <div class="bg-slate-200 w-full h-32 mb-2 flex items-center justify-center text-3xl">✅</div>
+                                <div class="text-center font-handwriting text-xs text-slate-500">To pomaga</div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Procedura Analizy SHOWED</h2>
+                    <p class="text-slate-600 mb-6">Analiza zdjęć odbywa się według ustrukturyzowanego schematu akronimu SHOWED. Pozwala to przejść od prostego opisu do planu działania.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition">
+                            <div class="text-4xl font-black text-purple-200 mb-2">S</div>
+                            <strong class="block text-slate-800">See</strong>
+                            <p class="text-sm text-slate-600">Co tu widzisz? (Opis dosłowny zdjęcia).</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition">
+                            <div class="text-4xl font-black text-purple-200 mb-2">H</div>
+                            <strong class="block text-slate-800">Happening</strong>
+                            <p class="text-sm text-slate-600">Co się tutaj dzieje? (Jaka jest historia za zdjęciem?).</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition">
+                            <div class="text-4xl font-black text-purple-200 mb-2">O</div>
+                            <strong class="block text-slate-800">Our</strong>
+                            <p class="text-sm text-slate-600">Jak to odnosi się do naszego życia / naszej społeczności?</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition">
+                            <div class="text-4xl font-black text-purple-200 mb-2">W</div>
+                            <strong class="block text-slate-800">Why</strong>
+                            <p class="text-sm text-slate-600">Dlaczego ten problem/sytuacja istnieje? (Szukanie przyczyn).</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition">
+                            <div class="text-4xl font-black text-purple-200 mb-2">E</div>
+                            <strong class="block text-slate-800">Empowerment / Education</strong>
+                            <p class="text-sm text-slate-600">Co możemy z tym zrobić? Jak to zmienić?</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition">
+                            <div class="text-4xl font-black text-purple-200 mb-2">D</div>
+                            <strong class="block text-slate-800">Do</strong>
+                            <p class="text-sm text-slate-600">Co konkretnie zrobimy? (Działanie).</p>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <div class="max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Zadanie: Opis zdjęcia</h2>
+                        <p class="text-slate-500 mb-6">Wyobraź sobie, że to zdjęcie przedstawia problem w Twoim otoczeniu. Zastosuj metodę SHOWED.</p>
+
+                        <!-- Placeholder Photo -->
+                        <div class="w-full h-64 bg-slate-200 rounded-xl mb-8 flex flex-col items-center justify-center overflow-hidden relative shadow-inner">
+                            <svg class="w-full h-full opacity-30" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice">
+                                <rect width="400" height="200" fill="#cbd5e1"/>
+                                <path d="M50,150 L100,50 L150,150 Z" fill="#94a3b8"/>
+                                <path d="M120,150 L180,30 L240,150 Z" fill="#64748b"/>
+                                <circle cx="300" cy="50" r="30" fill="#facc15" opacity="0.8"/>
+                                <rect x="0" y="150" width="400" height="50" fill="#475569"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="bg-white/80 px-4 py-2 rounded text-slate-600 font-bold backdrop-blur-sm shadow">[Tu wklejono by Twoje zdjęcie]</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-800 uppercase mb-1">S - See (Co widzisz?)</label>
+                                    <textarea class="w-full p-2 border border-purple-200 rounded bg-white text-sm" rows="2"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-800 uppercase mb-1">H - Happening (Historia)</label>
+                                    <textarea class="w-full p-2 border border-purple-200 rounded bg-white text-sm" rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-800 uppercase mb-1">O - Our (Nasze życie)</label>
+                                    <textarea class="w-full p-2 border border-purple-200 rounded bg-white text-sm" rows="2"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-800 uppercase mb-1">W - Why (Dlaczego?)</label>
+                                    <textarea class="w-full p-2 border border-purple-200 rounded bg-white text-sm" rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-800 uppercase mb-1">E - Empowerment (Co zrobić?)</label>
+                                    <textarea class="w-full p-2 border border-purple-200 rounded bg-white text-sm" rows="2"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-800 uppercase mb-1">D - Do (Działanie)</label>
+                                    <textarea class="w-full p-2 border border-purple-200 rounded bg-white text-sm" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'zdania',
+                title: "Zdania Niedokończone",
+                subtitle: "Technika Uzupełniania",
+                icon: "✍️",
+                color: "pink",
+                theory: `
+                    <div class="mb-6 border-b pb-4 border-slate-100">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Technika Uzupełniania</h2>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-200 mb-6 flex items-start gap-4">
+                        <span class="text-2xl">✅</span>
+                        <div>
+                            <strong class="block text-green-900 mb-1">Wartość: Wywiad i Relacja</strong>
+                            <p class="text-sm text-green-800">
+                                To doskonałe narzędzie do <strong>rozpoczęcia rozmowy (ice-breaker)</strong>.
+                                Pozwala badanemu w bezpieczny sposób wyrazić myśli, które trudno ująć wprost.
+                                Buduje "pomost" między pacjentem a diagnostą.
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-lg text-slate-700 mb-6">Metoda projekcyjna polegająca na kończeniu rozpoczętych zdań. Ujawnia postawy, lęki, pragnienia i konflikty.</p>
+                    
+                    <div class="bg-pink-50 p-6 rounded-xl border border-pink-100 flex flex-col md:flex-row gap-6 items-center">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-pink-900 mb-2">Geneza</h3>
+                            <p class="text-sm text-pink-800">Technika ta jest wzorowana na klasycznym <strong>Teście Niedokończonych Zdań Rottera (RISB)</strong>. W wersji uproszczonej służy do wstępnej diagnozy.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-pink-200 text-center w-full md:w-auto">
+                            <span class="text-4xl block mb-2">🧩</span>
+                            <span class="text-xs font-bold text-slate-500 uppercase">Mechanizm</span>
+                            <strong class="block text-slate-700">Projekcja</strong>
+                        </div>
+                    </div>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Procedura Badania</h2>
+                    <p class="text-slate-600 mb-6">Badany otrzymuje arkusz z początkami zdań (stymulatorami). Instrukcja wymaga szybkiego i szczerego dokończenia myśli.</p>
+
+                    <div class="space-y-4">
+                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
+                            <strong class="block text-slate-700 mb-1">Zasada 1: Czas</strong>
+                            <p class="text-sm text-slate-500">Pierwsza myśl jest najlepsza. Nie należy się długo zastanawiać.</p>
+                        </div>
+                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
+                            <strong class="block text-slate-700 mb-1">Zasada 2: Pełne zdania</strong>
+                            <p class="text-sm text-slate-500">Zakończenie musi tworzyć gramatyczną całość z początkiem.</p>
+                        </div>
+                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
+                            <strong class="block text-slate-700 mb-1">Zasada 3: Szczerość</strong>
+                            <p class="text-sm text-slate-500">Wartość diagnostyczną mają tylko autentyczne odpowiedzi.</p>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <div class="max-w-2xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Karta Pracy</h2>
+                        <p class="text-slate-500 mb-4">Dokończ poniższe zdania pierwszą myślą, która przyjdzie Ci do głowy.</p>
+                        <p class="text-xs text-slate-400 italic mb-8 border-l-2 border-pink-300 pl-2">
+                            Uwaga: To jedynie fragment (10 zdań). Pełny test, np. RISB, zawiera zazwyczaj 40 trzonów zdań, co pozwala na głębszą analizę profilu osobowości.
+                        </p>
+
+                        <div class="space-y-6 bg-white p-8 rounded-xl shadow-lg border border-pink-100 paper-texture">
+                            
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">1.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Lubię...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">2.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Najszczęśliwszy czas...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">3.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Chcę wiedzieć...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">4.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">W domu rodzinnym...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">5.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Żałuję...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">6.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Kiedy idę spać...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">7.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Chłopcy...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">8.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Najlepszy...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">9.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Drażni mnie...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">10.</span>
+                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Ludzie...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                            </div>
+
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'plamy',
+                title: "Test Plam",
+                subtitle: "Test Rorschacha",
+                icon: "🦋",
+                color: "slate",
+                theory: `
+                    <div class="mb-6 border-b pb-4 border-slate-100">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Test Plam Atramentowych</h2>
+                    </div>
+                    
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex items-start gap-4">
+                        <span class="text-2xl">⚠️</span>
+                        <div>
+                            <strong class="block text-red-900 mb-1">Niska Wartość Diagnostyczna</strong>
+                            <p class="text-sm text-red-800">
+                                Współczesna psychometria uznaje ten test za <strong>mało rzetelny i nietrafny</strong>. 
+                                Jest podatny na subiektywną interpretację badacza i nie spełnia standardów EBM (Evidence-Based Medicine).
+                                W popkulturze znany, w nauce - marginalizowany.
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-lg text-slate-700 mb-6">Klasyczna technika projekcyjna opracowana przez Hermanna Rorschacha. Badany interpretuje symetryczne plamy atramentowe.</p>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Zasada Działania (Historycznie)</h2>
+                    <p class="text-slate-600 mb-6">Zakładano, że sposób postrzegania niejednoznacznych bodźców ujawnia strukturę osobowości.</p>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
+                            <strong class="block text-slate-800 mb-2">Analiza formalna</strong>
+                            <ul class="text-sm text-slate-600 list-disc ml-4">
+                                <li>Lokalizacja (cała plama czy szczegół?)</li>
+                                <li>Determinanty (kształt, kolor, ruch?)</li>
+                                <li>Treść (ludzie, zwierzęta, obiekty?)</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-4 rounded flex items-center justify-center border border-slate-200 shadow-inner">
+                            <img src="zajecia_6/roschac/Normalized_Rorschach_blot_08.jpg" alt="Plama Rorschacha" class="w-40 h-auto opacity-80 mix-blend-multiply" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xs text-slate-400\'>[Błąd ładowania obrazu]</span>';">
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <div class="max-w-2xl mx-auto text-center">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Zadanie: Test Rorschacha</h2>
+                        <p class="text-slate-600 mb-8">Zobacz, jak wygląda (lub wyglądała) próba interpretacji tych plam. Czy wyniki mają sens?</p>
+                        
+                        <a href="https://moodle.lieberfilip.pl/metody/zajecia_6.html" target="_blank" class="inline-flex items-center gap-2 bg-slate-600 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-slate-700 transition transform hover:-translate-y-1">
+                            <span>🦋</span> Sprawdź go
+                        </a>
+                        
+                        <p class="text-xs text-slate-400 mt-6">Link prowadzi do zewnętrznego materiału dydaktycznego.</p>
+                    </div>
+                `
+            }
+        ];
+
+        let currentTech = null;
+
+        function initLobby() {
+            const list = document.getElementById('tech-list');
+            list.innerHTML = '';
+            techniques.forEach(tech => {
+                const btn = document.createElement('button');
+                btn.className = `group p-6 bg-white border border-slate-200 rounded-xl hover:border-${tech.color}-500 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
+                btn.onclick = () => loadTech(tech);
+                
+                let hoverColorClass = '';
+                if (tech.color === 'purple') hoverColorClass = 'group-hover:text-purple-600 group-hover:bg-purple-50';
+                else if (tech.color === 'pink') hoverColorClass = 'group-hover:text-pink-600 group-hover:bg-pink-50';
+                else hoverColorClass = 'group-hover:text-slate-600 group-hover:bg-slate-50';
+
+                btn.innerHTML = `
+                    <div class="text-4xl bg-slate-50 w-20 h-20 flex items-center justify-center rounded-2xl shadow-sm transition-colors ${hoverColorClass}">${tech.icon}</div>
+                    <div>
+                        <div class="font-bold text-slate-800 text-xl mb-1">${tech.title}</div>
+                        <div class="text-sm text-slate-500 font-medium">${tech.subtitle}</div>
+                        <div class="mt-2 text-xs font-bold uppercase tracking-wider text-slate-300 group-hover:text-${tech.color}-500 transition-colors">Rozpocznij →</div>
+                    </div>
+                `;
+                list.appendChild(btn);
+            });
+        }
+
+        function loadTech(tech) {
+            currentTech = tech;
+            document.getElementById('header-title').innerHTML = `<span class="block text-xs text-slate-400 uppercase tracking-wider">${tech.subtitle}</span>${tech.title}`;
+            document.getElementById('header-icon').innerText = tech.icon;
+
+            document.getElementById('content-theory').innerHTML = tech.theory;
+            document.getElementById('content-method').innerHTML = tech.method;
+            document.getElementById('content-result').innerHTML = tech.result;
+
+            document.getElementById('lobby-screen').classList.add('-translate-y-full');
+            const app = document.getElementById('app-screen');
+            app.classList.remove('opacity-0', 'pointer-events-none');
+            app.classList.add('opacity-100');
+
+            setStep(1);
+        }
+
+        function showLobby() {
+            document.getElementById('lobby-screen').classList.remove('-translate-y-full');
+            const app = document.getElementById('app-screen');
+            app.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function setStep(stepId) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${stepId}`).classList.add('active');
+            
+            const btnDefault = "flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-slate-50";
+            const btnActive = `flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all shadow-md bg-white text-${currentTech ? currentTech.color : 'purple'}-700 border border-slate-100 transform scale-105`;
+            
+            for(let i=1; i<=3; i++) { 
+                const btn = document.getElementById(`tab-${i}`);
+                btn.className = (i === stepId) ? btnActive : btnDefault;
+            }
+        }
+        
+        initLobby();
+    </script>
+</body>
+</html>
