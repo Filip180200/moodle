@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metody Badań Psychologicznych</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans', sans-serif; background-color: #f1f5f9; color: #334155; overflow: hidden; }
+        
+        .step-content { display: none; height: 100%; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .step-content.active { display: block; opacity: 1; }
+        
+        .scroller::-webkit-scrollbar { width: 8px; height: 8px; }
+        .scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .scroller::-webkit-scrollbar-track { background: transparent; }
+
+        /* Animacje */
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; transform: translateY(10px); }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Efekty dla klikerów */
+        .clicker-btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="h-screen flex flex-col relative">
+
+    <!-- EKRAN LOBBY -->
+    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4 transition-transform duration-500">
+        <div class="max-w-6xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh]">
+            <!-- Lewy panel -->
+            <div class="md:w-1/3 bg-slate-800 p-8 text-white flex flex-col justify-center relative overflow-hidden">
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M0,0 L100,100 M100,0 L0,100" stroke="white" stroke-width="0.5" />
+                    </svg>
+                </div>
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+                
+                <h1 class="text-3xl font-bold mb-2 font-serif relative z-10">Metodologia Badań</h1>
+                <p class="text-xs text-emerald-400 font-mono mb-6 relative z-10 uppercase tracking-widest">Obserwacja i Eksperyment</p>
+
+                <p class="mb-8 opacity-80 text-sm leading-relaxed relative z-10">Interaktywny przewodnik po podstawowych metodach badawczych w psychologii, oparty na materiale wykładowym.</p>
+                
+                <div class="space-y-4 text-sm relative z-10">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-emerald-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-emerald-400">1</span> 
+                        <div><span class="font-bold block text-emerald-100">Obserwacja</span><span class="text-xs opacity-60">Ćwiczenie 4: Video</span></div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-indigo-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-indigo-400">2</span> 
+                        <div><span class="font-bold block text-indigo-100">Eksperyment</span><span class="text-xs opacity-60">Ćwiczenie 5: Projekt</span></div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-orange-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-orange-400">3</span> 
+                        <div><span class="font-bold block text-orange-100">Studium: Bandura</span><span class="text-xs opacity-60">Lalka Bobo</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prawy panel (Lista) -->
+            <div class="md:w-2/3 p-8 bg-slate-50 overflow-y-auto scroller">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2 border-slate-200">Wybierz Moduł:</h2>
+                <div class="grid grid-cols-1 gap-4" id="tech-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EKRAN APLIKACJI -->
+    <div id="app-screen" class="flex-1 flex flex-col h-full transition-opacity duration-500 opacity-0 pointer-events-none">
+        
+        <!-- Header -->
+        <div class="bg-white border-b border-slate-200 p-4 shadow-sm z-20 flex flex-col sm:flex-row justify-between items-center px-6 shrink-0 h-auto sm:h-20 gap-4">
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+                <div class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center text-2xl shadow-sm border border-emerald-100" id="header-icon">📊</div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800 leading-tight" id="header-title">...</h1>
+                    <button onclick="showLobby()" class="text-xs text-emerald-600 hover:text-emerald-800 hover:underline font-bold uppercase tracking-wide mt-1 block flex items-center gap-1">
+                        ← Powrót do menu
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 w-full sm:w-auto justify-center">
+                <button onclick="setStep(1)" id="tab-1" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all bg-white text-emerald-700 shadow-sm">1. Teoria</button>
+                <button onclick="setStep(2)" id="tab-2" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">2. Metodyka</button>
+                <button onclick="setStep(3)" id="tab-3" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">3. Zadanie</button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 relative overflow-hidden bg-white flex flex-col">
+            <div id="step-1" class="step-content active p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-theory"></div></div>
+            <div id="step-2" class="step-content p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-method"></div></div>
+            <div id="step-3" class="step-content p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-result"></div></div>
+        </div>
+    </div>
+
+    <script>
+        const modules = [
+            {
+                id: 'obs',
+                title: "Obserwacja",
+                subtitle: "Ćwiczenie 4: Analiza Video",
+                icon: "👁️",
+                color: "emerald",
+                theory: `
+                    <div class="mb-6 border-b pb-4 border-slate-100">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Czym jest obserwacja naukowa?</h2>
+                    </div>
+                    <p class="text-lg text-slate-700 mb-6">To nie jest przypadkowe patrzenie. To <strong>systematyczne spostrzeganie</strong>, mające na celu zdobycie obiektywnych danych.</p>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100 fade-in-up" style="animation-delay: 0.1s">
+                            <div class="text-2xl mb-2">🎯</div>
+                            <h3 class="font-bold text-emerald-800 mb-2">Celowość</h3>
+                            <p class="text-sm text-emerald-700">Badacz wie dokładnie <strong>co i po co</strong> obserwuje. Nie jest to działanie przypadkowe.</p>
+                        </div>
+                        <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100 fade-in-up" style="animation-delay: 0.2s">
+                            <div class="text-2xl mb-2">📝</div>
+                            <h3 class="font-bold text-emerald-800 mb-2">Planowość</h3>
+                            <p class="text-sm text-emerald-700">Zaprojektowany czas, miejsce, uczestnicy i narzędzia (np. arkusze).</p>
+                        </div>
+                        <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100 fade-in-up" style="animation-delay: 0.3s">
+                            <div class="text-2xl mb-2">⚖️</div>
+                            <h3 class="font-bold text-emerald-800 mb-2">Obiektywność</h3>
+                            <p class="text-sm text-emerald-700">Opis faktów, nie wrażeń. <br><em>Źle:</em> "Był niegrzeczny". <br><em>Dobrze:</em> "Przerwał wypowiedź 3 razy".</p>
+                        </div>
+                    </div>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Rodzaje Obserwacji - Pełny Przegląd</h2>
+                    
+                    <div class="space-y-8">
+                        <!-- Środowisko -->
+                        <div class="bg-white border-l-4 border-emerald-500 pl-6 py-2">
+                            <h3 class="font-bold text-slate-700 text-lg mb-4 flex items-center gap-2">🌍 1. Ze względu na środowisko</h3>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <strong class="text-emerald-700 block mb-2">Laboratoryjna</strong>
+                                    <p class="text-sm text-slate-600 mb-2">Sztuczne warunki, wysoka kontrola zmiennych (np. lustro weneckie).</p>
+                                    <div class="text-xs bg-slate-50 p-2 rounded">
+                                        <span class="text-green-600 font-bold">+</span> Kontrola, precyzja<br>
+                                        <span class="text-red-600 font-bold">-</span> Sztuczność, niska trafność ekologiczna
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1 italic">Przykład: Ainsworth (Obca Sytuacja)</p>
+                                </div>
+                                <div>
+                                    <strong class="text-emerald-700 block mb-2">Naturalna</strong>
+                                    <p class="text-sm text-slate-600 mb-2">Rzeczywiste otoczenie (szkoła, ulica).</p>
+                                    <div class="text-xs bg-slate-50 p-2 rounded">
+                                        <span class="text-green-600 font-bold">+</span> Autentyczność zachowań<br>
+                                        <span class="text-red-600 font-bold">-</span> Brak kontroli nad czynnikami zakłócającymi
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1 italic">Przykład: Obserwacja dzieci na placu zabaw</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rola Badacza -->
+                        <div class="bg-white border-l-4 border-indigo-500 pl-6 py-2">
+                            <h3 class="font-bold text-slate-700 text-lg mb-4 flex items-center gap-2">🕵️ 2. Ze względu na rolę badacza</h3>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <strong class="text-indigo-700 block mb-2">Uczestnicząca</strong>
+                                    <p class="text-sm text-slate-600 mb-2">Badacz staje się członkiem grupy.</p>
+                                    <div class="text-xs bg-slate-50 p-2 rounded">
+                                        <span class="text-green-600 font-bold">+</span> Głębia danych, zrozumienie "od środka"<br>
+                                        <span class="text-red-600 font-bold">-</span> Subiektywizm, wpływ na grupę
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1 italic">Przykład: Rosenhan w szpitalu psychiatrycznym</p>
+                                </div>
+                                <div>
+                                    <strong class="text-indigo-700 block mb-2">Nieuczestnicząca</strong>
+                                    <p class="text-sm text-slate-600 mb-2">Badacz obserwuje z zewnątrz, jest neutralny.</p>
+                                    <div class="text-xs bg-slate-50 p-2 rounded">
+                                        <span class="text-green-600 font-bold">+</span> Obiektywizm<br>
+                                        <span class="text-red-600 font-bold">-</span> Powierzchowność danych
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Świadomość -->
+                        <div class="bg-white border-l-4 border-orange-500 pl-6 py-2">
+                            <h3 class="font-bold text-slate-700 text-lg mb-4 flex items-center gap-2">👁️ 3. Ze względu na wiedzę badanych</h3>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <strong class="text-orange-700 block mb-2">Jawna</strong>
+                                    <p class="text-sm text-slate-600 mb-2">Badani wiedzą, że są obserwowani.</p>
+                                    <div class="text-xs bg-slate-50 p-2 rounded">
+                                        <span class="text-green-600 font-bold">+</span> Etyczność<br>
+                                        <span class="text-red-600 font-bold">-</span> Efekt Hawthorne'a (zmiana zachowania)
+                                    </div>
+                                </div>
+                                <div>
+                                    <strong class="text-orange-700 block mb-2">Ukryta</strong>
+                                    <p class="text-sm text-slate-600 mb-2">Badani nie wiedzą o obserwacji.</p>
+                                    <div class="text-xs bg-slate-50 p-2 rounded">
+                                        <span class="text-green-600 font-bold">+</span> Naturalność<br>
+                                        <span class="text-red-600 font-bold">-</span> Problemy etyczne (zgoda)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Ćwiczenie 4: Obserwacja</h2>
+                        <p class="text-slate-500">Obejrzyj nagranie i wykonaj zadanie dla wybranej grupy.</p>
+                        <a href="https://www.youtube.com/watch?v=hqF1kWXUFwk" target="_blank" class="inline-flex items-center gap-2 mt-4 text-emerald-600 hover:text-emerald-800 font-bold border border-emerald-200 px-4 py-2 rounded-lg hover:bg-emerald-50 transition">
+                            <span>▶️</span> Otwórz Video (YouTube)
+                        </a>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg">
+                        <div class="flex border-b border-slate-200">
+                            <button onclick="toggleObsGroup(1)" id="btn-g1" class="flex-1 py-4 text-center font-bold text-slate-600 hover:bg-slate-50 border-r border-slate-100 bg-slate-100">
+                                GRUPA 1<br><span class="text-xs font-normal">Opis jakościowy</span>
+                            </button>
+                            <button onclick="toggleObsGroup(2)" id="btn-g2" class="flex-1 py-4 text-center font-bold text-slate-600 hover:bg-slate-50">
+                                GRUPA 2<br><span class="text-xs font-normal">Analiza ilościowa</span>
+                            </button>
+                        </div>
+
+                        <!-- CONTENT GRUPA 1 -->
+                        <div id="content-g1" class="p-8">
+                            <h3 class="font-bold text-slate-800 mb-2">Instrukcja:</h3>
+                            <p class="text-sm text-slate-600 mb-4 bg-yellow-50 p-3 rounded border border-yellow-200">
+                                📝 Zapisz <strong>wszystko co widzisz</strong>. Skup się na ogólnym przebiegu interakcji, atmosferze i kontekście. Nie interpretuj - opisuj.
+                            </p>
+                            <textarea class="w-full h-48 p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm leading-relaxed" placeholder="Tutaj wpisz swoje obserwacje..."></textarea>
+                        </div>
+
+                        <!-- CONTENT GRUPA 2 -->
+                        <div id="content-g2" class="p-8 hidden">
+                            <h3 class="font-bold text-slate-800 mb-2">Instrukcja:</h3>
+                            <p class="text-sm text-slate-600 mb-6 bg-blue-50 p-3 rounded border border-blue-200">
+                                🔢 Policz wystąpienia konkretnych zachowań. Klikaj w odpowiednie przyciski za każdym razem, gdy zauważysz dane zachowanie.
+                            </p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <!-- Counter 1 -->
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                                    <div class="text-3xl mb-2">😊</div>
+                                    <div class="font-bold text-slate-700 mb-2">Uśmiech</div>
+                                    <div class="text-4xl font-mono text-emerald-600 font-bold mb-4" id="count-smile">0</div>
+                                    <button onclick="updateCounter('count-smile', 1)" class="clicker-btn w-full bg-emerald-600 text-white font-bold py-2 rounded shadow hover:bg-emerald-700 transition">+1</button>
+                                </div>
+                                <!-- Counter 2 -->
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                                    <div class="text-3xl mb-2">👁️</div>
+                                    <div class="font-bold text-slate-700 mb-2">Kontakt Wzrokowy</div>
+                                    <div class="text-4xl font-mono text-indigo-600 font-bold mb-4" id="count-eye">0</div>
+                                    <button onclick="updateCounter('count-eye', 1)" class="clicker-btn w-full bg-indigo-600 text-white font-bold py-2 rounded shadow hover:bg-indigo-700 transition">+1</button>
+                                </div>
+                                <!-- Counter 3 -->
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                                    <div class="text-3xl mb-2">👋</div>
+                                    <div class="font-bold text-slate-700 mb-2">Gestykulacja</div>
+                                    <div class="text-4xl font-mono text-orange-600 font-bold mb-4" id="count-gest">0</div>
+                                    <button onclick="updateCounter('count-gest', 1)" class="clicker-btn w-full bg-orange-600 text-white font-bold py-2 rounded shadow hover:bg-orange-700 transition">+1</button>
+                                </div>
+                            </div>
+                            <button onclick="resetCounters()" class="mt-6 text-xs text-slate-400 hover:text-red-500 underline w-full text-center">Resetuj liczniki</button>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'exp',
+                title: "Eksperyment",
+                subtitle: "Ćwiczenie 5: Projekt Badawczy",
+                icon: "🧪",
+                color: "indigo",
+                theory: `
+                    <div class="mb-6 border-b pb-4 border-slate-100">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Struktura Eksperymentu</h2>
+                    </div>
+                    <p class="text-lg text-slate-700 mb-6">Eksperyment różni się od obserwacji <strong>manipulacją</strong>. Badacz celowo zmienia jeden czynnik, aby sprawdzić jego wpływ na inny.</p>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-8 bg-indigo-50 p-8 rounded-xl border border-indigo-100">
+                        <div class="text-center bg-white p-4 rounded-lg shadow-sm w-48">
+                            <strong class="block text-indigo-600 text-xl mb-1">Zmienna Niezależna (ZN)</strong>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Przyczyna</span>
+                            <p class="text-xs text-slate-600 mt-2">To, czym badacz manipuluje.<br>(np. agresywny model)</p>
+                        </div>
+                        
+                        <div class="text-3xl text-indigo-300">➜</div>
+                        
+                        <div class="text-center bg-white p-4 rounded-lg shadow-sm w-48">
+                            <strong class="block text-indigo-600 text-xl mb-1">Zmienna Zależna (ZZ)</strong>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Skutek</span>
+                            <p class="text-xs text-slate-600 mt-2">To, co badacz mierzy.<br>(np. liczba uderzeń)</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-white p-5 rounded-xl border-l-4 border-indigo-500 shadow-sm">
+                            <h3 class="font-bold text-indigo-800 mb-2">Grupa Eksperymentalna</h3>
+                            <p class="text-sm text-slate-600">Uczestnicy poddani działaniu zmiennej niezależnej (np. oglądają film z agresją).</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border-l-4 border-slate-400 shadow-sm">
+                            <h3 class="font-bold text-slate-700 mb-2">Grupa Kontrolna</h3>
+                            <p class="text-sm text-slate-600">Punkt odniesienia. Nie są poddani manipulacji (np. nie oglądają nic lub oglądają film neutralny).</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-900 text-white p-6 rounded-xl">
+                        <h3 class="font-bold mb-4 flex items-center gap-2">🛡️ Eliminacja błędów (Ślepe próby)</h3>
+                        <div class="space-y-3 text-sm">
+                            <p><strong class="text-indigo-300">I stopnia:</strong> Uczestnik nie wie, w której jest grupie (minimalizuje efekt oczekiwań).</p>
+                            <p><strong class="text-indigo-300">II stopnia (Double-blind):</strong> Ani uczestnik, ani badacz nie wiedzą, kto jest w której grupie (kluczowe np. w badaniach leków).</p>
+                        </div>
+                    </div>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Rodzaje Eksperymentów</h2>
+                    <p class="text-slate-600 mb-6">Wybór rodzaju eksperymentu zależy od celu badania i możliwości kontroli zmiennych.</p>
+
+                    <div class="space-y-6">
+                        <!-- Laboratoryjny -->
+                        <div class="bg-white border-l-4 border-indigo-500 shadow-sm rounded-r-xl p-6">
+                            <h3 class="font-bold text-indigo-800 text-lg mb-2">1. Eksperyment Laboratoryjny</h3>
+                            <p class="text-sm text-slate-700 mb-3">Badanie w warunkach sztucznych, gdzie badacz ma pełną kontrolę nad otoczeniem.</p>
+                            <div class="grid grid-cols-2 gap-4 text-xs mb-3">
+                                <div class="bg-green-50 p-2 rounded text-green-800 border border-green-200">
+                                    <strong>+ Zalety:</strong> Wysoka kontrola zmiennych, łatwa replikacja.
+                                </div>
+                                <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200">
+                                    <strong>- Wady:</strong> Sztuczność sytuacji, niska trafność ekologiczna.
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 italic border-t border-slate-100 pt-2">Przykład: Milgram (posłuszeństwo), Bandura (Lalka Bobo).</p>
+                        </div>
+
+                        <!-- Naturalny (Terenowy) -->
+                        <div class="bg-white border-l-4 border-emerald-500 shadow-sm rounded-r-xl p-6">
+                            <h3 class="font-bold text-emerald-800 text-lg mb-2">2. Eksperyment Naturalny (Terenowy)</h3>
+                            <p class="text-sm text-slate-700 mb-3">Badanie w rzeczywistym środowisku uczestnika (szkoła, ulica), bez ingerencji w strukturę otoczenia.</p>
+                            <div class="grid grid-cols-2 gap-4 text-xs mb-3">
+                                <div class="bg-green-50 p-2 rounded text-green-800 border border-green-200">
+                                    <strong>+ Zalety:</strong> Naturalne zachowania, wysoka trafność ekologiczna.
+                                </div>
+                                <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200">
+                                    <strong>- Wady:</strong> Mała kontrola nad zmiennymi zakłócającymi.
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 italic border-t border-slate-100 pt-2">Przykład: Piliavin (pomoc w metrze).</p>
+                        </div>
+
+                        <!-- Eksperyment Polowy -->
+                        <div class="bg-white border-l-4 border-teal-500 shadow-sm rounded-r-xl p-6">
+                            <h3 class="font-bold text-teal-800 text-lg mb-2">3. Eksperyment Polowy</h3>
+                            <p class="text-sm text-slate-700 mb-3">Odbywa się w terenie, ale badacz wprowadza manipulację (np. podstawiona osoba).</p>
+                            <div class="grid grid-cols-2 gap-4 text-xs mb-3">
+                                <div class="bg-green-50 p-2 rounded text-green-800 border border-green-200">
+                                    <strong>+ Zalety:</strong> Połączenie realizmu z kontrolą Zmienną Niezależną.
+                                </div>
+                                <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200">
+                                    <strong>- Wady:</strong> Ryzyko nieprzewidzianych zakłóceń z otoczenia.
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 italic border-t border-slate-100 pt-2">Przykład: Badanie wpływu humoru na hojność w barze.</p>
+                        </div>
+
+                        <!-- Quasi-eksperyment -->
+                        <div class="bg-white border-l-4 border-orange-500 shadow-sm rounded-r-xl p-6">
+                            <h3 class="font-bold text-orange-800 text-lg mb-2">4. Quasi-eksperyment</h3>
+                            <p class="text-sm text-slate-700 mb-3">Brak losowego doboru do grup (randomizacji). Badacz wykorzystuje grupy zastane (np. klasy szkolne).</p>
+                            <div class="grid grid-cols-2 gap-4 text-xs mb-3">
+                                <div class="bg-green-50 p-2 rounded text-green-800 border border-green-200">
+                                    <strong>+ Zalety:</strong> Możliwy gdy randomizacja jest nieetyczna/niemożliwa.
+                                </div>
+                                <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200">
+                                    <strong>- Wady:</strong> Słabsze wnioskowanie przyczynowo-skutkowe.
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 italic border-t border-slate-100 pt-2">Przykład: Porównanie skuteczności metod nauczania w klasie A i B.</p>
+                        </div>
+
+                        <!-- Wewnątrzosobowy -->
+                        <div class="bg-white border-l-4 border-purple-500 shadow-sm rounded-r-xl p-6">
+                            <h3 class="font-bold text-purple-800 text-lg mb-2">5. Eksperyment Wewnątrzosobowy</h3>
+                            <p class="text-sm text-slate-700 mb-3">Ci sami ludzie badani są w kilku warunkach ("przed i po" lub w różnych sytuacjach).</p>
+                            <div class="grid grid-cols-2 gap-4 text-xs mb-3">
+                                <div class="bg-green-50 p-2 rounded text-green-800 border border-green-200">
+                                    <strong>+ Zalety:</strong> Eliminuje różnice indywidualne między badanymi.
+                                </div>
+                                <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200">
+                                    <strong>- Wady:</strong> Efekt uczenia się, zmęczenia (wymaga rotacji kolejności).
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 italic border-t border-slate-100 pt-2">Przykład: Badanie pamięci tej samej osoby w ciszy i hałasie.</p>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <div class="max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Ćwiczenie 5: Projektowanie Eksperymentu</h2>
+                        <p class="text-slate-500 mb-8">Zaprojektuj prosty eksperyment psychologiczny, definiując kluczowe zmienne.</p>
+
+                        <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200 space-y-6">
+                            
+                            <!-- Hipoteza -->
+                            <div>
+                                <label class="block text-sm font-bold text-indigo-800 mb-2 uppercase tracking-wide">1. Hipoteza Badawcza</label>
+                                <p class="text-xs text-slate-500 mb-2">Twierdzenie o zależności, które chcesz sprawdzić (np. "Kofeina poprawia pamięć").</p>
+                                <textarea class="w-full p-3 border border-indigo-100 rounded bg-indigo-50/30 focus:border-indigo-500 outline-none text-sm" rows="2" placeholder="Jeśli..., to..."></textarea>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <!-- ZN -->
+                                <div>
+                                    <label class="block text-sm font-bold text-indigo-800 mb-2 uppercase tracking-wide">2. Zmienna Niezależna (ZN)</label>
+                                    <p class="text-xs text-slate-500 mb-2">Co będziesz zmieniać/manipulować?</p>
+                                    <input type="text" class="w-full p-3 border border-indigo-100 rounded bg-indigo-50/30 focus:border-indigo-500 outline-none text-sm" placeholder="np. ilość kawy">
+                                </div>
+                                <!-- ZZ -->
+                                <div>
+                                    <label class="block text-sm font-bold text-indigo-800 mb-2 uppercase tracking-wide">3. Zmienna Zależna (ZZ)</label>
+                                    <p class="text-xs text-slate-500 mb-2">Co będziesz mierzyć?</p>
+                                    <input type="text" class="w-full p-3 border border-indigo-100 rounded bg-indigo-50/30 focus:border-indigo-500 outline-none text-sm" placeholder="np. wynik testu słówek">
+                                </div>
+                            </div>
+
+                            <!-- Grupy -->
+                            <div class="pt-4 border-t border-slate-100">
+                                <label class="block text-sm font-bold text-indigo-800 mb-4 uppercase tracking-wide">4. Operacjonalizacja Grup</label>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div class="bg-indigo-50 p-4 rounded border border-indigo-100">
+                                        <strong class="block text-indigo-700 text-sm mb-1">Grupa Eksperymentalna</strong>
+                                        <input type="text" class="w-full p-2 bg-white border border-slate-200 rounded text-sm" placeholder="Co się z nimi dzieje?">
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                                        <strong class="block text-slate-600 text-sm mb-1">Grupa Kontrolna</strong>
+                                        <input type="text" class="w-full p-2 bg-white border border-slate-200 rounded text-sm" placeholder="Co się z nimi dzieje?">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Miejsce, Czas i Zmienne Zakłócające -->
+                            <div class="pt-4 border-t border-slate-100">
+                                <div class="grid md:grid-cols-2 gap-6 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-indigo-800 mb-2 uppercase tracking-wide">5. Miejsce</label>
+                                        <input type="text" class="w-full p-3 border border-indigo-100 rounded bg-indigo-50/30 focus:border-indigo-500 outline-none text-sm" placeholder="np. sala laboratoryjna">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-indigo-800 mb-2 uppercase tracking-wide">6. Czas</label>
+                                        <input type="text" class="w-full p-3 border border-indigo-100 rounded bg-indigo-50/30 focus:border-indigo-500 outline-none text-sm" placeholder="np. 30 minut">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-bold text-indigo-800 mb-2 uppercase tracking-wide">7. Potencjalne Zmienne Zakłócające</label>
+                                    <p class="text-xs text-slate-500 mb-2">Co może wpłynąć na wynik poza Twoją manipulacją?</p>
+                                    <textarea class="w-full p-3 border border-indigo-100 rounded bg-indigo-50/30 focus:border-indigo-500 outline-none text-sm" rows="2" placeholder="np. hałas, zmęczenie, pora dnia..."></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                        <div class="mt-8 bg-slate-100 p-4 rounded-lg text-xs text-slate-500">
+                            <strong>Wskazówka:</strong> Pamiętaj o randomizacji (losowym przydziale do grup), aby uniknąć błędów systematycznych.
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'bobo',
+                title: "Studium: Bandura (1961)",
+                subtitle: "Lalka Bobo i Agresja",
+                icon: "🧸",
+                color: "orange",
+                theory: `
+                    <div class="mb-6 border-b pb-4 border-slate-100">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Eksperyment z Lalką Bobo</h2>
+                        <span class="text-sm font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded">Albert Bandura, 1961, 1963</span>
+                    </div>
+                    <p class="text-lg text-slate-700 mb-6">Klasyczne badanie nad <strong>uczeniem się przez obserwację</strong> (modelowanie). Bandura chciał sprawdzić, czy dzieci uczą się zachowań agresywnych, obserwując dorosłych.</p>
+                    
+                    <div class="bg-orange-50 p-4 rounded-xl border border-orange-100 text-center mb-6">
+                        <h3 class="font-bold text-orange-900">Hipoteza</h3>
+                        <p class="text-sm text-orange-800 italic">"Dzieci obserwujące agresywny model będą częściej przejawiać agresję niż dzieci z grupy kontrolnej."</p>
+                    </div>
+
+                    <div class="aspect-video w-full rounded-xl overflow-hidden shadow-lg border border-slate-200 mb-6 bg-black">
+                        <video class="w-full h-full" controls>
+                            <source src="/metody/zajecia_2/bandura.mp4" type="video/mp4">
+                            Twoja przeglądarka nie obsługuje elementu video.
+                        </video>
+                    </div>
+                    <p class="text-xs text-center text-slate-400 mt-2">Materiał archiwalny (Albert Bandura)</p>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Procedura Eksperymentalna</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500">ZN</div>
+                            <div class="flex-1">
+                                <strong class="block text-slate-700">Zmienna Niezależna (Manipulacja)</strong>
+                                <span class="text-sm text-slate-500">Rodzaj zachowania dorosłego modela.</span>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-100 relative overflow-hidden group">
+                                <div class="absolute right-2 top-2 text-2xl opacity-20 group-hover:opacity-100 transition-opacity">🥊</div>
+                                <h4 class="font-bold text-red-800 mb-1">Grupa Eksperymentalna</h4>
+                                <p class="text-xs text-red-700">Dziecko widzi dorosłego, który <strong>bije lalkę Bobo</strong>, krzyczy na nią i uderza młotkiem.</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100 relative overflow-hidden group">
+                                <div class="absolute right-2 top-2 text-2xl opacity-20 group-hover:opacity-100 transition-opacity">🧘</div>
+                                <h4 class="font-bold text-green-800 mb-1">Grupa Kontrolna</h4>
+                                <p class="text-xs text-green-700">Dziecko widzi dorosłego, który bawi się klockami (model spokojny) lub nie widzi żadnego modelu.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
+                            <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500">ZZ</div>
+                            <div class="flex-1">
+                                <strong class="block text-slate-700">Zmienna Zależna (Pomiar)</strong>
+                                <span class="text-sm text-slate-500">Liczba agresywnych zachowań dziecka wobec lalki (bicie, kopanie, krzyk) po pozostawieniu w sali zabaw.</span>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Rzeczywiste Wyniki (Bandura, 1961)</h2>
+                    <p class="text-slate-500 mb-8">Średnia liczba agresywnych zachowań (fizycznych i werbalnych) na dziecko w zależności od modelu.</p>
+                    
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-6">
+                        <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wide mb-6 text-center">Średnia liczba aktów agresji</h4>
+                        <!-- Chart Area -->
+                        <div class="flex items-end justify-center gap-8 h-48 border-b border-slate-300 pb-0 px-4">
+                             <!-- Bar 1 -->
+                             <div class="w-20 bg-red-500 rounded-t relative group" style="height: 95%">
+                                 <span class="absolute -top-6 inset-x-0 text-center text-xs font-bold text-red-600">38.2</span>
+                             </div>
+                             <!-- Bar 2 -->
+                             <div class="w-20 bg-red-400 rounded-t relative group" style="height: 32%">
+                                 <span class="absolute -top-6 inset-x-0 text-center text-xs font-bold text-red-500">12.7</span>
+                             </div>
+                             <!-- Bar 3 -->
+                             <div class="w-20 bg-green-400 rounded-t relative group" style="height: 4%">
+                                 <span class="absolute -top-6 inset-x-0 text-center text-xs font-bold text-green-600">1.5</span>
+                             </div>
+                        </div>
+                        <!-- Labels Area -->
+                        <div class="flex justify-center gap-8 mt-2">
+                            <div class="w-20 text-center text-[10px] uppercase font-bold text-slate-600">Model Agresywny<br>(Chłopcy)</div>
+                            <div class="w-20 text-center text-[10px] uppercase font-bold text-slate-600">Model Agresywny<br>(Dziewczęta)</div>
+                            <div class="w-20 text-center text-[10px] uppercase font-bold text-slate-600">Grupa<br>Kontrolna</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <h3 class="font-bold text-slate-800 mb-2">Wnioski</h3>
+                        <ul class="text-sm text-slate-600 list-disc ml-5 space-y-2">
+                            <li>Dzieci eksponowane na agresywny model przejawiały <strong>drastycznie więcej</strong> agresji niż grupa kontrolna.</li>
+                            <li>Chłopcy wykazywali więcej agresji fizycznej, szczególnie gdy modelem był mężczyzna.</li>
+                            <li>Wyniki potwierdziły teorię <strong>społecznego uczenia się</strong>: agresja może być nabyta przez samą obserwację, bez bezpośredniego wzmocnienia (nagrody).</li>
+                        </ul>
+                    </div>
+                `
+            }
+        ];
+
+        let currentModule = null;
+
+        function initLobby() {
+            const list = document.getElementById('tech-list');
+            list.innerHTML = '';
+            modules.forEach(mod => {
+                const btn = document.createElement('button');
+                btn.className = `group p-6 bg-white border border-slate-200 rounded-xl hover:border-${mod.color}-500 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
+                btn.onclick = () => loadModule(mod);
+                
+                // Dynamiczne klasy kolorów
+                const colorClasses = {
+                    emerald: 'group-hover:text-emerald-600 group-hover:bg-emerald-50',
+                    indigo: 'group-hover:text-indigo-600 group-hover:bg-indigo-50',
+                    orange: 'group-hover:text-orange-600 group-hover:bg-orange-50'
+                };
+
+                btn.innerHTML = `
+                    <div class="text-4xl bg-slate-50 w-20 h-20 flex items-center justify-center rounded-2xl shadow-sm transition-colors ${colorClasses[mod.color]}">${mod.icon}</div>
+                    <div>
+                        <div class="font-bold text-slate-800 text-xl mb-1">${mod.title}</div>
+                        <div class="text-sm text-slate-500 font-medium">${mod.subtitle}</div>
+                        <div class="mt-2 text-xs font-bold uppercase tracking-wider text-slate-300 group-hover:text-${mod.color}-500 transition-colors">Otwórz moduł →</div>
+                    </div>
+                `;
+                list.appendChild(btn);
+            });
+        }
+
+        function loadModule(mod) {
+            currentModule = mod;
+            document.getElementById('header-title').innerHTML = `<span class="block text-xs text-slate-400 uppercase tracking-wider">${mod.subtitle}</span>${mod.title}`;
+            document.getElementById('header-icon').innerText = mod.icon;
+
+            document.getElementById('content-theory').innerHTML = mod.theory;
+            document.getElementById('content-method').innerHTML = mod.method;
+            document.getElementById('content-result').innerHTML = mod.result;
+
+            document.getElementById('lobby-screen').classList.add('-translate-y-full');
+            const app = document.getElementById('app-screen');
+            app.classList.remove('opacity-0', 'pointer-events-none');
+            app.classList.add('opacity-100');
+
+            setStep(1);
+            
+            // Zmiana nazwy tabu 3 w zależności od modułu
+            const tab3 = document.getElementById('tab-3');
+            if (mod.id === 'bobo') {
+                tab3.innerText = '3. Wyniki';
+            } else if (mod.id === 'exp') {
+                tab3.innerText = '3. Zadanie';
+            } else {
+                tab3.innerText = '3. Zadanie';
+            }
+        }
+
+        function showLobby() {
+            document.getElementById('lobby-screen').classList.remove('-translate-y-full');
+            const app = document.getElementById('app-screen');
+            app.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function setStep(stepId) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${stepId}`).classList.add('active');
+            
+            const btnDefault = "flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-slate-50";
+            const btnActive = `flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all shadow-md bg-white text-${currentModule ? currentModule.color : 'emerald'}-700 border border-slate-100 transform scale-105`;
+            
+            for(let i=1; i<=3; i++) { 
+                const btn = document.getElementById(`tab-${i}`);
+                btn.className = (i === stepId) ? btnActive : btnDefault;
+            }
+        }
+
+        // --- FUNKCJE DLA ĆWICZENIA OBSERWACJI ---
+        function toggleObsGroup(groupNum) {
+            const g1 = document.getElementById('content-g1');
+            const g2 = document.getElementById('content-g2');
+            const btn1 = document.getElementById('btn-g1');
+            const btn2 = document.getElementById('btn-g2');
+
+            if (groupNum === 1) {
+                g1.classList.remove('hidden');
+                g2.classList.add('hidden');
+                btn1.classList.add('bg-slate-100');
+                btn2.classList.remove('bg-slate-100');
+            } else {
+                g1.classList.add('hidden');
+                g2.classList.remove('hidden');
+                btn1.classList.remove('bg-slate-100');
+                btn2.classList.add('bg-slate-100');
+            }
+        }
+
+        function updateCounter(id, amount) {
+            const el = document.getElementById(id);
+            if(el) {
+                let val = parseInt(el.innerText);
+                el.innerText = val + amount;
+            }
+        }
+
+        function resetCounters() {
+            document.getElementById('count-smile').innerText = '0';
+            document.getElementById('count-eye').innerText = '0';
+            document.getElementById('count-gest').innerText = '0';
+        }
+        
+        initLobby();
+    </script>
+</body>
+</html>
