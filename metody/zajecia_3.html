@@ -3,159 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statystyka - Wybór Pacjenta - Filip Liebersbach</title>
-    
-    <link rel="stylesheet" href="/styles.css">
+    <title>Statystyka - Wybór Pacjenta</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome (dla ikon) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" href="/images/logo.png" type="image/x-icon">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <!-- Czcionki Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
     
     <style>
-        /* Tło animowane */
-        #squares-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; background-color: #111; pointer-events: none;
-        }
-
-        /* Ustawienie całej strony jako Flexbox dla idealnego centrowania */
-        body {
-            background: transparent;
-            margin: 0;
-            height: 100vh; /* Pełna wysokość ekranu */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden; /* Blokada scrolla dla czystego widoku "aplikacji" */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
-        }
-
-        /* Kontener dla przycisków - Układ GRID */
-        .menu-buttons-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-            width: 90%;
-            max-width: 600px;
-            z-index: 2;
-        }
-
-        /* Responsywność */
-        @media (max-width: 700px) {
-            .menu-buttons-container {
-                grid-template-columns: 1fr;
-                max-width: 350px;
-            }
-            /* Na małych ekranach pozwalamy na scroll jeśli się nie mieści */
-            body { height: auto; min-height: 100vh; padding: 40px 0; justify-content: flex-start; }
-            .page-title { margin-top: 60px; }
-        }
-
-        /* Styl samego guzika */
-        .menu-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 15px;
-            padding: 40px 20px;
-            text-decoration: none;
-            color: #fff;
-            font-size: 1.2rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            text-align: center;
-            
-            /* Glassmorphism - efekt szkła */
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .menu-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(142, 202, 230, 0.6);
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .menu-button i {
-            font-size: 2.5rem;
-            color: #8ecae6;
-            margin-bottom: 5px;
-            transition: transform 0.3s ease;
-        }
-
-        .menu-button:hover i {
-            transform: scale(1.15);
-            color: #fff;
-        }
-
-        /* Nagłówek nad guzikami */
-        .page-title {
-            margin-bottom: 40px;
-            font-size: 2.5rem;
-            text-align: center;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            font-weight: 300;
-            letter-spacing: 2px;
-            z-index: 2;
-        }
-
-        /* Nowa, minimalistyczna stopka */
-        .simple-footer {
-            margin-top: auto; /* Pycha stopkę na dół w flexboxie */
-            padding: 20px;
-            width: 100%;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.3); /* Zwiększona przezroczystość */
-            z-index: 2;
-            font-size: 0.8rem;
-        }
+        body { font-family: 'Noto Sans', sans-serif; }
+        h1, h2, h3 { font-family: 'Noto Serif', serif; }
+        
+        /* Pasek przewijania dla estetyki */
+        .scroller::-webkit-scrollbar { width: 8px; }
+        .scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .scroller::-webkit-scrollbar-track { background: transparent; }
     </style>
 </head>
-<body>
-    <canvas id="squares-canvas"></canvas>
+<body class="bg-slate-900 h-screen flex items-center justify-center p-4 overflow-hidden">
 
-    <h1 class="page-title">Wybierz pacjenta</h1>
+    <!-- Główny Kontener (Karta) -->
+    <div class="max-w-6xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-[80vh]">
+        
+        <!-- Lewy Panel (Informacyjny) -->
+        <div class="md:w-1/3 bg-slate-800 p-8 text-white flex flex-col justify-center relative">
+            <!-- Pasek dekoracyjny na górze -->
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+            
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold mb-4 mt-2">Studium Przypadku</h1>
+                <p class="opacity-80 text-sm leading-relaxed text-slate-300">
+                    Wybierz pacjenta z listy, aby przejść do symulacji rozmowy z wykorzystaniem sztucznej inteligencji.
+                </p>
+            </div>
 
-    <div class="menu-buttons-container">
-        <!-- Guzik 1 -->
-        <a href="https://gemini.google.com/gem/1DconFwdwHvi9xDRR_ZwgNx4Mtnh6eT5E?usp=sharing" class="menu-button" target="_blank">
-            <i class="fa-solid fa-user-doctor"></i>
-            <span>Anna Kwiatkowska</span>
-        </a>        
-        <!-- Guzik 2 -->
-        <a href="https://gemini.google.com/gem/1Q28Jn6Fz4ahWfF2uYI0gwtYarb6wq-wB?usp=sharing" class="menu-button" target="_blank">
-            <i class="fa-solid fa-user-tie"></i>
-            <span>Tomasz Biel</span>
-        </a>      
-        <!-- Guzik 3 -->
-        <a href="https://gemini.google.com/gem/1WGeqbMAKrCqGQbwo5MMVEwe94xrkFA8d?usp=sharing" class="menu-button" target="_blank">
-            <i class="fa-solid fa-user-nurse"></i>
-            <span>Monika Sęk</span>
-        </a>
-        <!-- Guzik 4 -->
-        <a href="https://gemini.google.com/gem/1w8Cv9cAtISbaz8KT_V_ugW275nG3_MJp?usp=sharing" class="menu-button" target="_blank">
-            <i class="fa-solid fa-user-graduate"></i>
-            <span>Krzysztof Malec</span>
-        </a>         
+            <!-- Lista kroków (dekoracyjna) -->
+            <div class="space-y-4 text-sm mt-auto">
+                <div class="flex items-center gap-3">
+                    <span class="bg-indigo-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg shadow-indigo-500/30">1</span> 
+                    <span class="font-semibold">Zapoznaj się z przykładem</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="bg-slate-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs">2</span> 
+                    <span class="text-slate-300">Wybierz pacjenta</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="bg-purple-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg shadow-purple-500/30">3</span> 
+                    <span class="text-slate-300">Rozpocznij wywiad (Czat AI)</span>
+                </div>
+            </div>
+
+            <!-- Stopka lewego panelu -->
+            <div class="mt-8 pt-6 border-t border-slate-700 text-xs text-slate-500 text-center">
+                &copy; 2025 Filip Liebersbach
+            </div>
+        </div>
+
+        <!-- Prawy Panel (Lista Przycisków) -->
+        <div class="md:w-2/3 p-6 md:p-10 bg-slate-50 overflow-y-auto scroller flex flex-col">
+            
+            <!-- Sekcja 1: Materiały pomocnicze -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-indigo-600"></i> Przykład
+                </h2>
+                
+                <!-- Guzik Przykładowego Studium (Zaktualizowana ścieżka i usunięte DEMO) -->
+                <a href="/workspaces/lieberfilip/metody_badan/zajecia_3/Przykładowe Studium Przypadku.pdf" target="_blank" class="group block p-5 bg-white border border-indigo-200 rounded-xl hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 relative overflow-hidden">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800 group-hover:text-indigo-700 transition">Studium przypadku</h3>
+                            <p class="text-sm text-slate-500 mt-1">Zobacz wzorcową analizę i opis przypadku przed rozpoczęciem pracy.</p>
+                        </div>
+                        <div class="ml-auto text-slate-300 group-hover:text-indigo-500 transition">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Sekcja 2: Lista Pacjentów -->
+            <div>
+                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-users text-slate-600"></i> Lista Pacjentów
+                </h2>
+                
+                <div class="grid grid-cols-1 gap-4">
+                    
+                    <!-- Pacjent 1 -->
+                    <a href="https://gemini.google.com/gem/1DconFwdwHvi9xDRR_ZwgNx4Mtnh6eT5E?usp=sharing" target="_blank" class="group p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-400 hover:shadow-md transition-all flex items-center gap-4">
+                        <div class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition text-slate-500">
+                            <i class="fa-solid fa-user-doctor"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition">Anna Kwiatkowska</div>
+                            <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-001</div>
+                        </div>
+                    </a>
+
+                    <!-- Pacjent 2 -->
+                    <a href="https://gemini.google.com/gem/1Q28Jn6Fz4ahWfF2uYI0gwtYarb6wq-wB?usp=sharing" target="_blank" class="group p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-400 hover:shadow-md transition-all flex items-center gap-4">
+                        <div class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition text-slate-500">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition">Tomasz Biel</div>
+                            <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-002</div>
+                        </div>
+                    </a>
+
+                    <!-- Pacjent 3 -->
+                    <a href="https://gemini.google.com/gem/1WGeqbMAKrCqGQbwo5MMVEwe94xrkFA8d?usp=sharing" target="_blank" class="group p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-400 hover:shadow-md transition-all flex items-center gap-4">
+                        <div class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition text-slate-500">
+                            <i class="fa-solid fa-user-nurse"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition">Monika Sęk</div>
+                            <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-003</div>
+                        </div>
+                    </a>
+
+                    <!-- Pacjent 4 -->
+                    <a href="https://gemini.google.com/gem/1w8Cv9cAtISbaz8KT_V_ugW275nG3_MJp?usp=sharing" target="_blank" class="group p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-400 hover:shadow-md transition-all flex items-center gap-4">
+                        <div class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition text-slate-500">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition">Krzysztof Malec</div>
+                            <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-004</div>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <footer class="simple-footer">
-        <div>
-            &copy; 2025 Filip Liebersbach
-        </div>
-    </footer>
-
-    <script src="/background.js"></script>
 </body>
 </html>
