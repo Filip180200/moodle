@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klucz Odpowiedzi APA - Tabele</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.4/jstat.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .answer-highlight { 
+            background-color: #dcfce7; 
+            color: #166534; 
+            padding: 1px 4px; 
+            border-radius: 3px; 
+            font-weight: bold;
+            border: 1px solid #86efac;
+        }
+        table { font-family: 'Times New Roman', serif; font-size: 11pt; }
+        th, td { border: 1px solid #e5e7eb; padding: 8px; text-align: center; }
+        .row-label { text-align: left; font-weight: 500; background-color: #f9fafb; }
+        .header-line { border-top: 2px solid black; border-bottom: 1px solid black; }
+        .footer-line { border-bottom: 2px solid black; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-4">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 no-print">
+            <h1 class="text-xl font-bold text-slate-800">Panel Wyników: Klucz Tabel APA</h1>
+            <p class="text-sm text-slate-500 mb-4">Wczytaj plik, aby otrzymać konkretne wartości do tabel w Moodle.</p>
+            <div class="mt-4 flex flex-wrap gap-4 items-end">
+                <div class="w-64">
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Zestaw danych</label>
+                    <select id="dataset-select" class="w-full p-2.5 border rounded-lg bg-white shadow-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="dane_zestaw_1.csv">Zestaw 1 (dane_zestaw_1.csv)</option>
+                        <option value="dane_zestaw_2.csv">Zestaw 2 (dane_zestaw_2.csv)</option>
+                        <option value="dane_zestaw_3.csv">Zestaw 3 (dane_zestaw_3.csv)</option>
+                        <option value="dane_zestaw_4.csv">Zestaw 4 (dane_zestaw_4.csv)</option>
+                        <option value="dane_zestaw_5.csv">Zestaw 5 (dane_zestaw_5.csv)</option>
+                    </select>
+                </div>
+                <button id="calculate-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors">
+                    Oblicz Wartości
+                </button>
+            </div>
+        </div>
+
+        <div id="report-container" class="hidden bg-white rounded-xl shadow-xl p-10 border border-slate-200">
+            <div id="report-content" class="overflow-x-auto">
+                <!-- Tylko tabele -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('calculate-btn');
+        const container = document.getElementById('report-container');
+        const content = document.getElementById('report-content');
+        const select = document.getElementById('dataset-select');
+
+        // Formatowanie liczb: dwie cyfry po przecinku
+        const f = (val) => typeof val === 'number' ? val.toFixed(2).replace('.', ',') : val;
+
+        // Specjalne formatowanie p-value
+        const formatP = (p) => {
+            if (p < 0.001) return "< 0,001";
+            return p.toFixed(2).replace('.', ',');
+        };
+
+        function getPearsonP(r, n) {
+            if (Math.abs(r) >= 1) return 0;
+            const t = Math.abs(r) * Math.sqrt((n - 2) / (1 - r * r));
+            return 2 * (1 - jStat.studentt.cdf(t, n - 2));
+        }
+
+        function getStars(p) {
+            if (p < 0.001) return "***";
+            if (p < 0.01) return "**";
+            if (p < 0.05) return "*";
+            return "";
+        }
+
+        function getKSPValue(d, n) {
+            const s = d * (Math.sqrt(n) + 0.12 + 0.11 / Math.sqrt(n));
+            if (s < 0.2) return 1.0;
+            if (s > 2.5) return 0.0001;
+            let sum = 0;
+            for (let k = 1; k <= 20; k++) {
+                sum += Math.pow(-1, k - 1) * Math.exp(-2 * k * k * s * s);
+            }
+            return Math.min(1, Math.max(0, 2 * sum));
+        }
+
+        function calculateStats(arr) {
+            const n = arr.length;
+            const mean = jStat.mean(arr);
+            const std = jStat.stdev(arr, true);
+            
+            let d_max = 0;
+            const sorted = [...arr].sort((a, b) => a - b);
+            for(let i=0; i<n; i++) {
+                const obs_h = (i + 1) / n;
+                const obs_l = i / n;
+                const exp = jStat.normal.cdf(sorted[i], mean, std);
+                d_max = Math.max(d_max, Math.abs(obs_h - exp), Math.abs(obs_l - exp));
+            }
+
+            return {
+                m: mean,
+                mdn: jStat.median(arr),
+                sd: std,
+                skew: jStat.skewness(arr),
+                kurt: jStat.kurtosis(arr),
+                min: jStat.min(arr),
+                max: jStat.max(arr),
+                d: d_max,
+                p: getKSPValue(d_max, n)
+            };
+        }
+
+        btn.addEventListener('click', async () => {
+            const fileName = select.value;
+            const filePath = `dane_korelacje/${fileName}`;
+
+            container.classList.remove('hidden');
+            content.innerHTML = '<p class="text-center italic text-slate-400">Przetwarzanie...</p>';
+
+            try {
+                const response = await fetch(filePath);
+                const csvText = await response.text();
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    dynamicTyping: true,
+                    delimiter: ";",
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        const data = results.data;
+                        const vars = ['Ekstrawersja', 'Neurotyzm', 'Otwartosc', 'Ugodowosc'];
+                        const cols = {};
+                        vars.forEach(v => {
+                            cols[v] = data.map(row => row[v]).filter(val => typeof val === 'number');
+                        });
+
+                        const n = cols['Ekstrawersja'].length;
+                        const stats = {};
+                        vars.forEach(v => { stats[v] = calculateStats(cols[v]); });
+
+                        const getCorr = (v1, v2) => {
+                            const r = jStat.corrcoeff(cols[v1], cols[v2]);
+                            const p = getPearsonP(r, n);
+                            return { r, p, stars: getStars(p) };
+                        };
+
+                        const cEN = getCorr('Ekstrawersja', 'Neurotyzm');
+                        const cEO = getCorr('Ekstrawersja', 'Otwartosc');
+                        const cEU = getCorr('Ekstrawersja', 'Ugodowosc');
+                        const cNO = getCorr('Neurotyzm', 'Otwartosc');
+                        const cNU = getCorr('Neurotyzm', 'Ugodowosc');
+                        const cOU = getCorr('Otwartosc', 'Ugodowosc');
+
+                        content.innerHTML = `
+                            <div class="max-w-4xl mx-auto space-y-12">
+                                <div>
+                                    <p class="font-bold italic text-sm mb-2 text-slate-700">Tabela 1. Statystyki opisowe i test normalności (N=${n})</p>
+                                    <table class="w-full border-collapse shadow-sm">
+                                        <thead>
+                                            <tr class="header-line bg-slate-50">
+                                                <th class="text-left">Zmienna</th><th>M</th><th>Mdn</th><th>SD</th><th>Sk.</th><th>Kurt.</th><th>Min</th><th>Max</th><th>D</th><th>p</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${vars.map(v => `
+                                                <tr>
+                                                    <td class="row-label font-bold">${v.toLowerCase()}</td>
+                                                    <td><span class="answer-highlight">${f(stats[v].m)}</span></td>
+                                                    <td><span class="answer-highlight">${f(stats[v].mdn)}</span></td>
+                                                    <td><span class="answer-highlight">${f(stats[v].sd)}</span></td>
+                                                    <td><span class="answer-highlight">${f(stats[v].skew)}</span></td>
+                                                    <td><span class="answer-highlight">${f(stats[v].kurt)}</span></td>
+                                                    <td><span class="answer-highlight">${f(stats[v].min)}</span></td>
+                                                    <td><span class="answer-highlight">${f(stats[v].max)}</span></td>
+                                                    <td><span class="answer-highlight">${f(stats[v].d)}</span></td>
+                                                    <td><span class="answer-highlight">${formatP(stats[v].p)}</span></td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div>
+                                    <p class="font-bold italic text-sm mb-2 text-slate-700">Tabela 2. Macierz korelacji r-Pearsona</p>
+                                    <table class="w-full border-collapse shadow-sm">
+                                        <thead>
+                                            <tr class="header-line bg-slate-50">
+                                                <th class="text-left">Zmienna</th><th>1</th><th>2</th><th>3</th><th>4</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="row-label font-bold">1. ekstrawersja</td><td>-</td><td></td><td></td><td></td></tr>
+                                            <tr><td class="row-label font-bold">2. neurotyzm</td><td><span class="answer-highlight">${f(cEN.r)}${cEN.stars}</span></td><td>-</td><td></td><td></td></tr>
+                                            <tr><td class="row-label font-bold">3. otwartość</td><td><span class="answer-highlight">${f(cEO.r)}${cEO.stars}</span></td><td><span class="answer-highlight">${f(cNO.r)}${cNO.stars}</span></td><td>-</td><td></td></tr>
+                                            <tr class="footer-line"><td class="row-label font-bold">4. ugodowość</td><td><span class="answer-highlight">${f(cEU.r)}</span></td><td><span class="answer-highlight">${f(cNU.r)}</span></td><td><span class="answer-highlight">${f(cOU.r)}</span></td><td>-</td></tr>
+                                        </tbody>
+                                    </table>
+                                    <p class="text-[10pt] italic mt-2">Uwaga. * p < 0,05; ** p < 0,01; *** p < 0,001.</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            } catch (err) {
+                content.innerHTML = `<div class="text-center py-10 text-red-500 font-bold">Błąd: ${err.message}</div>`;
+            }
+        });
+    </script>
+</body>
+</html>
