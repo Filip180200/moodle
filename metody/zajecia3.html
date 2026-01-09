@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statystyka - Wybór Pacjenta - Filip Liebersbach</title>
+    
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <style>
+        /* Tło animowane */
+        #squares-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; background-color: #111; pointer-events: none;
+        }
+
+        /* Ustawienie całej strony jako Flexbox dla idealnego centrowania */
+        body {
+            background: transparent;
+            margin: 0;
+            height: 100vh; /* Pełna wysokość ekranu */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Blokada scrolla dla czystego widoku "aplikacji" */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        /* Kontener dla przycisków - Układ GRID */
+        .menu-buttons-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            width: 90%;
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        /* Responsywność */
+        @media (max-width: 700px) {
+            .menu-buttons-container {
+                grid-template-columns: 1fr;
+                max-width: 350px;
+            }
+            /* Na małych ekranach pozwalamy na scroll jeśli się nie mieści */
+            body { height: auto; min-height: 100vh; padding: 40px 0; justify-content: flex-start; }
+            .page-title { margin-top: 60px; }
+        }
+
+        /* Styl samego guzika */
+        .menu-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 15px;
+            padding: 40px 20px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-align: center;
+            
+            /* Glassmorphism - efekt szkła */
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .menu-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(142, 202, 230, 0.6);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-button i {
+            font-size: 2.5rem;
+            color: #8ecae6;
+            margin-bottom: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-button:hover i {
+            transform: scale(1.15);
+            color: #fff;
+        }
+
+        /* Nagłówek nad guzikami */
+        .page-title {
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            text-align: center;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            font-weight: 300;
+            letter-spacing: 2px;
+            z-index: 2;
+        }
+
+        /* Nowa, minimalistyczna stopka */
+        .simple-footer {
+            margin-top: auto; /* Pycha stopkę na dół w flexboxie */
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3); /* Zwiększona przezroczystość */
+            z-index: 2;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="squares-canvas"></canvas>
+
+    <h1 class="page-title">Wybierz pacjenta</h1>
+
+    <div class="menu-buttons-container">
+        <!-- Guzik 1 -->
+        <a href="https://gemini.google.com/gem/1DconFwdwHvi9xDRR_ZwgNx4Mtnh6eT5E?usp=sharing" class="menu-button" target="_blank">
+            <i class="fa-solid fa-user-doctor"></i>
+            <span>Anna Kwiatkowska</span>
+        </a>        
+        <!-- Guzik 2 -->
+        <a href="https://gemini.google.com/gem/1Q28Jn6Fz4ahWfF2uYI0gwtYarb6wq-wB?usp=sharing" class="menu-button" target="_blank">
+            <i class="fa-solid fa-user-tie"></i>
+            <span>Tomasz Biel</span>
+        </a>      
+        <!-- Guzik 3 -->
+        <a href="https://gemini.google.com/gem/1WGeqbMAKrCqGQbwo5MMVEwe94xrkFA8d?usp=sharing" class="menu-button" target="_blank">
+            <i class="fa-solid fa-user-nurse"></i>
+            <span>Monika Sęk</span>
+        </a>
+        <!-- Guzik 4 -->
+        <a href="https://gemini.google.com/gem/1w8Cv9cAtISbaz8KT_V_ugW275nG3_MJp?usp=sharing" class="menu-button" target="_blank">
+            <i class="fa-solid fa-user-graduate"></i>
+            <span>Krzysztof Malec</span>
+        </a>         
+    </div>
+
+    <footer class="simple-footer">
+        <div>
+            &copy; 2025 Filip Liebersbach
+        </div>
+    </footer>
+
+    <script src="/background.js"></script>
+</body>
+</html>
