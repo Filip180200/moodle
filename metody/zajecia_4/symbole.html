@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symbole Genogramu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        h1, h2, h3, .serif {
+            font-family: 'Noto Serif', serif;
+        }
+        .symbol-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between; /* Rozkłada treść góra-dół */
+            padding: 1.5rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            height: 100%; /* Rozciągnij do wysokości rzędu */
+            transition: all 0.2s;
+        }
+        .symbol-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-color: #cbd5e1;
+        }
+        /* Kontener na ikonę o stałej wysokości, żeby wyrównać wszystko */
+        .icon-container {
+            height: 100px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .symbol-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            line-height: 1.25rem;
+            color: #334155;
+        }
+        .sub-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+            font-weight: 400;
+        }
+        svg {
+            overflow: visible;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <header class="text-center mb-12">
+        <h1 class="text-3xl md:text-4xl font-bold mb-2 text-slate-800">Symbole stosowane przy tworzeniu genogramu</h1>
+        <p class="text-slate-500 italic">Cyfrowa adaptacja wzorców graficznych</p>
+    </header>
+
+    <!-- Sekcja 1: Podstawowe -->
+    <section class="mb-12">
+        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Podstawowe oznaczenia osób</h2>
+        <!-- Grid z auto-rows-fr zapewnia równe wysokości -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 auto-rows-fr">
+            
+            <!-- Mężczyzna -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <rect x="5" y="5" width="40" height="40" fill="none" stroke="black" stroke-width="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Mężczyzna</div>
+                </div>
+            </div>
+
+            <!-- Kobieta -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke="black" stroke-width="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Kobieta</div>
+                </div>
+            </div>
+
+            <!-- Data urodzenia -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <div class="relative">
+                        <span class="absolute -top-4 -left-6 text-xs font-serif">1941</span>
+                        <svg width="50" height="50" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="black" stroke-width="2" />
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="symbol-label">Data urodzenia</div>
+                    <div class="sub-label">zapisana po lewej ponad symbolem</div>
+                </div>
+            </div>
+
+            <!-- Wiek -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <div class="relative flex items-center justify-center">
+                        <svg width="50" height="50" viewBox="0 0 50 50">
+                            <rect x="5" y="5" width="40" height="40" fill="none" stroke="black" stroke-width="2" />
+                        </svg>
+                        <span class="absolute text-sm font-bold">45</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="symbol-label">Wiek</div>
+                    <div class="sub-label">zapisany wewnątrz symbolu</div>
+                </div>
+            </div>
+
+            <!-- Data śmierci -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <div class="relative">
+                        <span class="absolute -top-4 -right-4 text-xs font-serif">1996</span>
+                        <svg width="50" height="50" viewBox="0 0 50 50">
+                            <rect x="5" y="5" width="40" height="40" fill="none" stroke="black" stroke-width="2" />
+                            <line x1="5" y1="5" x2="45" y2="45" stroke="black" stroke-width="2"/>
+                            <line x1="45" y1="5" x2="5" y2="45" stroke="black" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="symbol-label">Data śmierci</div>
+                    <div class="sub-label">zapisana po prawej</div>
+                </div>
+            </div>
+
+             <!-- Zakres dat -->
+             <div class="symbol-card">
+                <div class="icon-container">
+                    <div class="relative">
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-serif w-full text-center whitespace-nowrap">1941-1996</span>
+                        <svg width="50" height="50" viewBox="0 0 50 50">
+                            <rect x="5" y="5" width="40" height="40" fill="none" stroke="black" stroke-width="2" />
+                            <line x1="5" y1="5" x2="45" y2="45" stroke="black" stroke-width="2"/>
+                            <line x1="45" y1="5" x2="5" y2="45" stroke="black" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="symbol-label">Śmierć = Data X</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sekcja 2: Związki -->
+    <section class="mb-12">
+        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Relacje partnerskie</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-fr">
+            
+            <!-- Małżeństwo -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="140" height="60" viewBox="0 0 140 60">
+                        <!-- Male -->
+                        <rect x="10" y="5" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                        <!-- Female -->
+                        <circle cx="115" cy="20" r="15" fill="none" stroke="black" stroke-width="2" />
+                        <!-- Connection -->
+                        <path d="M25 35 L25 50 L115 50 L115 35" fill="none" stroke="black" stroke-width="2" />
+                        <text x="70" y="45" text-anchor="middle" font-size="10" font-family="serif">m. 1970</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Małżeństwo</div>
+                </div>
+            </div>
+
+            <!-- Konkubinat -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="140" height="60" viewBox="0 0 140 60">
+                        <rect x="10" y="5" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                        <circle cx="115" cy="20" r="15" fill="none" stroke="black" stroke-width="2" />
+                        <!-- Dotted line -->
+                        <path d="M25 35 L25 50 L115 50 L115 35" fill="none" stroke="black" stroke-width="2" stroke-dasharray="4 4" />
+                        <text x="70" y="45" text-anchor="middle" font-size="10" font-family="serif">MR 1975</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Mieszkają razem / Romans</div>
+                    <div class="sub-label">MR = mieszkają razem</div>
+                </div>
+            </div>
+
+            <!-- Para lesbijska (POPRAWIONE: trójkąt W środku) -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="140" height="60" viewBox="0 0 140 60">
+                        <!-- Left Woman -->
+                        <g>
+                            <circle cx="25" cy="20" r="15" fill="none" stroke="black" stroke-width="2" />
+                            <!-- Inverted triangle inside -->
+                            <polygon points="20,15 30,15 25,25" fill="none" stroke="black" stroke-width="1.5" />
+                        </g>
+                        <!-- Right Woman -->
+                        <g>
+                            <circle cx="115" cy="20" r="15" fill="none" stroke="black" stroke-width="2" />
+                            <!-- Inverted triangle inside -->
+                             <polygon points="110,15 120,15 115,25" fill="none" stroke="black" stroke-width="1.5" />
+                        </g>
+                        <!-- Connection -->
+                        <path d="M25 35 L25 50 L115 50 L115 35" fill="none" stroke="black" stroke-width="2" />
+                        <text x="70" y="45" text-anchor="middle" font-size="8" font-family="serif">MR 1991</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Para lesbijska</div>
+                    <div class="sub-label">Trójkąt wewnątrz symbolu</div>
+                </div>
+            </div>
+
+            <!-- Para gejów (POPRAWIONE: trójkąt W środku) -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="140" height="60" viewBox="0 0 140 60">
+                       <!-- Left Man -->
+                       <g>
+                            <rect x="10" y="5" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                            <!-- Inverted triangle inside -->
+                            <polygon points="20,15 30,15 25,25" fill="none" stroke="black" stroke-width="1.5" />
+                        </g>
+                        <!-- Right Man -->
+                        <g>
+                            <rect x="100" y="5" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                            <!-- Inverted triangle inside -->
+                            <polygon points="110,15 120,15 115,25" fill="none" stroke="black" stroke-width="1.5" />
+                        </g>
+                        <!-- Connection -->
+                        <path d="M25 35 L25 50 L115 50 L115 35" fill="none" stroke="black" stroke-width="2" stroke-dasharray="2 2"/>
+                        <text x="70" y="45" text-anchor="middle" font-size="8" font-family="serif">MR 1993</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Para gejów</div>
+                    <div class="sub-label">Trójkąt wewnątrz symbolu</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sekcja 3: Rozstania -->
+    <section class="mb-12">
+        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Separacje i Rozwody</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-fr">
+            
+            <!-- Separacja -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="160" height="70" viewBox="0 0 160 70">
+                        <rect x="10" y="5" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                        <circle cx="135" cy="20" r="15" fill="none" stroke="black" stroke-width="2" />
+                        <path d="M25 35 L25 55 L135 55 L135 35" fill="none" stroke="black" stroke-width="2" />
+                        <!-- Slash -->
+                        <line x1="75" y1="60" x2="85" y2="50" stroke="black" stroke-width="2" />
+                        <text x="80" y="45" text-anchor="middle" font-size="10" font-family="serif">m. 70 s. 85</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Separacja (1 kreska)</div>
+                </div>
+            </div>
+
+            <!-- Rozwód -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="160" height="70" viewBox="0 0 160 70">
+                        <rect x="10" y="5" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                        <circle cx="135" cy="20" r="15" fill="none" stroke="black" stroke-width="2" />
+                        <path d="M25 35 L25 55 L135 55 L135 35" fill="none" stroke="black" stroke-width="2" />
+                        <!-- Double Slash -->
+                        <line x1="72" y1="60" x2="82" y2="50" stroke="black" stroke-width="2" />
+                        <line x1="78" y1="60" x2="88" y2="50" stroke="black" stroke-width="2" />
+                        <text x="80" y="45" text-anchor="middle" font-size="9" font-family="serif">r. 87</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Rozwód (2 kreski)</div>
+                </div>
+            </div>
+
+            <!-- Ponowne małżeństwo (POPRAWIONE: //\ z tą samą osobą) -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="140" height="60" viewBox="0 0 140 60">
+                        <!-- Male -->
+                        <rect x="10" y="5" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                        <!-- Female -->
+                        <circle cx="115" cy="20" r="15" fill="none" stroke="black" stroke-width="2" />
+                        <!-- Connection -->
+                        <path d="M25 35 L25 50 L115 50 L115 35" fill="none" stroke="black" stroke-width="2" />
+                        
+                        <!-- Symbols //\ on the line centered around x=70 -->
+                        <!-- Slash 1 (/) -->
+                        <line x1="62" y1="55" x2="67" y2="45" stroke="black" stroke-width="2" />
+                        <!-- Slash 2 (/) -->
+                        <line x1="68" y1="55" x2="73" y2="45" stroke="black" stroke-width="2" />
+                        <!-- Slash 3 (\) -->
+                        <line x1="74" y1="45" x2="79" y2="55" stroke="black" stroke-width="2" />
+                        
+                        <text x="70" y="40" text-anchor="middle" font-size="8" font-family="serif">m. 70 r. 87 m. 90</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Ponowne małżeństwo</div>
+                    <div class="sub-label">Z tą samą osobą (//\)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sekcja 4: Dzieci -->
+    <section class="mb-12">
+        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Dzieci (od najstarszego z lewej)</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 auto-rows-fr">
+            
+            <!-- Biologiczne -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <line x1="40" y1="0" x2="40" y2="40" stroke="black" stroke-width="2" />
+                        <rect x="25" y="40" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                        <text x="15" y="30" font-size="10">1971</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Dziecko biologiczne</div>
+                </div>
+            </div>
+
+            <!-- Zastępcze -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                         <line x1="40" y1="0" x2="40" y2="40" stroke="black" stroke-width="2" stroke-dasharray="3 3"/>
+                         <rect x="25" y="40" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                         <text x="15" y="30" font-size="10">1973</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Dziecko w rodzinie zastępczej</div>
+                </div>
+            </div>
+
+            <!-- Adoptowane -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <line x1="40" y1="0" x2="40" y2="40" stroke="black" stroke-width="2" />
+                        <line x1="40" y1="0" x2="40" y2="40" stroke="black" stroke-width="2" stroke-dasharray="3 3"/>
+                        <circle cx="40" cy="55" r="15" fill="none" stroke="black" stroke-width="2" />
+                        <text x="15" y="30" font-size="10">1976</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Dziecko adoptowane</div>
+                </div>
+            </div>
+
+            <!-- Poronienie / Śmierć -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <line x1="40" y1="0" x2="40" y2="40" stroke="black" stroke-width="2" />
+                        <rect x="30" y="40" width="20" height="20" fill="none" stroke="black" stroke-width="2" />
+                        <line x1="30" y1="40" x2="50" y2="60" stroke="black" stroke-width="2"/>
+                        <line x1="50" y1="40" x2="30" y2="60" stroke="black" stroke-width="2"/>
+                        <text x="40" y="30" text-anchor="middle" font-size="10">1977-1977</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Narodziny martwego dziecka</div>
+                </div>
+            </div>
+
+             <!-- Poronienie (ZMIANA: Data po prawej) -->
+             <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <line x1="40" y1="0" x2="40" y2="50" stroke="black" stroke-width="2" />
+                        <circle cx="40" cy="52" r="3" fill="black" /> 
+                        <!-- Zmiana x z 15 na 50 -->
+                        <text x="50" y="30" font-size="10">-1979</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Poronienie</div>
+                </div>
+            </div>
+
+            <!-- Aborcja -->
+             <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <line x1="40" y1="0" x2="40" y2="45" stroke="black" stroke-width="2" />
+                        <line x1="35" y1="45" x2="45" y2="55" stroke="black" stroke-width="2"/>
+                        <line x1="45" y1="45" x2="35" y2="55" stroke="black" stroke-width="2"/>
+                        <text x="50" y="30" font-size="10">-1981</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Aborcja</div>
+                </div>
+            </div>
+
+            <!-- Bliźnięta -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="100" height="80" viewBox="0 0 100 80">
+                        <line x1="50" y1="0" x2="30" y2="40" stroke="black" stroke-width="2" />
+                        <line x1="50" y1="0" x2="70" y2="40" stroke="black" stroke-width="2" />
+                        <rect x="15" y="40" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                        <rect x="55" y="40" width="30" height="30" fill="none" stroke="black" stroke-width="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Bliźnięta (dwujajowe)</div>
+                </div>
+            </div>
+
+             <!-- Bliźnięta jednojajowe (POPRAWIONE: linia między kołami) -->
+             <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="100" height="80" viewBox="0 0 100 80">
+                        <!-- Linie od rodziców -->
+                        <line x1="50" y1="0" x2="30" y2="40" stroke="black" stroke-width="2" />
+                        <line x1="50" y1="0" x2="70" y2="40" stroke="black" stroke-width="2" />
+                        
+                        <!-- Linia łącząca BEZPOŚREDNIO koła (na dole) -->
+                        <line x1="45" y1="55" x2="55" y2="55" stroke="black" stroke-width="2" />
+
+                        <circle cx="30" cy="55" r="15" fill="none" stroke="black" stroke-width="2" />
+                        <circle cx="70" cy="55" r="15" fill="none" stroke="black" stroke-width="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Bliźnięta jednojajowe</div>
+                    <div class="sub-label">Linia łączy symbole</div>
+                </div>
+            </div>
+
+             <!-- Ciąża (ZMIANA: Data po lewej) -->
+             <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <line x1="40" y1="0" x2="40" y2="40" stroke="black" stroke-width="2" />
+                        <polygon points="40,40 25,70 55,70" fill="none" stroke="black" stroke-width="2"/>
+                        <!-- Zmiana x z 50 na 15 -->
+                        <text x="15" y="30" font-size="10">1998-</text>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Ciąża</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sekcja 5: Problemy zdrowotne/społeczne -->
+    <section class="mb-12">
+        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Zdrowie i nałogi</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 auto-rows-fr">
+            
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <rect x="5" y="5" width="40" height="40" fill="none" stroke="black" stroke-width="2" />
+                        <path d="M5 25 L45 25 L45 45 L5 45 Z" fill="#64748b" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Uzależnienie</div>
+                    <div class="sub-label">Alkohol lub narkotyki</div>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <rect x="5" y="5" width="40" height="40" fill="none" stroke="black" stroke-width="2" />
+                        <path d="M5 35 L45 35 L45 45 L5 45 Z" fill="#cbd5e1" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Podejrzenie uzależnienia</div>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke="black" stroke-width="2" />
+                        <path d="M5 25 A20 20 0 0 0 45 25 Z" fill="#64748b" />
+                         <line x1="25" y1="25" x2="25" y2="45" stroke="white" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Wyjście z nałogu</div>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke="black" stroke-width="2" />
+                        <path d="M25 5 A20 20 0 0 0 25 45 Z" fill="#64748b" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Poważna choroba</div>
+                    <div class="sub-label">fizyczna lub psychiczna</div>
+                </div>
+            </div>
+             <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke="black" stroke-width="2" />
+                        <path d="M25 5 A20 20 0 0 0 25 45 Z" fill="#64748b" />
+                        <path d="M5 25 A20 20 0 0 0 45 25 Z" fill="#64748b" fill-opacity="0.5" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Uzależnienie i choroba</div>
+                    <div class="sub-label">Komorbidność</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sekcja 6: Interakcje -->
+    <section class="mb-12">
+        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Wzorce interakcji</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-fr">
+
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <rect x="0" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <rect x="90" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <line x1="30" y1="15" x2="90" y2="15" stroke="black" stroke-width="2" />
+                        <line x1="30" y1="25" x2="90" y2="25" stroke="black" stroke-width="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Bliska</div>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <rect x="0" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <rect x="90" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <line x1="30" y1="12" x2="90" y2="12" stroke="black" stroke-width="2" />
+                        <line x1="30" y1="20" x2="90" y2="20" stroke="black" stroke-width="2" />
+                        <line x1="30" y1="28" x2="90" y2="28" stroke="black" stroke-width="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Zlana (bardzo bliska)</div>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <circle cx="15" cy="20" r="15" fill="none" stroke="black" />
+                        <circle cx="105" cy="20" r="15" fill="none" stroke="black" />
+                        <line x1="30" y1="20" x2="90" y2="20" stroke="black" stroke-width="2" stroke-dasharray="4 4"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Odległa</div>
+                </div>
+            </div>
+
+             <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <circle cx="15" cy="20" r="15" fill="none" stroke="black" />
+                        <circle cx="105" cy="20" r="15" fill="none" stroke="black" />
+                        <path d="M30 20 L35 10 L45 30 L55 10 L65 30 L75 10 L85 30 L90 20" fill="none" stroke="black" stroke-width="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Konfliktowa (wroga)</div>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <circle cx="15" cy="20" r="15" fill="none" stroke="black" />
+                        <rect x="90" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <line x1="30" y1="12" x2="90" y2="12" stroke="black" stroke-width="2" />
+                        <line x1="30" y1="28" x2="90" y2="28" stroke="black" stroke-width="2" />
+                        <path d="M30 20 L35 15 L45 25 L55 15 L65 25 L75 15 L85 25 L90 20" fill="none" stroke="black" stroke-width="1.5" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Bliska-konfliktowa</div>
+                </div>
+            </div>
+
+             <!-- Zlana-konfliktowa (POPRAWIONE: 3 linie poziome + zygzak) -->
+             <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <circle cx="15" cy="20" r="15" fill="none" stroke="black" />
+                        <rect x="90" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <!-- 3 Horizontal Lines -->
+                        <line x1="30" y1="10" x2="90" y2="10" stroke="black" stroke-width="1.5" />
+                        <line x1="30" y1="20" x2="90" y2="20" stroke="black" stroke-width="1.5" />
+                        <line x1="30" y1="30" x2="90" y2="30" stroke="black" stroke-width="1.5" />
+                        <!-- Zig Zag Overlay -->
+                        <path d="M30 20 L35 15 L45 25 L55 15 L65 25 L75 15 L85 25 L90 20" fill="none" stroke="black" stroke-width="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Zlana-konfliktowa</div>
+                    <div class="sub-label">3 linie + zygzak</div>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <rect x="0" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <rect x="90" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <line x1="30" y1="20" x2="88" y2="20" stroke="black" stroke-width="2" />
+                        <polygon points="90,20 80,15 80,25" fill="black" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Kontrolująca</div>
+                </div>
+            </div>
+
+            <!-- Odcięta (POPRAWIONE: dwie pionowe linie) -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <rect x="0" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <rect x="90" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <!-- Left part of horizontal line -->
+                        <line x1="30" y1="20" x2="52" y2="20" stroke="black" stroke-width="2" />
+                        <!-- Right part of horizontal line -->
+                        <line x1="68" y1="20" x2="90" y2="20" stroke="black" stroke-width="2" />
+                        
+                        <!-- Two vertical lines -->
+                        <line x1="55" y1="10" x2="55" y2="30" stroke="black" stroke-width="2" />
+                        <line x1="65" y1="10" x2="65" y2="30" stroke="black" stroke-width="2" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Odcięta</div>
+                    <div class="sub-label">Dwie pionowe kreski</div>
+                </div>
+            </div>
+             <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <rect x="0" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <circle cx="105" cy="20" r="15" fill="none" stroke="black" />
+                        <path d="M30 20 L40 15 L50 25 L60 15 L70 25 L80 15 L85 20" fill="none" stroke="black" stroke-width="2" />
+                        <polygon points="90,20 80,15 80,25" fill="black" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Przemoc fizyczna</div>
+                </div>
+            </div>
+
+            <!-- Przemoc seksualna (POPRAWIONE: mniejsze zgięcia) -->
+            <div class="symbol-card">
+                <div class="icon-container">
+                    <svg width="120" height="40" viewBox="0 0 120 40">
+                        <rect x="0" y="5" width="30" height="30" fill="none" stroke="black" />
+                        <circle cx="105" cy="20" r="15" fill="none" stroke="black" />
+                        <!-- Flattened zig zag (y varies only by +/- 2 or 3) -->
+                        <path d="M30 20 L35 18 L40 22 L45 18 L50 22 L55 18 L60 22 L65 18 L70 22 L75 18 L80 22 L85 20" fill="none" stroke="black" stroke-width="2" />
+                        <polygon points="90,20 78,12 78,28" fill="black" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="symbol-label">Przemoc seksualna</div>
+                    <div class="sub-label">Mniejsze zgięcia</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="mt-16 text-center text-sm text-slate-400 pb-8 border-t pt-8">
+        <p>Na podstawie materiałów: M.McGoldrick, R. Garson, S. Shellenberger "Genogramy, rozpoznanie i interwencja"</p>
+        <p>www.twojpsychologzoliborz.pl</p>
+    </footer>
+
+</body>
+</html>

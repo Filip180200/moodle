@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eksperyment Percepcji</title>
+    <!-- Biblioteki zewnętrzne -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { background-color: #f8fafc; font-family: sans-serif; }
+        .inkblot { filter: contrast(120%) brightness(95%); transition: opacity 0.5s; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .pulse-text { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // --- 1. TWOJA KONFIGURACJA ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbqbrD-VJgLQw9HtXgXE6hccQNBfE7OhM",
+            authDomain: "zajecia6.firebaseapp.com",
+            projectId: "zajecia6",
+            storageBucket: "zajecia6.firebasestorage.app",
+            messagingSenderId: "464023535230",
+            appId: "1:464023535230:web:c147bde7dddd020d0d222f"
+        };
+
+        // --- 2. USTAWIENIA ---
+        const COLLECTION_NAME = 'zajecia_6_extended'; // Nowa kolekcja dla nowej struktury danych
+        const ADMIN_PASSWORD = "2000"; 
+
+        const IMAGES = [
+            { id: 1, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_01.jpg&width=800" },
+            { id: 2, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_02.jpg&width=800" },
+            { id: 3, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_03.jpg&width=800" },
+            { id: 4, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_04.jpg&width=800" },
+            { id: 5, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_05.jpg&width=800" },
+            { id: 6, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_06.jpg&width=800" },
+            { id: 7, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_07.jpg&width=800" },
+            { id: 8, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_08.jpg&width=800" },
+            { id: 9, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_09.jpg&width=800" },
+            { id: 10, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_10.jpg&width=800" }
+        ];
+
+        const BARNUM_TEXT = `
+        "Analiza wskazuje, że masz w sobie spory potencjał, którego jeszcze w pełni nie wykorzystałeś na swoją korzyść. 
+        Mimo że na zewnątrz potrafisz sprawiać wrażenie osoby opanowanej i zdyscyplinowanej, wewnątrz zdarza Ci się odczuwać niepokój i niepewność. 
+        Cenisz sobie niezależność myślenia i nie przyjmujesz twierdzeń innych bez wystarczających dowodów. 
+        Czasami bywasz ekstrawertyczny i towarzyski, a innym razem introwertyczny, ostrożny i zdystansowany."
+        `;
+
+        // --- IKONA ADMINA ---
+        const AdminGear = ({ onAdminLogin }) => (
+            <button onClick={onAdminLogin} className="fixed bottom-4 left-4 text-slate-300 hover:text-slate-500 transition-colors p-2 z-50 opacity-50 hover:opacity-100" title="Panel Administratora">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+        );
+
+        // --- HELPER: CHMURA SŁÓW ---
+        const getWordFrequencies = (data, imageIndex) => {
+            const counts = {};
+            let maxCount = 0;
+            data.forEach(d => {
+                if (d.words && d.words[imageIndex]) {
+                    const word = d.words[imageIndex].trim().toLowerCase();
+                    if (word && word.length > 2) { // Ignoruj b. krótkie
+                        counts[word] = (counts[word] || 0) + 1;
+                        if (counts[word] > maxCount) maxCount = counts[word];
+                    }
+                }
+            });
+            return { words: Object.entries(counts).sort((a, b) => b[1] - a[1]), maxCount };
+        };
+        const CLOUD_COLORS = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#059669', '#0891b2', '#4b5563'];
+        const getColorForWord = (word) => {
+            let hash = 0;
+            for (let i = 0; i < word.length; i++) hash = word.charCodeAt(i) + ((hash << 5) - hash);
+            return CLOUD_COLORS[Math.abs(hash) % CLOUD_COLORS.length];
+        };
+
+        // --- KOMPONENT: DASHBOARD ---
+        function Dashboard({ dbInstance }) {
+            const [data, setData] = React.useState([]);
+            const [loading, setLoading] = React.useState(true);
+            const accuracyChartRef = React.useRef(null);
+            const confidenceChartRef = React.useRef(null);
+            const accuracyCanvas = React.useRef(null);
+            const confidenceCanvas = React.useRef(null);
+
+            React.useEffect(() => {
+                const q = query(collection(dbInstance, COLLECTION_NAME));
+                const unsubscribe = onSnapshot(q, (snapshot) => {
+                    const docs = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                    setData(docs);
+                    setLoading(false);
+                });
+                return () => unsubscribe();
+            }, [dbInstance]);
+
+            // Rysowanie wykresów
+            React.useEffect(() => {
+                if (data.length === 0) return;
+                
+                // Dane do wykresów
+                const accCounts = [0, 0, 0, 0, 0];
+                const confCounts = [0, 0, 0, 0, 0];
+
+                data.forEach(d => {
+                    if (d.rating >= 1 && d.rating <= 5) accCounts[d.rating - 1]++;
+                    if (d.confidence >= 1 && d.confidence <= 5) confCounts[d.confidence - 1]++;
+                });
+
+                // Wykres 1: Trafność
+                if (accuracyCanvas.current) {
+                    if (accuracyChartRef.current) accuracyChartRef.current.destroy();
+                    accuracyChartRef.current = new Chart(accuracyCanvas.current, {
+                        type: 'bar',
+                        data: {
+                            labels: ['1 (Nie)', '2', '3', '4', '5 (Tak)'],
+                            datasets: [{
+                                label: 'Trafność opisu',
+                                data: accCounts,
+                                backgroundColor: '#3b82f6',
+                                borderRadius: 4
+                            }]
+                        },
+                        options: { responsive: true, plugins: { legend: { display: false }, title: {display: true, text: 'Czy opis do Ciebie pasuje?'} }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+                    });
+                }
+
+                // Wykres 2: Pewność
+                if (confidenceCanvas.current) {
+                    if (confidenceChartRef.current) confidenceChartRef.current.destroy();
+                    confidenceChartRef.current = new Chart(confidenceCanvas.current, {
+                        type: 'bar',
+                        data: {
+                            labels: ['1 (Przypadek)', '2', '3', '4', '5 (Algorytm)'],
+                            datasets: [{
+                                label: 'Pewność źródła',
+                                data: confCounts,
+                                backgroundColor: '#8b5cf6', // Fioletowy
+                                borderRadius: 4
+                            }]
+                        },
+                        options: { responsive: true, plugins: { legend: { display: false }, title: {display: true, text: 'Czy to analiza Twoich słów?'} }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+                    });
+                }
+
+            }, [data]);
+
+            const downloadCSV = () => {
+                if (data.length === 0) { alert("Brak danych."); return; }
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "ID,Data,Ocena Trafnosci (1-5),Pewnosc Algorytmu (1-5),S1,S2,S3,S4,S5,S6,S7,S8,S9,S10\n";
+                data.forEach(row => {
+                    const date = row.timestamp ? new Date(row.timestamp.seconds * 1000).toLocaleString() : 'N/A';
+                    const safeWords = (row.words || []).map(w => `"${w.replace(/"/g, '""')}"`); 
+                    while(safeWords.length < 10) safeWords.push('""');
+                    csvContent += `${row.uid},${date},${row.rating},${row.confidence || ''},${safeWords.join(",")}\n`;
+                });
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `wyniki_projekcji_full_${new Date().toLocaleDateString()}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const clearDB = async () => {
+                const inputPass = prompt("Podaj hasło administratora:");
+                if (inputPass !== ADMIN_PASSWORD) { alert("Błędne hasło."); return; }
+                if(!confirm("Czy na pewno usunąć WSZYSTKIE wyniki?")) return;
+                const q = query(collection(dbInstance, COLLECTION_NAME));
+                const snap = await getDocs(q);
+                snap.forEach(d => deleteDoc(d.ref));
+                alert("Baza wyczyszczona.");
+            };
+
+            if (loading) return <div className="text-center p-10 text-slate-500 animate-pulse">Ładowanie wyników...</div>;
+
+            return (
+                <div className="max-w-7xl mx-auto p-4 fade-in pb-20">
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-xl shadow border border-slate-200">
+                        <div>
+                            <h2 className="text-2xl font-bold text-slate-800">Wyniki Grupy</h2>
+                            <p className="text-slate-500">Liczba odpowiedzi: <strong>{data.length}</strong></p>
+                        </div>
+                        <div className="flex gap-2 mt-4 md:mt-0">
+                            <button onClick={downloadCSV} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium">📥 CSV</button>
+                            <button onClick={clearDB} className="bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded hover:bg-red-100 font-medium">🗑️ Wyczyść</button>
+                        </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6 mb-6">
+                        {/* Wykres 1: Trafność */}
+                        <div className="bg-white p-6 rounded-xl shadow border border-slate-200">
+                            <h3 className="text-lg font-bold mb-2 text-slate-700">1. Efekt Forera (Trafność)</h3>
+                            <div className="h-64"><canvas ref={accuracyCanvas}></canvas></div>
+                        </div>
+                        {/* Wykres 2: Pewność */}
+                        <div className="bg-white p-6 rounded-xl shadow border border-slate-200">
+                            <h3 className="text-lg font-bold mb-2 text-slate-700">2. Wiara w Algorytm (Pewność)</h3>
+                            <div className="h-64"><canvas ref={confidenceCanvas}></canvas></div>
+                        </div>
+                    </div>
+
+                    {/* Chmura słów */}
+                    <div className="bg-white p-6 rounded-xl shadow border border-slate-200 h-[600px] flex flex-col">
+                        <h3 className="text-lg font-bold mb-4 text-slate-700">Chmura Projekcji (Skojarzenia)</h3>
+                        <div className="flex-1 overflow-y-auto pr-2">
+                            {Array.from({length: 10}).map((_, i) => {
+                                const { words, maxCount } = getWordFrequencies(data, i);
+                                return (
+                                    <div key={i} className="mb-6 border-b border-slate-100 pb-4 last:border-0">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <span className="text-xs font-bold text-blue-600 uppercase bg-blue-50 px-2 py-1 rounded">Tablica {i+1}</span>
+                                        </div>
+                                        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 min-h-[40px]">
+                                            {words.length > 0 ? words.map(([word, count], idx) => (
+                                                <span key={idx} style={{ 
+                                                    fontSize: `${Math.min(12 + (count / maxCount) * 20, 32)}px`, 
+                                                    color: getColorForWord(word),
+                                                    fontWeight: count > 1 ? 'bold' : 'normal',
+                                                    opacity: 0.8 + (count/maxCount * 0.2)
+                                                }} className="transition hover:scale-110 cursor-default" title={`${count} głosów`}>
+                                                    {word}
+                                                </span>
+                                            )) : <span className="text-xs text-gray-300 italic">Brak danych</span>}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // --- GŁÓWNA APLIKACJA ---
+        function App() {
+            const [step, setStep] = React.useState('intro'); 
+            const [imgIndex, setImgIndex] = React.useState(0);
+            const [words, setWords] = React.useState([]);
+            const [input, setInput] = React.useState('');
+            
+            // Dane do zapisu
+            const [rating, setRating] = React.useState(null); // Trafność
+            
+            const [progress, setProgress] = React.useState(0);
+            const [loadingText, setLoadingText] = React.useState("Inicjalizacja...");
+            const [dbInstance, setDbInstance] = React.useState(null);
+            const [user, setUser] = React.useState(null);
+            const [isSaving, setIsSaving] = React.useState(false);
+
+            React.useEffect(() => {
+                const initFirebase = async () => {
+                    try {
+                        const app = initializeApp(firebaseConfig);
+                        const auth = getAuth(app);
+                        const db = getFirestore(app);
+                        setDbInstance(db);
+                        const userCred = await signInAnonymously(auth);
+                        setUser(userCred.user);
+                    } catch (err) { alert("Błąd połączenia: " + err.message); }
+                };
+                initFirebase();
+            }, []);
+
+            const handleAdminLogin = () => {
+                const pass = prompt("Podaj hasło administratora:");
+                if (pass === ADMIN_PASSWORD) setStep('dashboard');
+                else if (pass) alert("Błędne hasło.");
+            };
+
+            const nextImage = () => {
+                if(!input.trim()) return;
+                setWords([...words, input]);
+                setInput('');
+                if (imgIndex < IMAGES.length - 1) setImgIndex(imgIndex + 1);
+                else startExtendedProcessing();
+            };
+
+            const startExtendedProcessing = () => {
+                setStep('processing');
+                let p = 0;
+                const interval = setInterval(() => {
+                    p += 0.4; 
+                    setProgress(p);
+                    if (p < 15) setLoadingText("Szyfrowanie połączenia...");
+                    else if (p < 30) setLoadingText("Wysyłanie danych biometrycznych...");
+                    else if (p < 45) setLoadingText("Pobieranie wzorców semantycznych...");
+                    else if (p < 60) setLoadingText("Analiza podświadomych skojarzeń...");
+                    else if (p < 75) setLoadingText("Korelacja z bazą archetypów...");
+                    else if (p < 90) setLoadingText("Generowanie profilu osobowości...");
+                    else setLoadingText("Finalizowanie raportu...");
+                    
+                    if (p >= 100) { clearInterval(interval); setStep('result'); }
+                }, 30);
+            };
+
+            // KROK 1 OCENY: Trafność
+            const handleAccuracyRating = (val) => {
+                setRating(val);
+                setStep('confidence_check');
+            };
+
+            // KROK 2 OCENY: Pewność (i zapis)
+            const handleConfidenceAndSubmit = async (confidenceVal) => {
+                if (!dbInstance || !user) return;
+                setIsSaving(true);
+                try {
+                    await addDoc(collection(dbInstance, COLLECTION_NAME), {
+                        words: words,
+                        rating: rating,       // Trafność opisu
+                        confidence: confidenceVal, // Wiara w algorytm
+                        timestamp: serverTimestamp(),
+                        uid: user.uid
+                    });
+                    setStep('thankyou');
+                } catch (e) {
+                    alert("Błąd zapisu. Sprawdź internet.");
+                    setIsSaving(false);
+                }
+            };
+
+            // WIDOKI
+            if (step === 'intro') return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
+                    <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full relative">
+                        <div className="text-4xl mb-4">👁️</div>
+                        <h1 className="text-2xl font-bold mb-4 text-slate-800">Eksperyment Percepcji</h1>
+                        <p className="mb-8 text-slate-600">Zobaczysz 10 tablic testu projekcyjnego. Przy każdej wpisz <strong>jedno słowo</strong>, które pierwsze przychodzi Ci na myśl.</p>
+                        <button onClick={() => setStep('test')} className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition transform hover:-translate-y-1">Rozpocznij</button>
+                    </div>
+                    <AdminGear onAdminLogin={handleAdminLogin} />
+                </div>
+            );
+
+            if (step === 'test') return (
+                <div className="min-h-screen flex items-center justify-center p-4">
+                    <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg max-w-2xl w-full">
+                        <div className="flex justify-between items-center mb-4 border-b pb-2">
+                            <span className="text-sm font-bold text-slate-500">TABLICA {imgIndex + 1} / {IMAGES.length}</span>
+                            <div className="flex gap-1">{IMAGES.map((_, i) => <div key={i} className={`h-1.5 w-4 rounded-full ${i <= imgIndex ? 'bg-blue-500' : 'bg-slate-200'}`}></div>)}</div>
+                        </div>
+                        <div className="bg-white mb-6 flex items-center justify-center border border-slate-100 rounded-lg p-4" style={{minHeight: '350px'}}>
+                            <img src={IMAGES[imgIndex].src} className="max-w-full max-h-[400px] object-contain inkblot" alt="Inkblot" />
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <input autoFocus type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && nextImage()} placeholder="Co widzisz? (jedno słowo)" className="border-2 border-slate-200 p-3 w-full rounded-lg outline-none focus:border-blue-500 transition" />
+                            <button onClick={nextImage} disabled={!input.trim()} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold disabled:opacity-50 hover:bg-blue-700 transition">Dalej</button>
+                        </div>
+                    </div>
+                    <AdminGear onAdminLogin={handleAdminLogin} />
+                </div>
+            );
+
+            if (step === 'processing') return (
+                <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white">
+                    <div className="text-6xl mb-8 animate-bounce">🧠</div>
+                    <h2 className="text-2xl font-bold mb-4 pulse-text">{loadingText}</h2>
+                    <div className="w-80 h-2 bg-slate-700 rounded-full overflow-hidden shadow-lg border border-slate-600">
+                        <div className="h-full bg-blue-500 transition-all duration-75 ease-out shadow-[0_0_10px_#3b82f6]" style={{width: `${progress}%`}}></div>
+                    </div>
+                    <p className="mt-4 text-slate-400 text-sm font-mono">{Math.round(progress)}%</p>
+                </div>
+            );
+
+            if (step === 'result') return (
+                <div className="min-h-screen flex items-center justify-center p-4">
+                    <div className="bg-white p-8 rounded-xl shadow-lg max-w-2xl w-full fade-in">
+                        <h2 className="text-xl font-bold mb-4 text-slate-800">Twój Profil Projekcyjny</h2>
+                        <div className="bg-blue-50 p-6 border-l-4 border-blue-500 text-slate-700 italic mb-8 leading-relaxed text-lg rounded-r-lg">
+                            {BARNUM_TEXT}
+                        </div>
+                        <div className="text-center">
+                            <p className="mb-4 text-sm font-bold text-slate-500 uppercase tracking-wide">Jak bardzo ten opis do Ciebie pasuje?</p>
+                            <div className="flex justify-center gap-3">
+                                {[1,2,3,4,5].map(r => (
+                                    <button key={r} onClick={() => handleAccuracyRating(r)} className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-blue-100 text-blue-600 font-bold text-xl hover:bg-blue-600 hover:text-white hover:border-blue-600 transition shadow-sm">{r}</button>
+                                ))}
+                            </div>
+                            <div className="flex justify-between w-64 mx-auto mt-2 text-xs text-slate-400 font-medium"><span>1 - W ogóle</span><span>5 - Bardzo</span></div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // NOWY KROK: Pytanie o pewność
+            if (step === 'confidence_check') return (
+                <div className="min-h-screen flex items-center justify-center p-4">
+                    <div className="bg-white p-8 rounded-xl shadow-lg max-w-xl w-full fade-in text-center">
+                        <div className="text-4xl mb-4">🤔</div>
+                        <h2 className="text-xl font-bold mb-6 text-slate-800">Jedno ostatnie pytanie...</h2>
+                        <p className="mb-8 text-slate-600 text-lg">
+                            Jak bardzo jesteś pewien/pewna, że ten opis powstał <strong>na podstawie Twoich słów</strong>, a nie został wygenerowany losowo?
+                        </p>
+                        
+                        {isSaving ? (
+                            <div className="text-blue-600 font-bold animate-pulse">Zapisywanie odpowiedzi...</div>
+                        ) : (
+                            <div className="flex justify-center gap-3 mb-2">
+                                {[1,2,3,4,5].map(r => (
+                                    <button key={r} onClick={() => handleConfidenceAndSubmit(r)} className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-purple-100 text-purple-600 font-bold text-xl hover:bg-purple-600 hover:text-white hover:border-purple-600 transition shadow-sm">{r}</button>
+                                ))}
+                            </div>
+                        )}
+                        <div className="flex justify-between w-full max-w-xs mx-auto mt-2 text-xs text-slate-400 font-medium">
+                            <span>1 - To przypadek</span>
+                            <span>5 - To na pewno analiza</span>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            if (step === 'thankyou') return (
+                <div className="min-h-screen flex flex-col items-center justify-center text-center p-4 fade-in">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-4xl mb-6 text-green-600 shadow-sm">✓</div>
+                    <h2 className="text-3xl font-bold text-slate-800 mb-2">Dziękuję!</h2>
+                    <p className="text-slate-600 mb-8">Twój wynik został pomyślnie zapisany.</p>
+                    <button onClick={() => setStep('dashboard')} className="bg-slate-800 text-white px-8 py-3 rounded-lg font-bold hover:bg-slate-700 transition shadow-lg flex items-center gap-2 transform hover:-translate-y-1">
+                        📊 Zobacz wyniki grupy
+                    </button>
+                </div>
+            );
+
+            if (step === 'dashboard') return <Dashboard dbInstance={dbInstance} />;
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
