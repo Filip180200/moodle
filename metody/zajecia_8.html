@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warsztaty Psychofizjologiczne</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans', sans-serif; background-color: #f8fafc; color: #334155; overflow: hidden; }
+        
+        /* Animacje przejść */
+        .step-content { display: none; height: 100%; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .step-content.active { display: block; opacity: 1; }
+        
+        /* Pasek przewijania */
+        .scroller::-webkit-scrollbar { width: 8px; height: 8px; }
+        .scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .scroller::-webkit-scrollbar-track { background: transparent; }
+
+        /* Animacja rysowania wykresów */
+        .animate-draw {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2.5s ease-out forwards;
+        }
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Siatka tła dla wykresów */
+        .grid-bg {
+            background-size: 20px 20px;
+            background-image:
+                linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+        }
+
+        /* Interaktywne elektrody */
+        .electrode { cursor: pointer; transition: fill 0.2s; }
+        .electrode:hover { fill: #99f6e4; stroke: #0f766e; }
+        .electrode.active { fill: #facc15; stroke: #ca8a04; stroke-width: 2px; }
+    </style>
+</head>
+<body class="h-screen flex flex-col relative">
+
+    <!-- EKRAN LOBBY (WYBÓR TECHNIKI) -->
+    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4 transition-transform duration-500">
+        <div class="max-w-6xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh]">
+            <!-- Lewy panel informacyjny -->
+            <div class="md:w-1/3 bg-slate-800 p-8 text-white flex flex-col justify-center relative overflow-hidden">
+                <!-- Dekoracyjne tło -->
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M0,50 Q25,0 50,50 T100,50" stroke="white" stroke-width="0.5" fill="none"/>
+                        <path d="M0,60 Q25,10 50,60 T100,60" stroke="white" stroke-width="0.5" fill="none"/>
+                    </svg>
+                </div>
+
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-500 to-emerald-600"></div>
+                <h1 class="text-4xl font-bold mb-4 font-serif relative z-10">Laboratorium Psychofizjologii</h1>
+                <p class="mb-8 opacity-80 text-sm leading-relaxed relative z-10">Interaktywny panel edukacyjny poświęcony technikom pomiaru zmiennych fizjologicznych. Wybierz moduł, aby rozpocząć analizę.</p>
+                
+                <div class="space-y-4 text-sm relative z-10">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-teal-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-teal-400">1</span> 
+                        <div>
+                            <span class="font-bold block text-teal-100">Teoria</span>
+                            <span class="text-xs opacity-60">Mechanizmy biologiczne</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-slate-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-slate-500">2</span> 
+                        <div>
+                            <span class="font-bold block text-slate-200">Metodyka</span>
+                            <span class="text-xs opacity-60">Standardy rejestracji</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-emerald-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-emerald-400">3</span> 
+                        <div>
+                            <span class="font-bold block text-emerald-100">Analiza Sygnału</span>
+                            <span class="text-xs opacity-60">Interpretacja wykresów</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prawy panel z listą -->
+            <div class="md:w-2/3 p-8 bg-slate-50 overflow-y-auto scroller">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2 border-slate-200">Dostępne Moduły Badawcze:</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="tech-list">
+                    <!-- Przyciski generowane przez JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EKRAN GŁÓWNY APLIKACJI -->
+    <div id="app-screen" class="flex-1 flex flex-col h-full transition-opacity duration-500 opacity-0 pointer-events-none">
+        
+        <!-- Header -->
+        <div class="bg-white border-b border-slate-200 p-4 shadow-sm z-20 flex flex-col sm:flex-row justify-between items-center px-6 shrink-0 h-auto sm:h-20 gap-4">
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center text-xl sm:text-2xl shadow-sm border border-teal-100" id="header-icon">🧠</div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800 leading-tight" id="header-title">...</h1>
+                    <button onclick="showLobby()" class="text-xs text-teal-600 hover:text-teal-800 hover:underline font-bold uppercase tracking-wide mt-1 block flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                        Powrót do menu
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 w-full sm:w-auto justify-center">
+                <button onclick="setStep(1)" id="tab-1" class="flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-sm font-bold transition-all bg-white text-teal-700 shadow-sm">1. Teoria</button>
+                <button onclick="setStep(2)" id="tab-2" class="flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">2. Metodyka</button>
+                <button onclick="setStep(3)" id="tab-3" class="flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">3. Wynik</button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 relative overflow-hidden bg-slate-100 flex flex-col">
+
+            <!-- Krok 1: Teoria -->
+            <div id="step-1" class="step-content active p-4 sm:p-8 scroller">
+                <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200 min-h-full" id="content-theory"></div>
+            </div>
+
+            <!-- Krok 2: Metodyka -->
+            <div id="step-2" class="step-content p-4 sm:p-8 scroller">
+                <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200 min-h-full" id="content-method"></div>
+            </div>
+
+            <!-- Krok 3: Wynik (Teraz Otwarty) -->
+            <div id="step-3" class="step-content p-4 sm:p-8 scroller">
+                <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200 min-h-full" id="content-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // BAZA DANYCH TREŚCI
+        const techniques = [
+            {
+                id: 'rt',
+                title: "Czas Reakcji (RT)",
+                icon: "⏱️",
+                theory: `
+                    <div class="flex gap-4 items-baseline mb-6 border-b pb-4">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Czas Reakcji (Reaction Time)</h2>
+                        <span class="text-sm font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded">miara: milisekundy (ms)</span>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="col-span-2">
+                            <p class="mb-4 text-lg text-slate-700">Podstawowa miara w psychologii eksperymentalnej, definiowana jako czas upływający od prezentacji bodźca do momentu inicjacji odpowiedzi behawioralnej.</p>
+                            
+                            <div class="mt-6 mb-6">
+                                <h4 class="font-bold text-slate-700 mb-2 flex items-center gap-2">Etapy Przetwarzania (Model Dondersa) <span class="text-xs bg-slate-200 px-2 py-1 rounded text-slate-600 font-normal">Metoda odejmowania</span></h4>
+                                <div class="relative h-16 w-full bg-slate-100 rounded-lg overflow-hidden flex text-xs font-bold text-white text-center shadow-inner">
+                                    <div class="h-full bg-teal-400 flex flex-col justify-center border-r border-white/20" style="width: 20%">T1<span class="font-normal opacity-80 text-[10px]">Detekcja</span></div>
+                                    <div class="h-full bg-teal-500 flex flex-col justify-center border-r border-white/20" style="width: 30%">T2<span class="font-normal opacity-80 text-[10px]">Identyfikacja</span></div>
+                                    <div class="h-full bg-teal-600 flex flex-col justify-center border-r border-white/20" style="width: 30%">T3<span class="font-normal opacity-80 text-[10px]">Wybór Odp.</span></div>
+                                    <div class="h-full bg-teal-700 flex flex-col justify-center" style="width: 20%">T4<span class="font-normal opacity-80 text-[10px]">Wykonanie</span></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-slate-400 mt-1 font-mono uppercase tracking-wide">
+                                    <span>Bodziec (0ms)</span>
+                                    <span>Reakcja (~400-500ms)</span>
+                                </div>
+                            </div>
+
+                            <p class="text-slate-600 mb-4 text-sm">RT nie jest jednolitym procesem. W zadaniu prostym (Simple RT) występują tylko T1 i T4. W zadaniu z wyborem (Choice RT) dochodzą T2 i T3, co wydłuża czas reakcji.</p>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-100 p-5 rounded-xl">
+                            <h3 class="font-bold text-blue-800 mb-3 text-lg">Paradygmaty:</h3>
+                            <ul class="space-y-3 text-sm text-blue-900">
+                                <li class="flex gap-2"><span class="font-bold">SRT (Prosty):</span> Wykrycie bodźca. Najkrótszy czas (~190-220ms).</li>
+                                <li class="flex gap-2"><span class="font-bold">CRT (Z Wyborem):</span> Decyzja, który przycisk nacisnąć. Wydłuża się logarytmicznie (Prawo Hicka).</li>
+                                <li class="flex gap-2"><span class="font-bold">Go/No-Go:</span> Hamowanie reakcji na dystraktor.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Metodyka Pomiaru i Artefakty</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-bold text-teal-700 mb-4 flex items-center gap-2"><span class="text-xl">🛠️</span> Aparatura</h3>
+                            <ul class="list-disc ml-5 space-y-3 text-slate-600">
+                                <li><strong>Response Box:</strong> Standardowa klawiatura USB wprowadza losowe opóźnienia (15-30ms). W badaniach naukowych używa się dedykowanych przycisków o wysokiej precyzji próbkowania.</li>
+                                <li><strong>Odświeżanie ekranu:</strong> Czas wyświetlania bodźca musi być zsynchronizowany z odświeżaniem monitora (np. 60Hz = 16.6ms na klatkę).</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <h3 class="font-bold text-slate-700 mb-4">Procedura "Oddball"</h3>
+                            <div class="flex justify-around items-center mb-4">
+                                <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-xs text-slate-500">Standard (80%)</div>
+                                <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold animate-pulse">Cel (20%)</div>
+                            </div>
+                            <p class="text-sm text-slate-500 text-center">Badany reaguje tylko na bodźce rzadkie (Cel). Częste bodźce (Standard) są ignorowane.</p>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Wyniki: Prawo Hicka</h2>
+                    <p class="mb-6 text-slate-500">Wizualizacja zależności czasu reakcji od stopnia złożoności zadania.</p>
+                    
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-inner grid-bg mb-6">
+                        <!-- Używamy viewBox dla responsywności -->
+                        <svg viewBox="0 0 600 300" class="w-full h-auto">
+                            <!-- Osie -->
+                            <line x1="50" y1="250" x2="550" y2="250" stroke="#94a3b8" stroke-width="2" />
+                            <line x1="50" y1="250" x2="50" y2="20" stroke="#94a3b8" stroke-width="2" />
+                            
+                            <!-- Etykiety Osi -->
+                            <text x="300" y="290" text-anchor="middle" class="text-xs fill-slate-500">Liczba Alternatyw (Bity Informacji)</text>
+                            <text x="15" y="150" text-anchor="middle" transform="rotate(-90 15,150)" class="text-xs fill-slate-500">Czas (ms)</text>
+
+                            <!-- Słupki (RT) -->
+                            <!-- Prosty (1 wybór) -->
+                            <rect x="100" y="150" width="80" height="100" fill="#2dd4bf" class="hover:opacity-80 transition-opacity cursor-pointer">
+                                <title>SRT: 220ms</title>
+                            </rect>
+                            <text x="140" y="140" text-anchor="middle" font-weight="bold" fill="#0f766e">220ms</text>
+                            <text x="140" y="270" text-anchor="middle" class="text-xs fill-slate-600">Prosty</text>
+
+                            <!-- 2 Wybory -->
+                            <rect x="260" y="100" width="80" height="150" fill="#0d9488" class="hover:opacity-80 transition-opacity cursor-pointer">
+                                <title>2 Opcje: 350ms</title>
+                            </rect>
+                            <text x="300" y="90" text-anchor="middle" font-weight="bold" fill="#0f766e">350ms</text>
+                            <text x="300" y="270" text-anchor="middle" class="text-xs fill-slate-600">2 Opcje</text>
+
+                            <!-- 4 Wybory -->
+                            <rect x="420" y="50" width="80" height="200" fill="#115e59" class="hover:opacity-80 transition-opacity cursor-pointer">
+                                <title>4 Opcje: 480ms</title>
+                            </rect>
+                            <text x="460" y="40" text-anchor="middle" font-weight="bold" fill="#115e59">480ms</text>
+                            <text x="460" y="270" text-anchor="middle" class="text-xs fill-slate-600">4 Opcje</text>
+                            
+                            <!-- Linia trendu -->
+                            <path d="M140,150 L300,100 L460,50" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,5" fill="none" opacity="0.6"/>
+                        </svg>
+                    </div>
+                    <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r text-sm text-yellow-900">
+                        <strong>Wniosek:</strong> Każde podwojenie liczby możliwych wyborów wydłuża czas reakcji o stałą wartość (tutaj ok. 130ms). Potwierdza to liniową zależność RT od entropii informacyjnej.
+                    </div>
+                `
+            },
+            {
+                id: 'eeg',
+                title: "EEG (Bioelektryka Mózgu)",
+                icon: "🧠",
+                theory: `
+                    <div class="flex gap-4 items-baseline mb-6 border-b pb-4">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Elektroencefalografia (EEG)</h2>
+                        <span class="text-sm font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded">miara: mikrowolty (µV)</span>
+                    </div>
+                    <p class="mb-6 text-lg text-slate-700">Nieinwazyjna metoda diagnostyczna służąca do badania bioelektrycznej czynności mózgu za pomocą elektrod powierzchniowych.</p>
+                    
+                    <h3 class="font-bold text-slate-800 mb-4">Pełne spektrum fal:</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                         <div class="p-3 bg-slate-100 rounded-lg border border-slate-200">
+                             <div class="text-slate-500 text-xs font-bold uppercase">Głęboki sen</div>
+                             <strong class="text-slate-900 block text-lg">Delta</strong>
+                             <span class="text-sm text-slate-600 font-mono">< 4 Hz</span>
+                         </div>
+                         <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+                             <div class="text-indigo-500 text-xs font-bold uppercase">Senność / Relaks</div>
+                             <strong class="text-indigo-900 block text-lg">Theta</strong>
+                             <span class="text-sm text-indigo-700 font-mono">4-8 Hz</span>
+                         </div>
+                         <div class="p-3 bg-teal-50 rounded-lg border border-teal-100">
+                             <div class="text-teal-500 text-xs font-bold uppercase">Spoczynkowe</div>
+                             <strong class="text-teal-900 block text-lg">Alpha</strong>
+                             <span class="text-sm text-teal-700 font-mono">8-13 Hz</span>
+                         </div>
+                         <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+                             <div class="text-yellow-600 text-xs font-bold uppercase">Aktywność</div>
+                             <strong class="text-yellow-900 block text-lg">Beta</strong>
+                             <span class="text-sm text-yellow-700 font-mono">13-30 Hz</span>
+                         </div>
+                         <div class="p-3 bg-red-50 rounded-lg border border-red-100">
+                             <div class="text-red-500 text-xs font-bold uppercase">Integracja</div>
+                             <strong class="text-red-900 block text-lg">Gamma</strong>
+                             <span class="text-sm text-red-700 font-mono">> 30 Hz</span>
+                         </div>
+                    </div>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">System 10-20 i Montaż</h2>
+                    <p class="mb-4 text-sm text-slate-500">Kliknij na elektrodę, aby ją oznaczyć.</p>
+                    <div class="flex flex-col md:flex-row gap-8 items-center">
+                        <div class="w-full md:w-1/2 relative bg-white p-4 rounded-xl border border-slate-200">
+                            <!-- Schemat głowy SVG -->
+                            <svg viewBox="0 0 200 220" class="w-full h-auto drop-shadow-md select-none">
+                                <!-- Głowa -->
+                                <circle cx="100" cy="100" r="90" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+                                <!-- Nos -->
+                                <path d="M90,10 L110,10 L100,0 Z" fill="#cbd5e1"/>
+                                <!-- Uszy -->
+                                <ellipse cx="5" cy="100" rx="10" ry="20" fill="#cbd5e1"/>
+                                <ellipse cx="195" cy="100" rx="10" ry="20" fill="#cbd5e1"/>
+                                
+                                <!-- Linie pomocnicze -->
+                                <line x1="100" y1="10" x2="100" y2="190" stroke="#cbd5e1" stroke-dasharray="4"/>
+                                <line x1="10" y1="100" x2="190" y2="100" stroke="#cbd5e1" stroke-dasharray="4"/>
+
+                                <!-- Elektrody Interaktywne -->
+                                <g class="font-sans text-[8px] text-center" font-weight="bold" fill="#475569" onclick="if(event.target.classList.contains('electrode')) event.target.classList.toggle('active')">
+                                    <!-- Central -->
+                                    <circle cx="100" cy="100" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="100" y="102" pointer-events="none" text-anchor="middle">Cz</text>
+                                    <circle cx="70" cy="100" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="70" y="102" pointer-events="none" text-anchor="middle">C3</text>
+                                    <circle cx="130" cy="100" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="130" y="102" pointer-events="none" text-anchor="middle">C4</text>
+
+                                    <!-- Frontal -->
+                                    <circle cx="100" cy="50" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="100" y="52" pointer-events="none" text-anchor="middle">Fz</text>
+                                    <circle cx="70" cy="60" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="70" y="62" pointer-events="none" text-anchor="middle">F3</text>
+                                    <circle cx="130" cy="60" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="130" y="62" pointer-events="none" text-anchor="middle">F4</text>
+                                    <circle cx="40" cy="45" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="40" y="47" pointer-events="none" text-anchor="middle">F7</text>
+                                    <circle cx="160" cy="45" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="160" y="47" pointer-events="none" text-anchor="middle">F8</text>
+                                    
+                                    <!-- Pre-Frontal -->
+                                    <circle cx="80" cy="30" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="80" y="32" pointer-events="none" text-anchor="middle">Fp1</text>
+                                    <circle cx="120" cy="30" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="120" y="32" pointer-events="none" text-anchor="middle">Fp2</text>
+
+                                    <!-- Temporal -->
+                                    <circle cx="30" cy="100" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="30" y="102" pointer-events="none" text-anchor="middle">T3</text>
+                                    <circle cx="170" cy="100" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="170" y="102" pointer-events="none" text-anchor="middle">T4</text>
+                                    <circle cx="40" cy="140" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="40" y="142" pointer-events="none" text-anchor="middle">T5</text>
+                                    <circle cx="160" cy="140" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="160" y="142" pointer-events="none" text-anchor="middle">T6</text>
+
+                                    <!-- Parietal -->
+                                    <circle cx="100" cy="140" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="100" y="142" pointer-events="none" text-anchor="middle">Pz</text>
+                                    <circle cx="70" cy="140" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="70" y="142" pointer-events="none" text-anchor="middle">P3</text>
+                                    <circle cx="130" cy="140" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="130" y="142" pointer-events="none" text-anchor="middle">P4</text>
+
+                                    <!-- Occipital -->
+                                    <circle cx="85" cy="175" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="85" y="177" pointer-events="none" text-anchor="middle">O1</text>
+                                    <circle cx="115" cy="175" r="7" fill="#e2e8f0" stroke="#64748b" class="electrode"/><text x="115" y="177" pointer-events="none" text-anchor="middle">O2</text>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="w-full md:w-1/2">
+                            <h3 class="font-bold text-teal-700 mb-3">Kluczowe zasady:</h3>
+                            <ul class="space-y-4 text-slate-600 list-disc ml-5">
+                                <li><strong>Parzyste po prawej (2,4,8):</strong> Nieparzyste po lewej (1,3,7). "z" oznacza linię środkową (Zero).</li>
+                                <li>Lokalizację elektrod wyznacza się procentowo (10% lub 20%) odległości między Nasion a Inion.</li>
+                                <li><strong>Impedancja:</strong> Musi być niższa niż 5 kΩ, aby zminimalizować szum.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Sygnał Surowy vs Artefakty</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Wykres 1: Alfa Blocking -->
+                        <div class="bg-slate-900 p-4 rounded-xl shadow-lg border border-slate-700">
+                            <div class="flex justify-between text-xs text-slate-400 font-mono mb-2">
+                                <span>Kanał O1 (Kora Wzrokowa)</span>
+                                <span>Skala: 50µV / 1s</span>
+                            </div>
+                            <div class="relative h-24 w-full overflow-hidden">
+                                <!-- Grid -->
+                                <svg width="100%" height="100%" class="absolute inset-0 opacity-20">
+                                    <defs>
+                                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="gray" stroke-width="0.5"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect width="100%" height="100%" fill="url(#grid)" />
+                                </svg>
+                                
+                                <!-- Linia Sygnału: Alfa przechodzi w Beta po otwarciu oczu -->
+                                <svg viewBox="0 0 800 100" class="w-full h-full" preserveAspectRatio="none">
+                                    <!-- Oczy zamknięte (Alpha - duża amplituda, wolne) -->
+                                    <path d="M0,50 
+                                             Q10,20 20,50 T40,50 T60,50 T80,50 T100,50 
+                                             Q110,80 120,50 T140,50 T160,50 T180,50 T200,50
+                                             Q210,20 220,50 T240,50 T260,50 T280,50 T300,50
+                                             Q310,80 320,50 T340,50 T360,50 T380,50 T400,50
+                                             L400,50" 
+                                          fill="none" stroke="#4ade80" stroke-width="2" class="animate-draw"/>
+                                          
+                                    <!-- Oczy otwarte (Beta - mała amplituda, szybkie) -->
+                                    <path d="M400,50 
+                                             L405,45 L410,55 L415,48 L420,52 L425,49 L430,50 
+                                             L435,45 L440,55 L445,48 L450,52 L455,49 L460,50
+                                             L465,45 L470,55 L475,48 L480,52 L485,49 L490,50
+                                             L600,50 L800,50" 
+                                          fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="1000" stroke-dashoffset="1000" style="animation: drawLine 2s ease-out 1.2s forwards"/>
+                                    
+                                    <!-- Marker zdarzenia -->
+                                    <line x1="400" y1="0" x2="400" y2="100" stroke="white" stroke-dasharray="4" opacity="0.5"/>
+                                    <text x="405" y="15" fill="white" font-size="12" font-family="monospace">Otwarcie oczu</text>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Wykres 2: Artefakt Mrugania -->
+                        <div class="bg-slate-900 p-4 rounded-xl shadow-lg border border-slate-700">
+                            <div class="flex justify-between text-xs text-slate-400 font-mono mb-2">
+                                <span>Kanał FP1 (Czołowy) - Artefakt okulomotoryczny</span>
+                            </div>
+                            <div class="relative h-24 w-full overflow-hidden">
+                                <svg width="100%" height="100%" class="absolute inset-0 opacity-20">
+                                    <rect width="100%" height="100%" fill="url(#grid)" />
+                                </svg>
+                                <svg viewBox="0 0 800 100" class="w-full h-full" preserveAspectRatio="none">
+                                    <!-- Spokojne tło -->
+                                    <path d="M0,50 L100,50 L105,48 L110,52 L200,50" stroke="#94a3b8" stroke-width="1" fill="none"/>
+                                    
+                                    <!-- Silne mrugnięcie -->
+                                    <path d="M200,50 Q220,100 240,50 Q250,0 260,50" stroke="#f87171" stroke-width="3" fill="none"/>
+                                    <text x="210" y="20" fill="#f87171" font-size="12">Mrugnięcie</text>
+
+                                    <!-- Dalszy ciąg -->
+                                    <path d="M260,50 L300,50 L305,48 L310,52 L800,50" stroke="#94a3b8" stroke-width="1" fill="none"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'gsr',
+                title: "GSR / EDA (Stres)",
+                icon: "✋",
+                theory: `
+                    <div class="flex gap-4 items-baseline mb-6 border-b pb-4">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Reakcja Skórno-Galwaniczna</h2>
+                        <span class="text-sm font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded">miara: mikrosiemensy (µS)</span>
+                    </div>
+                    <p class="mb-4 text-lg text-slate-700">Znana obecnie jako EDA (Electrodermal Activity). Mierzy zmiany w przewodnictwie elektrycznym skóry, które zależą od stopnia jej nawilżenia przez pot.</p>
+                    
+                    <div class="bg-orange-50 p-6 rounded-xl border border-orange-100 mb-6">
+                        <h3 class="font-bold text-orange-800 mb-2">Unikalna cecha:</h3>
+                        <p class="text-orange-900 text-sm leading-relaxed">Gruczoły potowe ekrynowe (na dłoniach i stopach) są unerwione <strong>wyłącznie</strong> przez współczulną gałąź autonomicznego układu nerwowego (AUN). W przeciwieństwie do tętna, na GSR nie wpływa układ przywspółczulny (relaksacyjny). Dlatego jest to czysty wskaźnik pobudzenia (arousal).</p>
+                    </div>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Pomiar Egzosomatyczny</h2>
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/2">
+                            <p class="mb-4 text-slate-600">Do skóry przykłada się stałe napięcie (zazwyczaj 0.5V). Zgodnie z prawem Ohma, im więcej potu (elektrolitu) w kanałach gruczołów, tym mniejszy opór i wyższe przewodnictwo.</p>
+                            <div class="bg-white p-4 border border-slate-200 rounded-lg">
+                                <h4 class="font-bold text-sm text-slate-500 uppercase mb-2">Lokalizacja elektrod</h4>
+                                <div class="flex gap-4 items-center">
+                                    <div class="text-4xl">✋</div>
+                                    <div class="text-sm text-slate-700">Środkowe paliczki palca wskazującego i środkowego dłoni niedominującej (aby zminimalizować artefakty ruchowe).</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:w-1/2 flex items-center justify-center bg-slate-50 rounded-xl p-4">
+                            <!-- Schemat obwodu -->
+                            <svg viewBox="0 0 200 120" class="w-full h-auto">
+                                <rect x="20" y="40" width="40" height="40" rx="5" fill="#e2e8f0" stroke="#64748b"/>
+                                <text x="40" y="65" text-anchor="middle" font-size="10" font-weight="bold">Źródło V</text>
+                                
+                                <path d="M60,60 L100,60 L100,40" stroke="#334155" fill="none"/>
+                                <path d="M100,80 L100,60" stroke="#334155" fill="none"/>
+                                
+                                <!-- Palec -->
+                                <path d="M130,20 C160,20 180,40 180,60 C180,80 160,100 130,100" stroke="#fb923c" stroke-width="2" fill="none" stroke-dasharray="4"/>
+                                <text x="145" y="65" text-anchor="middle" font-size="10" fill="#fb923c">Opór Skóry</text>
+                                
+                                <rect x="90" y="20" width="20" height="20" fill="#cbd5e1"/> <!-- Elektroda 1 -->
+                                <rect x="90" y="80" width="20" height="20" fill="#cbd5e1"/> <!-- Elektroda 2 -->
+                            </svg>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Składowe Sygnału EDA</h2>
+                    
+                    <div class="relative h-64 bg-white border border-slate-200 rounded-xl mb-6 overflow-hidden shadow-inner">
+                        <!-- Tło siatki -->
+                        <div class="absolute inset-0 grid-bg opacity-50"></div>
+                        
+                        <!-- Wykresy nakładkowe -->
+                        <svg viewBox="0 0 600 200" class="absolute inset-0 w-full h-full">
+                            <!-- Legenda -->
+                            <g transform="translate(450, 20)">
+                                <rect width="10" height="10" fill="#94a3b8" rx="2"/><text x="15" y="9" font-size="10" fill="#64748b">SCL (Toniczny)</text>
+                                <rect y="15" width="10" height="10" fill="#0d9488" rx="2"/><text x="15" y="24" font-size="10" fill="#0d9488" font-weight="bold">SCR (Fazowy)</text>
+                            </g>
+
+                            <!-- SCL (Poziom Toniczny) - Wolne zmiany -->
+                            <path d="M0,150 C100,148 200,145 300,140 C400,135 500,138 600,142" 
+                                  stroke="#94a3b8" stroke-width="4" fill="none" stroke-dasharray="10,5" opacity="0.6"/>
+
+                            <!-- SCR (Reakcja Fazowa) - Szybkie piki -->
+                            <path d="M0,150 
+                                     L100,148 
+                                     Q110,148 115,100 
+                                     Q120,60 140,130 
+                                     L300,140 
+                                     Q310,140 315,50 
+                                     Q325,10 360,135 
+                                     L600,142" 
+                                  stroke="#0d9488" stroke-width="3" fill="none" class="animate-draw"/>
+                            
+                            <!-- Markery Bodźców (Przesunięte napisy + Tło dla czytelności) -->
+                            <line x1="100" y1="180" x2="100" y2="200" stroke="#ef4444" stroke-width="2"/>
+                            
+                            <!-- Tło pod tekst -->
+                            <rect x="50" y="165" width="100" height="14" fill="white" rx="4" opacity="0.8"/>
+                            <text x="100" y="175" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="bold">Pytanie neutralne</text>
+                            
+                            <line x1="300" y1="180" x2="300" y2="200" stroke="#ef4444" stroke-width="4"/>
+                            
+                             <!-- Tło pod tekst -->
+                             <rect x="250" y="165" width="100" height="14" fill="white" rx="4" opacity="0.8"/>
+                            <text x="300" y="175" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="bold">Pytanie krytyczne</text>
+                        </svg>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6 text-sm">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <strong class="block text-slate-700 mb-1">Poziom Toniczny (SCL)</strong>
+                            <p class="text-slate-500">Wolnozmienne "tło". Odzwierciedla ogólny nastrój, zmęczenie lub stały poziom lęku.</p>
+                        </div>
+                        <div class="p-4 bg-teal-50 rounded-lg border border-teal-100">
+                            <strong class="block text-teal-800 mb-1">Reakcja Fazowa (SCR)</strong>
+                            <p class="text-teal-700">Szybka (1-3s) odpowiedź na konkretny bodziec. To właśnie te "górki" interesują nas przy wykrywaniu kłamstwa lub reakcji emocjonalnej.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'emg',
+                title: "Elektromiografia (EMG)",
+                icon: "💪",
+                theory: `
+                    <div class="flex gap-4 items-baseline mb-6 border-b pb-4">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Elektromiografia Powierzchniowa</h2>
+                        <span class="text-sm font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded">miara: mikrowolty (µV)</span>
+                    </div>
+                    <p class="mb-4 text-lg text-slate-700">Technika rejestracji aktywności elektrycznej mięśni szkieletowych. W psychofizjologii służy do oceny ukrytych reakcji emocjonalnych (mikroekspresji), których nie widać gołym okiem.</p>
+                    <ul class="list-disc ml-5 space-y-2 mb-6 text-slate-600">
+                        <li><strong>Marszczący brwi (Corrugator):</strong> Reaguje na bodźce negatywne (ból, niesmak, złość).</li>
+                        <li><strong>Jarzmowy większy (Zygomaticus):</strong> Reaguje na bodźce pozytywne (uśmiech).</li>
+                        <li><strong>Startle Reflex:</strong> Odruch wzdrygnięcia (mrugnięcie mięśnia okrężnego oka) jako miara lęku.</li>
+                    </ul>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Przygotowanie i Sygnał</h2>
+                    <div class="flex flex-col gap-6">
+                        <div class="bg-slate-50 p-4 rounded-xl border-l-4 border-slate-400">
+                            <h3 class="font-bold text-slate-700">Wyzwanie: Impedancja i Szum</h3>
+                            <p class="text-sm text-slate-600 mt-1">Sygnał EMG ma szerokie pasmo (do 500Hz) i małą amplitudę. Wymaga idealnego przygotowania skóry (peeling, alkohol) oraz umieszczenia elektrod <strong>wzdłuż włókien mięśniowych</strong>, a nie w poprzek.</p>
+                        </div>
+                        <div class="bg-white p-4 border border-slate-200 rounded-xl">
+                            <h3 class="font-bold text-slate-700 mb-2">Przetwarzanie Sygnału</h3>
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-2 text-center text-xs font-mono text-white mt-4">
+                                <div class="bg-slate-400 p-3 rounded w-full sm:w-auto flex-1">RAW<br><span class="opacity-70">(Surowy)</span></div>
+                                <div class="text-slate-400 text-xl transform rotate-90 sm:rotate-0">➔</div>
+                                <div class="bg-slate-500 p-3 rounded w-full sm:w-auto flex-1">Rectified<br><span class="opacity-70">(Wyprostowany)</span></div>
+                                <div class="text-slate-400 text-xl transform rotate-90 sm:rotate-0">➔</div>
+                                <div class="bg-slate-700 p-3 rounded w-full sm:w-auto flex-1">Integrated<br><span class="opacity-70">(Wygładzony)</span></div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Wizualizacja Przetwarzania EMG</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- RAW Signal -->
+                        <div class="relative">
+                            <span class="text-xs text-slate-500 font-bold mb-1 block uppercase">1. Sygnał Surowy (Raw)</span>
+                            <div class="bg-slate-900 h-16 rounded overflow-hidden flex items-center">
+                                <svg viewBox="0 0 400 60" class="w-full h-full" preserveAspectRatio="none">
+                                    <path d="M0,30 L10,10 L20,50 L30,20 L40,40 L50,15 L60,45 L70,30 L80,30 L90,30 L100,30 L110,5 L120,55 L130,10 L140,50 L150,25 L160,35 L170,30 L300,30 L310,10 L320,50 L330,20 L340,40 L350,15 L360,45 L400,30" 
+                                        stroke="white" stroke-width="1" fill="none"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Rectified -->
+                        <div class="relative">
+                            <span class="text-xs text-slate-500 font-bold mb-1 block uppercase">2. Wyprostowany (Rectified)</span>
+                            <div class="bg-slate-800 h-16 rounded overflow-hidden flex items-end">
+                                <svg viewBox="0 0 400 60" class="w-full h-full" preserveAspectRatio="none">
+                                    <!-- Wszystkie piki idą w górę od 60 (dołu) -->
+                                    <path d="M0,60 L10,20 L20,20 L30,40 L40,40 L50,30 L60,30 L70,60 L100,60 L110,10 L120,10 L130,20 L140,20 L150,50 L160,50 L170,60 L300,60 L310,20 L320,20 L330,40 L340,40 L350,30 L360,30 L400,60" 
+                                        stroke="#a5f3fc" stroke-width="1.5" fill="rgba(165, 243, 252, 0.2)"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Integrated -->
+                        <div class="relative">
+                            <span class="text-xs text-slate-500 font-bold mb-1 block uppercase">3. Całkowany (Integrated / RMS)</span>
+                            <div class="bg-white border border-slate-300 h-24 rounded overflow-hidden relative shadow-sm">
+                                <div class="absolute inset-0 grid-bg"></div>
+                                <svg viewBox="0 0 400 60" class="w-full h-full absolute inset-0" preserveAspectRatio="none">
+                                     <path d="M0,60 L10,30 Q35,15 60,35 T100,60 L110,20 Q135,5 160,40 T200,60 L300,60 L310,30 Q335,15 360,35 T400,60 L400,60 Z" 
+                                        fill="rgba(250, 204, 21, 0.3)" stroke="none"/>
+                                     <path d="M0,60 L10,30 Q35,15 60,35 T100,60 L110,20 Q135,5 160,40 T200,60 L300,60 L310,30 Q335,15 360,35 T400,60" 
+                                        stroke="#eab308" stroke-width="3" fill="none" class="animate-draw"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'abpm',
+                title: "Holter Ciśnieniowy (ABPM)",
+                icon: "💓",
+                theory: `
+                    <div class="flex gap-4 items-baseline mb-6 border-b pb-4">
+                        <h2 class="text-3xl font-serif font-bold text-slate-800">Ambulatoryjne Monitorowanie Ciśnienia</h2>
+                        <span class="text-sm font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded">miara: mmHg</span>
+                    </div>
+                    <p class="mb-4 text-lg text-slate-700">Złoty standard w diagnostyce nadciśnienia. Polega na automatycznym pomiarze ciśnienia tętniczego co 15-30 minut przez całą dobę.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-rose-50 p-4 rounded-xl border border-rose-100">
+                            <h3 class="font-bold text-rose-800 mb-2">Nadciśnienie "Białego Fartucha"</h3>
+                            <p class="text-sm text-rose-900">Sytuacja, gdy pacjent ma wysokie ciśnienie tylko w gabinecie lekarskim (ze stresu), a w domu jest ono w normie. ABPM pozwala to wykryć.</p>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h3 class="font-bold text-indigo-800 mb-2">Nadciśnienie Ukryte</h3>
+                            <p class="text-sm text-indigo-900">Sytuacja odwrotna: w gabinecie jest w normie, ale pacjent ma "skoki" ciśnienia w pracy lub w domu.</p>
+                        </div>
+                    </div>
+                `,
+                method: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Profil Dobowy</h2>
+                    <div class="relative pl-8 border-l-2 border-slate-300 space-y-10">
+                        <div class="relative group">
+                            <span class="absolute -left-[41px] bg-yellow-400 w-8 h-8 rounded-full border-4 border-white shadow flex items-center justify-center text-xs">☀️</span>
+                            <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                                <h4 class="font-bold text-slate-800">Okres Aktywności (Dzień)</h4>
+                                <p class="text-sm text-slate-500 mb-2">Godziny: 7:00 - 22:00</p>
+                                <ul class="text-sm list-disc ml-4 text-slate-600">
+                                    <li>Częstość: co 15 lub 20 min.</li>
+                                    <li>Norma średnia: < 135/85 mmHg.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="relative group">
+                            <span class="absolute -left-[41px] bg-indigo-600 w-8 h-8 rounded-full border-4 border-white shadow flex items-center justify-center text-xs text-white">🌙</span>
+                            <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                                <h4 class="font-bold text-slate-800">Okres Spoczynku (Noc)</h4>
+                                <p class="text-sm text-slate-500 mb-2">Godziny: 22:00 - 7:00</p>
+                                <ul class="text-sm list-disc ml-4 text-slate-600">
+                                    <li>Częstość: co 30 min.</li>
+                                    <li>Norma średnia: < 120/70 mmHg.</li>
+                                    <li><strong>Fizjologiczny spadek:</strong> Ciśnienie powinno spaść o 10-20%.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                result: `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Wynik: Profil "Dipper" vs "Non-Dipper"</h2>
+                    <p class="mb-6 text-slate-600">Najważniejszym parametrem prognostycznym jest nocny spadek ciśnienia. Brak spadku (Non-dipper) drastycznie zwiększa ryzyko sercowo-naczyniowe.</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-8 items-center justify-center bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <!-- Wykres Słupkowy Porównawczy -->
+                        <div class="w-full max-w-lg">
+                            <h4 class="text-center font-bold text-slate-700 mb-6">Średnie Ciśnienie Skurczowe (SYS)</h4>
+                            
+                            <div class="flex items-end h-56 gap-12 justify-center border-b border-slate-300 pb-2">
+                                <!-- Dipper -->
+                                <div class="flex flex-col items-center gap-2 w-24">
+                                    <div class="relative w-full h-48 flex items-end justify-center">
+                                        <!-- Dzień -->
+                                        <div class="w-10 bg-blue-400 rounded-t absolute left-0 bottom-0 flex items-start justify-center text-[10px] text-white font-bold pt-1" style="height: 80%">130</div>
+                                        <!-- Noc -->
+                                        <div class="w-10 bg-indigo-600 rounded-t absolute right-0 bottom-0 shadow-lg z-10 flex items-start justify-center text-[10px] text-white font-bold pt-1" style="height: 65%">110</div>
+                                        
+                                        <!-- Strzałka spadku -->
+                                        <div class="absolute top-[25%] right-[-10px] bg-green-100 text-green-700 text-xs font-bold px-1 rounded border border-green-200">-15%</div>
+                                    </div>
+                                    <span class="font-bold text-sm text-green-600 mt-1 text-center leading-tight">DIPPER<br><span class="text-[10px] text-slate-400 font-normal">Norma</span></span>
+                                </div>
+
+                                <!-- Non-Dipper -->
+                                <div class="flex flex-col items-center gap-2 w-24">
+                                    <div class="relative w-full h-48 flex items-end justify-center">
+                                        <!-- Dzień -->
+                                        <div class="w-10 bg-blue-400 rounded-t absolute left-0 bottom-0 flex items-start justify-center text-[10px] text-white font-bold pt-1" style="height: 80%">130</div>
+                                        <!-- Noc -->
+                                        <div class="w-10 bg-indigo-600 rounded-t absolute right-0 bottom-0 shadow-lg z-10 flex items-start justify-center text-[10px] text-white font-bold pt-1" style="height: 78%">128</div>
+                                        
+                                        <!-- Strzałka spadku -->
+                                        <div class="absolute top-[12%] right-[-10px] bg-red-100 text-red-700 text-xs font-bold px-1 rounded border border-red-200 z-20">-2%</div>
+                                    </div>
+                                    <span class="font-bold text-sm text-red-600 mt-1 text-center leading-tight">NON-DIPPER<br><span class="text-[10px] text-slate-400 font-normal">Patologia</span></span>
+                                </div>
+                            </div>
+                            <div class="flex justify-center gap-6 mt-6 text-xs font-bold text-slate-600">
+                                <div class="flex items-center"><div class="w-4 h-4 bg-blue-400 mr-2 rounded"></div>Dzień (Aktywność)</div>
+                                <div class="flex items-center"><div class="w-4 h-4 bg-indigo-600 mr-2 rounded"></div>Noc (Spoczynek)</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        let currentTechnique = null;
+
+        function initLobby() {
+            const list = document.getElementById('tech-list');
+            list.innerHTML = '';
+            techniques.forEach(tech => {
+                const btn = document.createElement('button');
+                btn.className = `group p-4 bg-white border border-slate-200 rounded-xl hover:border-teal-500 hover:shadow-lg transition-all text-left flex items-center gap-4`;
+                btn.onclick = () => loadTechnique(tech);
+                btn.innerHTML = `
+                    <div class="text-3xl bg-slate-100 w-14 h-14 flex items-center justify-center rounded-lg group-hover:bg-teal-50 transition shadow-inner">${tech.icon}</div>
+                    <div>
+                        <div class="font-bold text-slate-700 group-hover:text-teal-700 transition text-lg">${tech.title}</div>
+                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider mt-1 group-hover:text-teal-500">Otwórz moduł →</div>
+                    </div>
+                `;
+                list.appendChild(btn);
+            });
+        }
+
+        function loadTechnique(tech) {
+            currentTechnique = tech;
+            document.getElementById('header-title').innerText = tech.title;
+            document.getElementById('header-icon').innerText = tech.icon;
+
+            // Wstrzyknięcie treści
+            document.getElementById('content-theory').innerHTML = tech.theory;
+            document.getElementById('content-method').innerHTML = tech.method;
+            document.getElementById('content-result').innerHTML = tech.result;
+
+            // Animacje przejścia ekranu
+            document.getElementById('lobby-screen').classList.add('-translate-y-full');
+            const app = document.getElementById('app-screen');
+            app.classList.remove('opacity-0', 'pointer-events-none');
+            app.classList.add('opacity-100');
+
+            // Reset do kroku 1
+            setStep(1);
+        }
+
+        function showLobby() {
+            document.getElementById('lobby-screen').classList.remove('-translate-y-full');
+            const app = document.getElementById('app-screen');
+            app.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function setStep(stepId) {
+            // Ukrywanie wszystkich
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            
+            // Pokazywanie wybranego
+            document.getElementById(`step-${stepId}`).classList.add('active');
+            
+            // Style przycisków
+            const btnDefault = "flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60 hover:text-slate-700 flex items-center justify-center gap-2";
+            const btnActive = "flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-sm font-bold transition-all shadow-md bg-white text-teal-700 border border-slate-100 flex items-center justify-center gap-2 transform scale-105";
+            
+            for(let i=1; i<=3; i++) { 
+                document.getElementById(`tab-${i}`).className = (i === stepId) ? btnActive : btnDefault; 
+            }
+        }
+        
+        // Inicjalizacja
+        initLobby();
+    </script>
+</body>
+</html>
