@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Asystent Oceniania - DSW (Final Layout)</title>
+    <style>
+        /* --- STYL INTERFEJSU (EKRAN) --- */
+        :root {
+            --primary: #2563eb;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --text: #1f2937;
+            --border: #e5e7eb;
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 20px; 
+            line-height: 1.5; 
+        }
+        .container { max-width: 950px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        
+        .grading-panel { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        h1 { margin-top: 0; color: var(--primary); font-size: 24px; }
+        h2 { font-size: 18px; border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-top: 20px; color: #4b5563; }
+        
+        /* Checkboxy */
+        .criteria-item { display: flex; align-items: flex-start; margin-bottom: 10px; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .criteria-item:hover { background: #f9fafb; }
+        .criteria-item input[type="checkbox"] { transform: scale(1.5); margin-right: 15px; margin-top: 4px; cursor: pointer; }
+        .criteria-label { cursor: pointer; flex-grow: 1; }
+        .criteria-points { font-weight: bold; color: #6b7280; font-size: 0.9em; margin-left: 10px; min-width: 40px; text-align: right; }
+        
+        /* Panel Wyników */
+        .results-panel { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); height: fit-content; position: sticky; top: 20px; }
+        .score-box { text-align: center; margin-bottom: 20px; }
+        .score-big { font-size: 48px; font-weight: bold; color: var(--primary); }
+        
+        /* Inputy */
+        .input-group { margin-bottom: 20px; display: flex; gap: 10px; }
+        .student-input { flex: 2; padding: 10px; font-size: 16px; border: 2px solid var(--border); border-radius: 4px; }
+        .topic-select { flex: 1; padding: 10px; font-size: 16px; border: 2px solid var(--primary); border-radius: 4px; background-color: #eff6ff; font-weight: bold; cursor: pointer;}
+
+        textarea { width: 100%; height: 400px; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 13px; color: #666; }
+        
+        button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; margin-bottom: 10px; }
+        button:hover { background: #1d4ed8; }
+        button.secondary { background: #fff; color: var(--text); border: 2px solid var(--border); }
+        button.secondary:hover { background: #f3f4f6; }
+
+        /* --- STYL WYDRUKU / PDF (APA 7) --- */
+        @media print {
+            @page {
+                /* TO JEST KLUCZOWA ZMIANA: Marginesy definiujemy dla KARTKI, a nie body */
+                margin: 2.54cm; 
+                size: A4;
+            }
+            body { 
+                background: white; 
+                /* Padding zerujemy, bo margines robi @page */
+                padding: 0; 
+                margin: 0;
+                font-family: 'Times New Roman', Times, serif; 
+                font-size: 12pt;
+                line-height: 2.0; 
+                color: black;
+            }
+            
+            /* Ukrywamy interfejs */
+            .container, .grading-panel, .results-panel, button, h1 { display: none !important; }
+            
+            /* Pokazujemy wydruk */
+            #print-area { display: block !important; }
+            
+            .apa-header { text-align: center; font-weight: bold; margin-bottom: 2em; text-transform: uppercase; line-height: 1.2; }
+            .apa-meta { text-align: center; margin-bottom: 3em; line-height: 1.5; }
+            .apa-title { font-weight: bold; text-align: center; margin-bottom: 1em; }
+            
+            /* Grupowanie sekcji */
+            .feedback-section {
+                margin-bottom: 1.5em; 
+                page-break-inside: avoid; 
+                break-inside: avoid;
+            }
+
+            .feedback-section-title {
+                font-weight: bold;
+                text-align: left;
+                margin-bottom: 0.5em;
+            }
+
+            .apa-content p {
+                text-indent: 1.27cm; 
+                margin-top: 0;
+                margin-bottom: 0; 
+                text-align: justify;
+            }
+            
+            .summary-spacer { margin-top: 2em !important; }
+            .retake-warning { font-weight: bold; margin-top: 1em !important; page-break-inside: avoid; }
+            .apa-resource { margin-top: 1em !important; font-style: italic; page-break-inside: avoid; }
+            
+            /* Podpis */
+            .signature { 
+                margin-top: 4em; 
+                font-size: 11pt; 
+                text-align: left; 
+                line-height: 1.5; 
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            a { color: black; text-decoration: none; }
+        }
+
+        #print-area { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="grading-panel">
+        <h1>🎓 Asystent Oceniania (Wersja 5.0 - Final)</h1>
+        
+        <div class="input-group">
+            <input type="text" id="studentName" class="student-input" placeholder="Imię i Nazwisko studenta/grupy...">
+            <select id="topicSelect" class="topic-select" onchange="update()">
+                <option value="MAKIAWELIZMU">Makiawelizm</option>
+                <option value="NARCYZMU">Narcyzm</option>
+                <option value="PSYCHOPATII">Psychopatia</option>
+            </select>
+        </div>
+
+        <h2>I. Metryczka i Rzetelność (4 pkt)</h2>
+        <div class="criteria-item">
+            <input type="checkbox" id="c1" checked onchange="update()">
+            <label for="c1" class="criteria-label"><strong>Przeliczenie danych:</strong> Poprawne rekodowanie i średnie (nie sumy).</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+        <div class="criteria-item">
+            <input type="checkbox" id="c2" checked onchange="update()">
+            <label for="c2" class="criteria-label"><strong>Opis grupy:</strong> N, Płeć (%), Wiek (M, SD).</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+        <div class="criteria-item">
+            <input type="checkbox" id="c3" checked onchange="update()">
+            <label for="c3" class="criteria-label"><strong>Normalność:</strong> Test (S-W/K-S) + Wniosek.</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+        <div class="criteria-item">
+            <input type="checkbox" id="c4" checked onchange="update()">
+            <label for="c4" class="criteria-label"><strong>Rzetelność:</strong> Podano Alfa Cronbacha.</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+
+        <h2>II. Korelacje (3 pkt)</h2>
+        <div class="criteria-item">
+            <input type="checkbox" id="c5" checked onchange="update()">
+            <label for="c5" class="criteria-label"><strong>Dobór testu:</strong> Spójny z normalnością (Pearson/Spearman).</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+        <div class="criteria-item">
+            <input type="checkbox" id="c6" checked onchange="update()">
+            <label for="c6" class="criteria-label"><strong>Tabela 2:</strong> Poprawne wartości i gwiazdki (*).</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+        <div class="criteria-item">
+            <input type="checkbox" id="c7" checked onchange="update()">
+            <label for="c7" class="criteria-label"><strong>Interpretacja:</strong> Siła i kierunek związku.</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+
+        <h2>III. Regresja (3 pkt)</h2>
+        <div class="criteria-item">
+            <input type="checkbox" id="c8" checked onchange="update()">
+            <label for="c8" class="criteria-label"><strong>Parametry modelu:</strong> R² i statystyka F.</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+        <div class="criteria-item">
+            <input type="checkbox" id="c9" checked onchange="update()">
+            <label for="c9" class="criteria-label"><strong>Predyktory:</strong> Poprawne Bety i istotności p.</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+        <div class="criteria-item">
+            <input type="checkbox" id="c10" checked onchange="update()">
+            <label for="c10" class="criteria-label"><strong>Sensowność:</strong> Tekst spójny z tabelą.</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+
+        <h2>IV. Styl APA 7 (3 pkt)</h2>
+        <div class="criteria-item">
+            <input type="checkbox" id="c11" checked onchange="update()">
+            <label for="c11" class="criteria-label"><strong>Tabele:</strong> Linie poziome, styl naukowy.</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+        <div class="criteria-item">
+            <input type="checkbox" id="c12" checked onchange="update()">
+            <label for="c12" class="criteria-label"><strong>Zapis statystyczny:</strong> Kursywa, stopnie swobody przy F.</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+        <div class="criteria-item">
+            <input type="checkbox" id="c13" checked onchange="update()">
+            <label for="c13" class="criteria-label"><strong>Formatowanie tekstu:</strong> Interlinia 2.0, wcięcia.</label>
+            <span class="criteria-points">1 pkt</span>
+        </div>
+    </div>
+
+    <div class="results-panel">
+        <div class="score-box">
+            <div>WYNIK</div>
+            <span id="currentScore" class="score-big">13</span>
+            <span>/ 13 pkt</span>
+        </div>
+
+        <h3>Podgląd treści</h3>
+        <textarea id="feedbackText" spellcheck="false" placeholder="Tu pojawi się tekst..."></textarea>
+
+        <button onclick="printPDF()">📄 Eksportuj do PDF</button>
+        <button class="secondary" onclick="resetForm()">🔄 Resetuj</button>
+        <p style="font-size: 11px; color: #666; text-align: center;">Wskazówka: Jeśli w PDF nadal widzisz nagłówki/stopki (URL), upewnij się, że opcja "Nagłówki i stopki" jest odznaczona w ustawieniach druku.</p>
+    </div>
+</div>
+
+<div id="print-area">
+    <div class="apa-header">
+        OCENA RAPORTU BADAWCZEGO:<br>
+        PREDYKTORY <span id="printTopic">MAKIAWELIZMU</span>
+    </div>
+    
+    <div class="apa-meta">
+        <strong>Studenci:</strong> <span id="printName">Grupa</span><br>
+        <strong>Przedmiot:</strong> Statys. z wyk. komp. i zaawan. met. badań psych.<br>
+        <strong>Wynik:</strong> <span id="printScoreVal"></span> / 13 pkt
+    </div>
+    
+    <div class="apa-title">Informacja zwrotna</div>
+    
+    <div class="apa-content" id="printFeedbackHTML"></div>
+    
+    <div class="signature">
+        Prowadzący: mgr Filip Liebersbach<br>
+        Adres e-mail: filip.liebersbach@dsw.edu.pl<br>
+        Data: <span id="printDate"></span>
+    </div>
+</div>
+
+<script>
+    // DEFINICJA SEKCJI (Identyfikatory checkboxów i tytuły)
+    const sections = [
+        { title: "I. Metryczka i Rzetelność", max: 4, ids: ['c1', 'c2', 'c3', 'c4'] },
+        { title: "II. Korelacje", max: 3, ids: ['c5', 'c6', 'c7'] },
+        { title: "III. Regresja", max: 3, ids: ['c8', 'c9', 'c10'] },
+        { title: "IV. Styl APA 7", max: 3, ids: ['c11', 'c12', 'c13'] }
+    ];
+
+    // BAZA KOMENTARZY
+    const feedbackMap = {
+        c1: "Analiza statystyk opisowych (średnich) wskazuje, że nie przeprowadzono poprawnego rekodowania (odwracania) pytań dla kwestionariusza.",
+        c2: "Opis grupy badawczej jest niekompletny. W raporcie naukowym należy precyzyjnie podać liczebność próby (N), podział procentowy lub liczbowy płci oraz średnią (M) i odchylenie standardowe (SD) dla wieku.",
+        c3: "Brak weryfikacji założenia o normalności rozkładu. Przed przystąpieniem do analiz parametrycznych należy zaraportować wyniki testów normalności (np. Kołmogorowa-Smirnowa lub Shapiro-Wilka) i wyciągnąć odpowiedni wniosek.",
+        c4: "Brak informacji o rzetelności zastosowanych narzędzi badawczych. Standardem jest raportowanie współczynnika Alfa Cronbacha dla każdej użytej skali.",
+        
+        c5: "Niespójność metodologiczna w doborze testu korelacji. Wybór między współczynnikiem Pearsona a Spearmana powinien wynikać bezpośrednio z wcześniejszej oceny normalności rozkładu zmiennych.",
+        c6: "Tabela korelacji nie spełnia wymogów formalnych. Brakuje oznaczeń istotności statystycznej (gwiazdki) lub dane są nieczytelne.",
+        c7: "Błędna interpretacja wyników korelacji. Opis słowny siły lub kierunku związku nie odpowiada wartościom liczbowym w tabeli.",
+        
+        c8: "Brak kluczowych statystyk dopasowania modelu regresji. Należy zaraportować skorygowane R² (procent wyjaśnianej zmienności) oraz statystykę F dla całego modelu.",
+        c9: "Błędna identyfikacja predyktorów w modelu regresji. Należy zwrócić uwagę na istotność statystyczną (p < 0.05) oraz standaryzowany współczynnik Beta.",
+        c10: "Niespójność interpretacji. Wnioski opisane w tekście stoją w sprzeczności z wynikami liczbowymi przedstawionymi w tabeli regresji.",
+        
+        c11: "Nieprawidłowe formatowanie tabel. Tabele nie spełniają standardów APA 7 (wymagane są tylko poziome linie, brak pionowych). Wklejanie surowych zrzutów z Excela/SPSS jest błędem edytorskim.",
+        c12: "Błędy w zapisie statystycznym. Symbole statystyczne (M, SD, p, F, t) powinny być zapisane kursywą.",
+        c13: "Błędy ogólnego formatowania tekstu. Raport powinien być sformatowany zgodnie z wymogami akademickimi (podwójna interlinia, wcięcia akapitowe, czcionka szeryfowa, np. Times New Roman)."
+    };
+
+    const apaLink = "https://apa7.liberilibri.pl/pdf/Skimina-Harasimczuk-Cieciuch(2022)-APA7-PL.pdf";
+
+    function update() {
+        let totalScore = 0;
+        let htmlContent = "";
+        let rawText = "";
+
+        // Czy są błędy APA?
+        let apaErrors = false;
+        
+        // 1. BUDOWANIE TREŚCI W PĘTLI SEKCJI
+        let sectionsHTML = "";
+        let sectionsRaw = "";
+
+        sections.forEach(section => {
+            let sectionScore = 0;
+            let sectionErrors = [];
+
+            // Sprawdzamy punkty w sekcji
+            section.ids.forEach(id => {
+                if (document.getElementById(id).checked) {
+                    sectionScore++;
+                    totalScore++;
+                } else {
+                    sectionErrors.push(feedbackMap[id]);
+                    if (section.title.includes("APA")) apaErrors = true;
+                }
+            });
+
+            // Jeśli sekcja nie jest idealna, tworzymy blok
+            if (sectionScore < section.max) {
+                // START WRAPPERA SEKCJI
+                sectionsHTML += `<div class="feedback-section">`;
+                
+                // Tytuł
+                sectionsHTML += `<div class="feedback-section-title">${section.title} (${sectionScore}/${section.max} pkt)</div>`;
+                sectionsRaw += `\n[${section.title} - ${sectionScore}/${section.max} pkt]\n`;
+
+                // Uwagi
+                sectionErrors.forEach(err => {
+                    sectionsHTML += `<p>${err}</p>`;
+                    sectionsRaw += `• ${err}\n`;
+                });
+                
+                // KONIEC WRAPPERA
+                sectionsHTML += `</div>`;
+            }
+        });
+
+        // 2. AKTUALIZACJA WYNIKU
+        const scoreEl = document.getElementById('currentScore');
+        scoreEl.innerText = totalScore;
+        scoreEl.style.color = totalScore < 7 ? '#dc2626' : (totalScore < 11 ? '#d97706' : '#2563eb');
+
+
+        // 3. SKŁADANIE CAŁOŚCI
+        
+        // --- WSTĘP ---
+        let introHTML = `<div class="feedback-section"><p>Szanowni Państwo,</p>`;
+        let introRaw = "Szanowni Państwo,\n\n";
+
+        if (totalScore === 13) {
+            let text = "Raport został przygotowany wzorowo i zaliczony na maksymalną liczbę punktów. Analiza statystyczna jest poprawna merytorycznie, a interpretacja spójna z wynikami. Formatowanie spełnia standardy APA 7.";
+            introHTML += `<p>${text}</p></div>`;
+            introRaw += text;
+        } else {
+            let text = `Przesłany raport badawczy został oceniony na ${totalScore} pkt (na 13 możliwych). Poniżej przedstawiono szczegółowe uzasadnienie oceny z podziałem na sekcje:`;
+            introHTML += `<p>${text}</p></div>`;
+            introRaw += text;
+        }
+
+        // --- SKLEJANIE TREŚCI ---
+        htmlContent = introHTML + sectionsHTML;
+        rawText = introRaw + "\n" + sectionsRaw;
+
+        // --- ZAKOŃCZENIE ---
+        htmlContent += `<div class="feedback-section">`;
+        
+        if (totalScore < 13) {
+            htmlContent += `<p class="summary-spacer">Proszę o uwzględnienie powyższych uwag w kolejnych raportach badawczych.</p>`;
+            rawText += "\nProszę o uwzględnienie powyższych uwag w kolejnych raportach badawczych.";
+        }
+
+        // Link do APA
+        if (apaErrors) {
+            htmlContent += `<p class="apa-resource">Pomocne opracowanie standardów APA 7 można znaleźć pod adresem:<br><a href="${apaLink}" target="_blank">${apaLink}</a></p>`;
+            rawText += "\n\nPomoc w zakresie standardów APA 7:\n" + apaLink;
+        }
+
+        // Ostrzeżenie o poprawie (<= 7 pkt)
+        if (totalScore <= 7) {
+            htmlContent += `<p class="retake-warning">Ze względu na uzyskanie 7 lub mniej punktów, proszę o kontakt mailowy w celu ustalenia terminu i formy poprawy raportu.</p>`;
+            rawText += "\n\nUWAGA: Ze względu na niski wynik, proszę o kontakt mailowy w sprawie poprawy.";
+        }
+        
+        htmlContent += `</div>`; // Koniec bloku
+
+        // Wstawianie do DOM
+        document.getElementById('feedbackText').value = rawText;
+        document.getElementById('printFeedbackHTML').innerHTML = htmlContent;
+    }
+
+    function printPDF() {
+        const name = document.getElementById('studentName').value || "Grupa";
+        const topic = document.getElementById('topicSelect').value;
+        const score = document.getElementById('currentScore').innerText;
+
+        document.getElementById('printName').innerText = name;
+        document.getElementById('printTopic').innerText = topic;
+        document.getElementById('printScoreVal').innerText = score;
+        document.getElementById('printDate').innerText = new Date().toLocaleDateString('pl-PL');
+
+        window.print();
+    }
+
+    function resetForm() {
+        if(confirm("Wyczyścić formularz?")) {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+            document.getElementById('studentName').value = "";
+            update();
+        }
+    }
+
+    update();
+</script>
+
+</body>
+</html>

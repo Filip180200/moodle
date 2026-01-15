@@ -9,7 +9,7 @@
     <style>
         body {
             background-color: #f4f4f4;
-            padding-bottom: 100px;
+            padding-bottom: 120px; /* Miejsce na dolny pasek */
         }
         .report-container {
             font-family: 'Times New Roman', Times, serif;
@@ -90,6 +90,36 @@
         .fixed-var {
             font-weight: bold;
             color: #333;
+        }
+
+        /* --- DOLNY PASEK NARZĘDZIOWY --- */
+        .bottom-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+            padding: 15px 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .score-badge {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #6c757d;
+            background-color: #f8f9fa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #dee2e6;
+            min-width: 150px;
+            text-align: center;
+            transition: all 0.3s ease;
         }
 
         /* --- STYLE WALIDACJI --- */
@@ -305,15 +335,16 @@
                 </table>
                 <p style="font-size: 10pt; margin-top: 10px;"><em>Uwaga.</em> *&nbsp;<i>p</i>&nbsp;&lt;&nbsp;0,05; **&nbsp;<i>p</i>&nbsp;&lt;&nbsp;0,01; ***&nbsp;<i>p</i>&nbsp;&lt;&nbsp;0,001.</p>
             </div>
-
-            <!-- PRZYCISKI - ZWYKŁY DIV, ŻADNEGO POZYCJONOWANIA -->
-            <div class="actions-row" style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 2px dashed #eee;">
-                <button type="button" onclick="checkAnswers()" class="btn btn-success btn-lg">✅ Sprawdź!</button>
-                <button type="button" onclick="exportToWord()" class="btn btn-primary btn-lg ms-2">💾 Zapisz do Worda</button>
-            </div>
             
         </div>
     </form>
+</div>
+
+<!-- DOLNY PASEK NARZĘDZIOWY -->
+<div class="bottom-action-bar">
+    <div id="scoreDisplay" class="score-badge">Wynik: --%</div>
+    <button type="button" onclick="checkAnswers()" class="btn btn-success btn-lg shadow-sm">✅ Sprawdź!</button>
+    <button type="button" onclick="exportToWord()" class="btn btn-primary btn-lg shadow-sm">💾 Zapisz do Worda</button>
 </div>
 
 <!-- MODAL / POPUP -->
@@ -392,11 +423,35 @@
 
             // Oblicz wynik
             const percentage = isAdmin ? 100 : (totalInputs > 0 ? Math.round((correctCount / totalInputs) * 100) : 0);
+            
+            // Aktualizacja paska dolnego
+            updateScoreDisplay(percentage);
+            
+            // Wyświetlenie modala (opcjonalne, ale zostawiam dla pełnego efektu)
             showModal(percentage);
 
         } catch (e) {
             console.error(e);
             alert("Błąd skryptu: " + e.message);
+        }
+    }
+
+    function updateScoreDisplay(percentage) {
+        const scoreEl = document.getElementById('scoreDisplay');
+        scoreEl.innerText = `Wynik: ${percentage}%`;
+        
+        // Zmiana koloru badge'a w zależności od wyniku
+        scoreEl.classList.remove('text-success', 'text-warning', 'text-danger', 'border-success', 'border-warning', 'border-danger');
+        
+        if (percentage === 100) {
+            scoreEl.classList.add('text-success', 'border-success', 'bg-success-subtle');
+            scoreEl.style.backgroundColor = '#d1e7dd';
+        } else if (percentage >= 50) {
+            scoreEl.classList.add('text-primary', 'border-primary');
+            scoreEl.style.backgroundColor = '#cfe2ff';
+        } else {
+            scoreEl.classList.add('text-danger', 'border-danger');
+            scoreEl.style.backgroundColor = '#f8d7da';
         }
     }
 
@@ -473,8 +528,11 @@
 
     function exportToWord() {
         try {
+            // Pobieramy TYLKO kontener raportu - przyciski są teraz poza nim,
+            // więc nie zostaną skopiowane :)
             const reportContent = document.querySelector('.report-container').cloneNode(true);
             
+            // Zamiana inputów na tekst
             const inputs = reportContent.querySelectorAll('input');
             inputs.forEach(input => {
                 const originalInput = document.querySelector(`input[name="${input.name}"]`);
@@ -485,6 +543,7 @@
                 }
             });
 
+            // Zamiana selectów na tekst
             const selects = reportContent.querySelectorAll('select');
             selects.forEach(select => {
                 const originalSelect = document.querySelector(`select[name="${select.name}"]`);
@@ -496,10 +555,9 @@
                 }
             });
 
-            // Usuwamy przyciski z wersji do eksportu
-            const actionRow = reportContent.querySelector('.actions-row');
-            if (actionRow) actionRow.remove();
-
+            // Usuwanie ewentualnych pozostałości interaktywnych (gdyby coś zostało)
+            // W nowym układzie przyciski są w .bottom-action-bar, więc tutaj ich nie ma.
+            
             const styles = document.querySelector('style').innerHTML;
             const html = `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
