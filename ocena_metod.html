@@ -2,11 +2,11 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Asystent Oceniania - Studium Przypadku (DSW)</title>
+    <title>Asystent Oceniania - Case Study (5 pkt)</title>
     <style>
         /* --- STYL INTERFEJSU (EKRAN) --- */
         :root {
-            --primary: #059669; /* Ciemna zieleń */
+            --primary: #059669; /* Zieleń dla Case Study */
             --bg: #f3f4f6;
             --card: #ffffff;
             --text: #1f2937;
@@ -24,26 +24,29 @@
         
         .grading-panel { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         h1 { margin-top: 0; color: var(--primary); font-size: 24px; }
-        h2 { font-size: 18px; border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-top: 25px; color: #4b5563; display: flex; justify-content: space-between; }
-        
+        h2 { font-size: 18px; border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-top: 25px; color: #4b5563; display: flex; justify-content: space-between; align-items: flex-end; }
+        .section-score { font-size: 0.8em; color: var(--primary); font-weight: normal; }
+
         /* Checkboxy */
         .criteria-item { display: flex; align-items: flex-start; margin-bottom: 10px; padding: 8px; border-radius: 4px; transition: background 0.2s; }
         .criteria-item:hover { background: #f9fafb; }
         .criteria-item input[type="checkbox"] { transform: scale(1.5); margin-right: 15px; margin-top: 4px; cursor: pointer; accent-color: var(--primary); }
         .criteria-label { cursor: pointer; flex-grow: 1; font-size: 15px; }
-        .criteria-points { font-weight: bold; color: #6b7280; font-size: 0.9em; margin-left: 10px; min-width: 50px; text-align: right; }
+        .criteria-points { font-weight: bold; color: #6b7280; font-size: 0.9em; margin-left: 10px; min-width: 55px; text-align: right; }
         
         /* Panel Wyników */
         .results-panel { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); height: fit-content; position: sticky; top: 20px; }
         .score-box { text-align: center; margin-bottom: 20px; }
         .score-big { font-size: 48px; font-weight: bold; color: var(--primary); }
+        .score-max { font-size: 20px; color: #6b7280; }
         
         /* Inputy */
         .input-group { margin-bottom: 20px; display: flex; gap: 10px; }
         .student-input { flex: 2; padding: 10px; font-size: 16px; border: 2px solid var(--border); border-radius: 4px; }
         .topic-display { flex: 1; padding: 10px; font-size: 16px; border: 2px solid var(--primary); border-radius: 4px; background-color: #ecfdf5; font-weight: bold; color: #065f46; text-align: center; display: flex; align-items: center; justify-content: center;}
 
-        textarea { width: 100%; height: 400px; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 13px; color: #666; }
+        /* Textarea do edycji */
+        textarea { width: 100%; height: 500px; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 13px; color: #333; line-height: 1.4; }
         
         button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; margin-bottom: 10px; }
         button:hover { background: #047857; }
@@ -73,28 +76,20 @@
             .apa-meta { text-align: center; margin-bottom: 3em; line-height: 1.5; }
             .apa-title { font-weight: bold; text-align: center; margin-bottom: 1em; }
             
-            .feedback-section {
-                margin-bottom: 1.5em; 
-                page-break-inside: avoid; 
-                break-inside: avoid;
-            }
-
-            .feedback-section-title {
-                font-weight: bold;
-                text-align: left;
-                margin-bottom: 0.5em;
-            }
-
+            /* Akapity z wcięciem */
             .apa-content p {
                 text-indent: 1.27cm; 
                 margin-top: 0;
                 margin-bottom: 0; 
                 text-align: justify;
+                page-break-inside: avoid;
             }
-            
-            .summary-spacer { margin-top: 2em !important; }
-            .retake-warning { font-weight: bold; margin-top: 1em !important; page-break-inside: avoid; }
-            .apa-resource { margin-top: 1em !important; font-style: italic; page-break-inside: avoid; }
+
+            /* Klasa dla pustych linii (odstępów) */
+            .spacer {
+                height: 1.5em; 
+                display: block;
+            }
             
             .signature { 
                 margin-top: 4em; 
@@ -102,7 +97,6 @@
                 text-align: left; 
                 line-height: 1.5; 
                 page-break-inside: avoid;
-                break-inside: avoid;
             }
             
             a { color: black; text-decoration: none; }
@@ -115,70 +109,70 @@
 
 <div class="container">
     <div class="grading-panel">
-        <h1>🧠 Ocena Studium Przypadku</h1>
+        <h1>🧠 Ocena Studium Przypadku (5 pkt)</h1>
         
         <div class="input-group">
             <input type="text" id="studentName" class="student-input" placeholder="Imię i Nazwisko studenta/grupy...">
             <div class="topic-display">STUDIUM PRZYPADKU</div>
         </div>
 
-        <h2>1. Konceptualizacja i Osoba Badana <span style="font-size:0.8em; color:var(--primary)">max 1.0 pkt</span></h2>
+        <h2>1. Konceptualizacja i Osoba Badana <span class="section-score">max 1.0 pkt</span></h2>
         <div class="criteria-item">
             <input type="checkbox" id="c1a" checked onchange="update()">
-            <label for="c1a" class="criteria-label"><strong>Cel i Kontekst:</strong> Jasno określony problem diagnostyczny (cel) oraz tło sytuacyjne osoby badanej.</label>
+            <label for="c1a" class="criteria-label"><strong>Cel i Tło:</strong> Jasno zdefiniowany problem diagnostyczny oraz opis sytuacji życiowej osoby badanej.</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
         <div class="criteria-item">
             <input type="checkbox" id="c1b" checked onchange="update()">
-            <label for="c1b" class="criteria-label"><strong>Metryczka:</strong> Kompletne dane socjodemograficzne (wiek, wykształcenie, sytuacja życiowa).</label>
+            <label for="c1b" class="criteria-label"><strong>Metryczka:</strong> Kompletne dane (wiek, wykształcenie, stan cywilny/sytuacja).</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
 
-        <h2>2. Procedura i Narzędzia <span style="font-size:0.8em; color:var(--primary)">max 1.0 pkt</span></h2>
+        <h2>2. Procedura i Narzędzia <span class="section-score">max 1.0 pkt</span></h2>
         <div class="criteria-item">
             <input type="checkbox" id="c2a" checked onchange="update()">
-            <label for="c2a" class="criteria-label"><strong>Opis Narzędzi:</strong> Poprawna charakterystyka metod (co mierzą, rzetelność, struktura).</label>
+            <label for="c2a" class="criteria-label"><strong>Opis Narzędzi:</strong> Charakterystyka metod (co mierzą, rzetelność), nawet jeśli były narzucone.</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
         <div class="criteria-item">
             <input type="checkbox" id="c2b" checked onchange="update()">
-            <label for="c2b" class="criteria-label"><strong>Poprawność obliczeń:</strong> Poprawne wyniki liczbowe (rekodowanie, klucz).</label>
+            <label for="c2b" class="criteria-label"><strong>Poprawność obliczeń:</strong> Wyniki przeliczone zgodnie z kluczem (rekodowanie).</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
 
-        <h2>3. Analiza Jakościowa (Wywiad) <span style="font-size:0.8em; color:var(--primary)">max 1.0 pkt</span></h2>
+        <h2>3. Analiza Jakościowa (Wywiad) <span class="section-score">max 1.0 pkt</span></h2>
         <div class="criteria-item">
             <input type="checkbox" id="c3a" checked onchange="update()">
-            <label for="c3a" class="criteria-label"><strong>Głębia analizy:</strong> Wyodrębnienie wątków i mechanizmów (wyjście poza cytowanie/streszczenie).</label>
+            <label for="c3a" class="criteria-label"><strong>Głębia analizy:</strong> Wyodrębnienie mechanizmów i wątków (wyjście poza streszczanie).</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
         <div class="criteria-item">
             <input type="checkbox" id="c3b" checked onchange="update()">
-            <label for="c3b" class="criteria-label"><strong>Interpretacja testu:</strong> Odniesienie wyniku do norm/teorii w kontekście TEJ konkretnej osoby.</label>
+            <label for="c3b" class="criteria-label"><strong>Interpretacja testu:</strong> Interpretacja wyniku w kontekście TEJ konkretnej osoby (nie ogólna).</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
 
-        <h2>4. Synteza i Wnioski (Profil) <span style="font-size:0.8em; color:var(--primary)">max 1.0 pkt</span></h2>
+        <h2>4. Synteza i Wnioski <span class="section-score">max 1.0 pkt</span></h2>
         <div class="criteria-item">
             <input type="checkbox" id="c4a" checked onchange="update()">
-            <label for="c4a" class="criteria-label"><strong>Integracja:</strong> Spójny profil psychologiczny łączący test z wywiadem (diagnoza funkcjonalna).</label>
+            <label for="c4a" class="criteria-label"><strong>Integracja:</strong> Spójny profil łączący wnioski z testu i wywiadu (diagnoza funkcjonalna).</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
         <div class="criteria-item">
             <input type="checkbox" id="c4b" checked onchange="update()">
-            <label for="c4b" class="criteria-label"><strong>Rekomendacje:</strong> Wnioski praktyczne, zasoby i obszary do rozwoju.</label>
+            <label for="c4b" class="criteria-label"><strong>Rekomendacje:</strong> Wskazanie zasobów oraz obszarów do rozwoju/pracy.</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
 
-        <h2>5. Standard APA 7 i Etyka <span style="font-size:0.8em; color:var(--primary)">max 1.0 pkt</span></h2>
+        <h2>5. Standard APA 7 i Etyka <span class="section-score">max 1.0 pkt</span></h2>
         <div class="criteria-item">
             <input type="checkbox" id="c5a" checked onchange="update()">
-            <label for="c5a" class="criteria-label"><strong>Etyka (Anonimizacja):</strong> Dane zostały skutecznie zanonimizowane (pseudonim).</label>
+            <label for="c5a" class="criteria-label"><strong>Anonimizacja:</strong> Skuteczna ochrona danych osobowych (pseudonim).</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
         <div class="criteria-item">
             <input type="checkbox" id="c5b" checked onchange="update()">
-            <label for="c5b" class="criteria-label"><strong>Edycja:</strong> Poprawne tabele APA, styl naukowy, cytowania.</label>
+            <label for="c5b" class="criteria-label"><strong>Edycja:</strong> Tabele APA, styl naukowy, poprawne cytowania.</label>
             <span class="criteria-points">0.5 pkt</span>
         </div>
     </div>
@@ -187,15 +181,15 @@
         <div class="score-box">
             <div>WYNIK</div>
             <span id="currentScore" class="score-big">5.0</span>
-            <span>/ 5.0 pkt</span>
+            <span class="score-max">/ 5.0 pkt</span>
         </div>
 
-        <h3>Podgląd treści</h3>
+        <h3>Podgląd (Edycja)</h3>
+        <p style="font-size: 11px; color: #666; margin-top:-10px;">Tekst poniżej możesz dowolnie edytować.</p>
         <textarea id="feedbackText" spellcheck="false" placeholder="Tu pojawi się tekst..."></textarea>
 
         <button onclick="printPDF()">📄 Eksportuj do PDF</button>
         <button class="secondary" onclick="resetForm()">🔄 Resetuj</button>
-        <p style="font-size: 11px; color: #666; text-align: center;">Narzędzie do oceny pracy zaliczeniowej typu Case Study.</p>
     </div>
 </div>
 
@@ -223,7 +217,7 @@
 </div>
 
 <script>
-    // DEFINICJA SEKCJI
+    // DEFINICJA SEKCJI (0.5 pkt za item)
     const sections = [
         { title: "1. Konceptualizacja i Osoba Badana", max: 1.0, ids: ['c1a', 'c1b'] },
         { title: "2. Procedura i Narzędzia", max: 1.0, ids: ['c2a', 'c2b'] },
@@ -232,34 +226,31 @@
         { title: "5. Standard APA 7 i Etyka", max: 1.0, ids: ['c5a', 'c5b'] }
     ];
 
-    // BAZA KOMENTARZY (Case Study specific - ZMODYFIKOWANA)
+    // BAZA KOMENTARZY (Case Study)
     const feedbackMap = {
-        c1a: "Niejasno określony cel badania lub brak kontekstu sytuacyjnego. W studium przypadku kluczowe jest zarysowanie problemu diagnostycznego.",
-        c1b: "Niekompletna metryczka. Brak kluczowych danych socjodemograficznych (wiek, wykształcenie, sytuacja życiowa), które są niezbędne do interpretacji wyników.",
+        c1a: "Niejasno określony problem diagnostyczny lub brak szerszego tła sytuacyjnego osoby badanej. W studium przypadku kluczowe jest zrozumienie kontekstu życiowego.",
+        c1b: "Niekompletna metryczka. Brakuje kluczowych danych (np. wieku, wykształcenia, sytuacji zawodowej), które są niezbędne do trafnej interpretacji wyników.",
         
-        c2a: "Niewystarczający opis narzędzi badawczych. Należy przedstawić charakterystykę wykorzystanych metod (np. co dokładnie mierzą, jaka jest ich struktura i rzetelność), nawet jeśli były one narzucone w poleceniu.",
-        c2b: "Błędy w obliczaniu wyników testu (np. brak rekodowania pytań odwróconych) lub brak jasnego przedstawienia wyników surowych/przeliczonych.",
+        c2a: "Brak odpowiedniej charakterystyki narzędzi badawczych. Mimo że metody były narzucone, praca powinna zawierać opis tego, co mierzą, z jakich skal się składają i jaka jest ich rzetelność.",
+        c2b: "Błędy w obliczeniach wyników (np. brak uwzględnienia pytań odwróconych przy rekodowaniu) lub niejasny sposób prezentacji wyników surowych.",
         
-        c3a: "Analiza jakościowa jest zbyt powierzchowna. Ograniczono się do streszczenia wywiadu, zamiast dokonać analizy psychologicznej (wyodrębnienie mechanizmów, wątków, sprzeczności).",
-        c3b: "Interpretacja wyniku testowego jest oderwana od kontekstu. Wynik należy interpretować w odniesieniu do specyfiki tej konkretnej osoby, a nie tylko ogólnych norm.",
+        c3a: "Analiza wywiadu jest zbyt powierzchowna. Ograniczono się do streszczenia wypowiedzi, zamiast wyodrębnić kluczowe wątki, mechanizmy psychologiczne czy sprzeczności.",
+        c3b: "Interpretacja wyniku testowego jest zbyt ogólna ('podręcznikowa'). Wynik należy interpretować w kontekście tej konkretnej osoby i informacji z wywiadu.",
         
-        c4a: "Brak integracji danych (diagnozy funkcjonalnej). Profil psychologiczny powinien łączyć wnioski z wywiadu i testu w jedną, spójną całość, wyjaśniającą funkcjonowanie osoby.",
-        c4b: "Brak konkretnych wniosków i rekomendacji. Praca powinna kończyć się wskazaniem zasobów osoby badanej oraz obszarów do pracy/rozwoju.",
+        c4a: "Brak integracji danych (diagnozy funkcjonalnej). Raport opisuje test i wywiad oddzielnie, zamiast połączyć wnioski w spójny profil wyjaśniający funkcjonowanie osoby.",
+        c4b: "Brak pogłębionych wniosków. Nie wskazano konkretnych zasobów osoby badanej ani obszarów wymagających rozwoju lub wsparcia.",
         
-        c5a: "Naruszenie zasad anonimizacji. W studium przypadku należy bezwzględnie używać pseudonimów i zmieniać dane umożliwiające identyfikację osoby.",
-        c5b: "Błędy edytorskie: tabele niezgodne z APA 7, brak stylu naukowego lub błędy w cytowaniu źródeł."
+        c5a: "Naruszenie zasad anonimizacji. Należy bezwzględnie stosować pseudonimy i usuwać dane umożliwiające identyfikację osoby badanej.",
+        c5b: "Błędy edytorskie: tabele niesformatowane zgodnie z APA 7 (linie pionowe), styl nienaukowy lub braki w cytowaniu literatury."
     };
 
     const apaLink = "https://apa7.liberilibri.pl/pdf/Skimina-Harasimczuk-Cieciuch(2022)-APA7-PL.pdf";
 
     function update() {
         let totalScore = 0;
-        let htmlContent = "";
-        let rawText = "";
-        let apaErrors = false;
+        let rawText = "Szanowni Państwo,\n\n";
         
-        // 1. BUDOWANIE TREŚCI
-        let sectionsHTML = "";
+        let apaErrors = false;
         let sectionsRaw = "";
 
         sections.forEach(section => {
@@ -277,71 +268,69 @@
             });
 
             if (sectionScore < section.max) {
-                sectionsHTML += `<div class="feedback-section">`;
-                sectionsHTML += `<div class="feedback-section-title">${section.title} (${sectionScore.toFixed(1)}/${section.max.toFixed(1)} pkt)</div>`;
+                // Tytuł i wynik sekcji
                 sectionsRaw += `\n[${section.title} - ${sectionScore.toFixed(1)}/${section.max.toFixed(1)} pkt]\n`;
-
+                // Błędy
                 sectionErrors.forEach(err => {
-                    sectionsHTML += `<p>${err}</p>`;
                     sectionsRaw += `• ${err}\n`;
                 });
-                sectionsHTML += `</div>`;
+                // Pusty wiersz po sekcji dla czytelności
+                sectionsRaw += "\n";
             }
         });
 
-        // 2. WYNIK
+        if (totalScore === 5.0) {
+            rawText += "Praca (Studium Przypadku) została przygotowana wzorowo i zaliczona na maksymalną ocenę. Diagnoza jest pogłębiona, opis narzędzi poprawny, a integracja danych z wywiadu i testu pozwala na pełne zrozumienie funkcjonowania osoby badanej.";
+        } else {
+            rawText += `Przesłane Studium Przypadku zostało ocenione na ${totalScore.toFixed(1)} pkt (na 5.0 możliwych). Poniżej przedstawiono szczegółowe uwagi:\n\n`;
+        }
+
+        rawText += sectionsRaw;
+
+        // 1. LINK APA (JEŚLI POTRZEBNY) - PRZED PODSUMOWANIEM
+        if (apaErrors) {
+            rawText += "\nPomoc w zakresie standardów APA 7:\n" + apaLink + "\n";
+        }
+
+        // 2. PROŚBA KOŃCOWA (Z DUŻYM ODSTĘPEM)
+        if (totalScore < 5.0) {
+            rawText += "\n\nProszę o uwzględnienie powyższych uwag przy kolejnych diagnozach.";
+        }
+
+        // 3. ALERT O NISKIM WYNIKU
+        if (totalScore <= 2.5) {
+            rawText += "\n\nUWAGA: Ze względu na niski wynik, proszę o kontakt mailowy w sprawie poprawy.";
+        }
+
         const scoreEl = document.getElementById('currentScore');
         scoreEl.innerText = totalScore.toFixed(1);
         
         if(totalScore < 2.5) scoreEl.style.color = '#dc2626';
-        else if(totalScore < 4.0) scoreEl.style.color = '#d97706';
-        else scoreEl.style.color = '#059669'; 
-
-        // 3. CAŁOŚĆ
-        let introHTML = `<div class="feedback-section"><p>Szanowni Państwo,</p>`;
-        let introRaw = "Szanowni Państwo,\n\n";
-
-        if (totalScore === 5.0) {
-            let text = "Praca (Studium Przypadku) została przygotowana wzorowo i zaliczona na maksymalną ocenę. Diagnoza jest pogłębiona, a integracja danych z wywiadu i testu pozwala na pełne zrozumienie funkcjonowania osoby badanej. Zachowano wysokie standardy etyczne.";
-            introHTML += `<p>${text}</p></div>`;
-            introRaw += text;
-        } else {
-            let text = `Przesłane Studium Przypadku zostało ocenione na ${totalScore.toFixed(1)} pkt (na 5.0 możliwych). Poniżej przedstawiono szczegółowe uwagi:`;
-            introHTML += `<p>${text}</p></div>`;
-            introRaw += text;
-        }
-
-        htmlContent = introHTML + sectionsHTML;
-        rawText = introRaw + "\n" + sectionsRaw;
-
-        // ZAKOŃCZENIE
-        htmlContent += `<div class="feedback-section">`;
-        
-        if (totalScore < 5.0) {
-            htmlContent += `<p class="summary-spacer">Proszę o uwzględnienie powyższych uwag przy kolejnych diagnozach.</p>`;
-            rawText += "\nProszę o uwzględnienie powyższych uwag przy kolejnych diagnozach.";
-        }
-
-        if (apaErrors) {
-            htmlContent += `<p class="apa-resource">Pomoc w zakresie standardów APA 7:<br><a href="${apaLink}" target="_blank">${apaLink}</a></p>`;
-            rawText += "\n\nPomoc w zakresie standardów APA 7:\n" + apaLink;
-        }
-
-        if (totalScore <= 2.5) {
-            htmlContent += `<p class="retake-warning">Ze względu na niski wynik, proszę o kontakt mailowy w celu ustalenia formy poprawy.</p>`;
-            rawText += "\n\nUWAGA: Ze względu na niski wynik, proszę o kontakt mailowy w sprawie poprawy.";
-        }
-        
-        htmlContent += `</div>`;
+        else if(totalScore < 4.5) scoreEl.style.color = '#d97706';
+        else scoreEl.style.color = '#059669';
 
         document.getElementById('feedbackText').value = rawText;
-        document.getElementById('printFeedbackHTML').innerHTML = htmlContent;
     }
 
     function printPDF() {
         const name = document.getElementById('studentName').value || "Grupa";
         const score = document.getElementById('currentScore').innerText;
 
+        const manualText = document.getElementById('feedbackText').value;
+
+        const lines = manualText.split('\n');
+        let htmlOutput = "";
+        
+        lines.forEach(line => {
+            if(line.trim() !== "") {
+                htmlOutput += `<p>${line}</p>`;
+            } else {
+                // Pusta linia jako odstęp
+                htmlOutput += `<div class="spacer"></div>`;
+            }
+        });
+
+        document.getElementById('printFeedbackHTML').innerHTML = htmlOutput;
         document.getElementById('printName').innerText = name;
         document.getElementById('printScoreVal').innerText = score;
         document.getElementById('printDate').innerText = new Date().toLocaleDateString('pl-PL');
