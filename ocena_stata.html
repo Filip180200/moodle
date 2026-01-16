@@ -2,11 +2,11 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Asystent Oceniania - DSW (Final Layout)</title>
+    <title>Asystent Oceniania - Statystyka (13 pkt)</title>
     <style>
         /* --- STYL INTERFEJSU (EKRAN) --- */
         :root {
-            --primary: #2563eb;
+            --primary: #2563eb; /* Niebieski */
             --bg: #f3f4f6;
             --card: #ffffff;
             --text: #1f2937;
@@ -24,26 +24,29 @@
         
         .grading-panel { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         h1 { margin-top: 0; color: var(--primary); font-size: 24px; }
-        h2 { font-size: 18px; border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-top: 20px; color: #4b5563; }
-        
+        h2 { font-size: 18px; border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-top: 25px; color: #4b5563; display: flex; justify-content: space-between; align-items: flex-end; }
+        .section-score { font-size: 0.8em; color: var(--primary); font-weight: normal; }
+
         /* Checkboxy */
         .criteria-item { display: flex; align-items: flex-start; margin-bottom: 10px; padding: 8px; border-radius: 4px; transition: background 0.2s; }
         .criteria-item:hover { background: #f9fafb; }
-        .criteria-item input[type="checkbox"] { transform: scale(1.5); margin-right: 15px; margin-top: 4px; cursor: pointer; }
-        .criteria-label { cursor: pointer; flex-grow: 1; }
-        .criteria-points { font-weight: bold; color: #6b7280; font-size: 0.9em; margin-left: 10px; min-width: 40px; text-align: right; }
+        .criteria-item input[type="checkbox"] { transform: scale(1.5); margin-right: 15px; margin-top: 4px; cursor: pointer; accent-color: var(--primary); }
+        .criteria-label { cursor: pointer; flex-grow: 1; font-size: 15px; }
+        .criteria-points { font-weight: bold; color: #6b7280; font-size: 0.9em; margin-left: 10px; min-width: 55px; text-align: right; }
         
         /* Panel Wyników */
         .results-panel { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); height: fit-content; position: sticky; top: 20px; }
         .score-box { text-align: center; margin-bottom: 20px; }
         .score-big { font-size: 48px; font-weight: bold; color: var(--primary); }
+        .score-max { font-size: 20px; color: #6b7280; }
         
         /* Inputy */
         .input-group { margin-bottom: 20px; display: flex; gap: 10px; }
         .student-input { flex: 2; padding: 10px; font-size: 16px; border: 2px solid var(--border); border-radius: 4px; }
         .topic-select { flex: 1; padding: 10px; font-size: 16px; border: 2px solid var(--primary); border-radius: 4px; background-color: #eff6ff; font-weight: bold; cursor: pointer;}
 
-        textarea { width: 100%; height: 400px; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 13px; color: #666; }
+        /* Textarea do edycji */
+        textarea { width: 100%; height: 500px; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 13px; color: #333; line-height: 1.4; }
         
         button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; margin-bottom: 10px; }
         button:hover { background: #1d4ed8; }
@@ -53,13 +56,11 @@
         /* --- STYL WYDRUKU / PDF (APA 7) --- */
         @media print {
             @page {
-                /* TO JEST KLUCZOWA ZMIANA: Marginesy definiujemy dla KARTKI, a nie body */
                 margin: 2.54cm; 
                 size: A4;
             }
             body { 
                 background: white; 
-                /* Padding zerujemy, bo margines robi @page */
                 padding: 0; 
                 margin: 0;
                 font-family: 'Times New Roman', Times, serif; 
@@ -68,48 +69,34 @@
                 color: black;
             }
             
-            /* Ukrywamy interfejs */
             .container, .grading-panel, .results-panel, button, h1 { display: none !important; }
-            
-            /* Pokazujemy wydruk */
             #print-area { display: block !important; }
             
             .apa-header { text-align: center; font-weight: bold; margin-bottom: 2em; text-transform: uppercase; line-height: 1.2; }
             .apa-meta { text-align: center; margin-bottom: 3em; line-height: 1.5; }
             .apa-title { font-weight: bold; text-align: center; margin-bottom: 1em; }
             
-            /* Grupowanie sekcji */
-            .feedback-section {
-                margin-bottom: 1.5em; 
-                page-break-inside: avoid; 
-                break-inside: avoid;
-            }
-
-            .feedback-section-title {
-                font-weight: bold;
-                text-align: left;
-                margin-bottom: 0.5em;
-            }
-
+            /* Akapity z wcięciem */
             .apa-content p {
                 text-indent: 1.27cm; 
                 margin-top: 0;
                 margin-bottom: 0; 
                 text-align: justify;
+                page-break-inside: avoid;
             }
             
-            .summary-spacer { margin-top: 2em !important; }
-            .retake-warning { font-weight: bold; margin-top: 1em !important; page-break-inside: avoid; }
-            .apa-resource { margin-top: 1em !important; font-style: italic; page-break-inside: avoid; }
-            
-            /* Podpis */
+            /* Puste linie dla odstępów */
+            .spacer {
+                height: 1.5em; 
+                display: block;
+            }
+
             .signature { 
                 margin-top: 4em; 
                 font-size: 11pt; 
                 text-align: left; 
                 line-height: 1.5; 
                 page-break-inside: avoid;
-                break-inside: avoid;
             }
             
             a { color: black; text-decoration: none; }
@@ -122,7 +109,7 @@
 
 <div class="container">
     <div class="grading-panel">
-        <h1>🎓 Asystent Oceniania (Wersja 5.0 - Final)</h1>
+        <h1>🎓 Asystent Oceniania (Statystyka)</h1>
         
         <div class="input-group">
             <input type="text" id="studentName" class="student-input" placeholder="Imię i Nazwisko studenta/grupy...">
@@ -133,7 +120,7 @@
             </select>
         </div>
 
-        <h2>I. Metryczka i Rzetelność (4 pkt)</h2>
+        <h2>I. Metryczka i Rzetelność <span class="section-score">max 4 pkt</span></h2>
         <div class="criteria-item">
             <input type="checkbox" id="c1" checked onchange="update()">
             <label for="c1" class="criteria-label"><strong>Przeliczenie danych:</strong> Poprawne rekodowanie i średnie (nie sumy).</label>
@@ -155,7 +142,7 @@
             <span class="criteria-points">1 pkt</span>
         </div>
 
-        <h2>II. Korelacje (3 pkt)</h2>
+        <h2>II. Korelacje <span class="section-score">max 3 pkt</span></h2>
         <div class="criteria-item">
             <input type="checkbox" id="c5" checked onchange="update()">
             <label for="c5" class="criteria-label"><strong>Dobór testu:</strong> Spójny z normalnością (Pearson/Spearman).</label>
@@ -172,7 +159,7 @@
             <span class="criteria-points">1 pkt</span>
         </div>
 
-        <h2>III. Regresja (3 pkt)</h2>
+        <h2>III. Regresja <span class="section-score">max 3 pkt</span></h2>
         <div class="criteria-item">
             <input type="checkbox" id="c8" checked onchange="update()">
             <label for="c8" class="criteria-label"><strong>Parametry modelu:</strong> R² i statystyka F.</label>
@@ -189,7 +176,7 @@
             <span class="criteria-points">1 pkt</span>
         </div>
 
-        <h2>IV. Styl APA 7 (3 pkt)</h2>
+        <h2>IV. Styl APA 7 <span class="section-score">max 3 pkt</span></h2>
         <div class="criteria-item">
             <input type="checkbox" id="c11" checked onchange="update()">
             <label for="c11" class="criteria-label"><strong>Tabele:</strong> Linie poziome, styl naukowy.</label>
@@ -211,15 +198,15 @@
         <div class="score-box">
             <div>WYNIK</div>
             <span id="currentScore" class="score-big">13</span>
-            <span>/ 13 pkt</span>
+            <span class="score-max">/ 13 pkt</span>
         </div>
 
-        <h3>Podgląd treści</h3>
+        <h3>Podgląd (Edycja)</h3>
+        <p style="font-size: 11px; color: #666; margin-top:-10px;">Możesz edytować poniższy tekst.</p>
         <textarea id="feedbackText" spellcheck="false" placeholder="Tu pojawi się tekst..."></textarea>
 
         <button onclick="printPDF()">📄 Eksportuj do PDF</button>
         <button class="secondary" onclick="resetForm()">🔄 Resetuj</button>
-        <p style="font-size: 11px; color: #666; text-align: center;">Wskazówka: Jeśli w PDF nadal widzisz nagłówki/stopki (URL), upewnij się, że opcja "Nagłówki i stopki" jest odznaczona w ustawieniach druku.</p>
     </div>
 </div>
 
@@ -247,7 +234,7 @@
 </div>
 
 <script>
-    // DEFINICJA SEKCJI (Identyfikatory checkboxów i tytuły)
+    // DEFINICJA SEKCJI
     const sections = [
         { title: "I. Metryczka i Rzetelność", max: 4, ids: ['c1', 'c2', 'c3', 'c4'] },
         { title: "II. Korelacje", max: 3, ids: ['c5', 'c6', 'c7'] },
@@ -279,21 +266,16 @@
 
     function update() {
         let totalScore = 0;
-        let htmlContent = "";
-        let rawText = "";
-
-        // Czy są błędy APA?
-        let apaErrors = false;
+        let rawText = "Szanowni Państwo,\n\n";
         
-        // 1. BUDOWANIE TREŚCI W PĘTLI SEKCJI
-        let sectionsHTML = "";
+        let apaErrors = false;
         let sectionsRaw = "";
 
+        // Logika punktacji i budowanie listy błędów
         sections.forEach(section => {
             let sectionScore = 0;
             let sectionErrors = [];
 
-            // Sprawdzamy punkty w sekcji
             section.ids.forEach(id => {
                 if (document.getElementById(id).checked) {
                     sectionScore++;
@@ -304,77 +286,48 @@
                 }
             });
 
-            // Jeśli sekcja nie jest idealna, tworzymy blok
             if (sectionScore < section.max) {
-                // START WRAPPERA SEKCJI
-                sectionsHTML += `<div class="feedback-section">`;
-                
-                // Tytuł
-                sectionsHTML += `<div class="feedback-section-title">${section.title} (${sectionScore}/${section.max} pkt)</div>`;
+                // Tytuł sekcji w brudnopisie
                 sectionsRaw += `\n[${section.title} - ${sectionScore}/${section.max} pkt]\n`;
-
-                // Uwagi
                 sectionErrors.forEach(err => {
-                    sectionsHTML += `<p>${err}</p>`;
                     sectionsRaw += `• ${err}\n`;
                 });
-                
-                // KONIEC WRAPPERA
-                sectionsHTML += `</div>`;
+                sectionsRaw += "\n"; // Dodatkowy odstęp po sekcji
             }
         });
 
-        // 2. AKTUALIZACJA WYNIKU
+        // Wstęp
+        if (totalScore === 13) {
+            rawText += "Raport został przygotowany wzorowo i zaliczony na maksymalną liczbę punktów. Analiza statystyczna jest poprawna merytorycznie, a interpretacja spójna z wynikami. Formatowanie spełnia standardy APA 7.";
+        } else {
+            rawText += `Przesłany raport badawczy został oceniony na ${totalScore} pkt (na 13 możliwych). Poniżej przedstawiono szczegółowe uzasadnienie oceny z podziałem na sekcje:\n\n`;
+        }
+
+        rawText += sectionsRaw;
+
+        // KOLEJNOŚĆ ZMIENIONA ZGODNIE Z PROŚBĄ:
+
+        // 1. Link do APA (jeśli błędy)
+        if (apaErrors) {
+            rawText += "\nPomoc w zakresie standardów APA 7:\n" + apaLink + "\n";
+        }
+
+        // 2. Zdanie końcowe (duży odstęp przed nim)
+        if (totalScore < 13) {
+            rawText += "\n\nProszę o uwzględnienie powyższych uwag w kolejnych raportach badawczych.";
+        }
+
+        // 3. Ostrzeżenie o poprawie (na samym końcu)
+        if (totalScore <= 7) {
+            rawText += "\n\nUWAGA: Ze względu na niski wynik, proszę o kontakt mailowy w sprawie poprawy.";
+        }
+
+        // Aktualizacja wyniku
         const scoreEl = document.getElementById('currentScore');
         scoreEl.innerText = totalScore;
         scoreEl.style.color = totalScore < 7 ? '#dc2626' : (totalScore < 11 ? '#d97706' : '#2563eb');
 
-
-        // 3. SKŁADANIE CAŁOŚCI
-        
-        // --- WSTĘP ---
-        let introHTML = `<div class="feedback-section"><p>Szanowni Państwo,</p>`;
-        let introRaw = "Szanowni Państwo,\n\n";
-
-        if (totalScore === 13) {
-            let text = "Raport został przygotowany wzorowo i zaliczony na maksymalną liczbę punktów. Analiza statystyczna jest poprawna merytorycznie, a interpretacja spójna z wynikami. Formatowanie spełnia standardy APA 7.";
-            introHTML += `<p>${text}</p></div>`;
-            introRaw += text;
-        } else {
-            let text = `Przesłany raport badawczy został oceniony na ${totalScore} pkt (na 13 możliwych). Poniżej przedstawiono szczegółowe uzasadnienie oceny z podziałem na sekcje:`;
-            introHTML += `<p>${text}</p></div>`;
-            introRaw += text;
-        }
-
-        // --- SKLEJANIE TREŚCI ---
-        htmlContent = introHTML + sectionsHTML;
-        rawText = introRaw + "\n" + sectionsRaw;
-
-        // --- ZAKOŃCZENIE ---
-        htmlContent += `<div class="feedback-section">`;
-        
-        if (totalScore < 13) {
-            htmlContent += `<p class="summary-spacer">Proszę o uwzględnienie powyższych uwag w kolejnych raportach badawczych.</p>`;
-            rawText += "\nProszę o uwzględnienie powyższych uwag w kolejnych raportach badawczych.";
-        }
-
-        // Link do APA
-        if (apaErrors) {
-            htmlContent += `<p class="apa-resource">Pomocne opracowanie standardów APA 7 można znaleźć pod adresem:<br><a href="${apaLink}" target="_blank">${apaLink}</a></p>`;
-            rawText += "\n\nPomoc w zakresie standardów APA 7:\n" + apaLink;
-        }
-
-        // Ostrzeżenie o poprawie (<= 7 pkt)
-        if (totalScore <= 7) {
-            htmlContent += `<p class="retake-warning">Ze względu na uzyskanie 7 lub mniej punktów, proszę o kontakt mailowy w celu ustalenia terminu i formy poprawy raportu.</p>`;
-            rawText += "\n\nUWAGA: Ze względu na niski wynik, proszę o kontakt mailowy w sprawie poprawy.";
-        }
-        
-        htmlContent += `</div>`; // Koniec bloku
-
-        // Wstawianie do DOM
         document.getElementById('feedbackText').value = rawText;
-        document.getElementById('printFeedbackHTML').innerHTML = htmlContent;
     }
 
     function printPDF() {
@@ -382,6 +335,22 @@
         const topic = document.getElementById('topicSelect').value;
         const score = document.getElementById('currentScore').innerText;
 
+        const manualText = document.getElementById('feedbackText').value;
+
+        // Konwersja na HTML (prosta metoda z zachowaniem akapitów)
+        const lines = manualText.split('\n');
+        let htmlOutput = "";
+        
+        lines.forEach(line => {
+            if(line.trim() !== "") {
+                htmlOutput += `<p>${line}</p>`;
+            } else {
+                // Pusta linia w textarea = odstęp w HTML
+                htmlOutput += `<div class="spacer"></div>`;
+            }
+        });
+
+        document.getElementById('printFeedbackHTML').innerHTML = htmlOutput;
         document.getElementById('printName').innerText = name;
         document.getElementById('printTopic').innerText = topic;
         document.getElementById('printScoreVal').innerText = score;
