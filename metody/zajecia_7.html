@@ -1,24 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Techniki Skojarzeniowe</title>
+    <title>7. Kreatywne techniki</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Noto Sans', sans-serif; background-color: #faf5ff; color: #334155; overflow: hidden; }
-        
-        .step-content { display: none; height: 100%; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease-in-out; }
-        .step-content.active { display: block; opacity: 1; }
-        
-        .scroller::-webkit-scrollbar { width: 8px; height: 8px; }
-        .scroller::-webkit-scrollbar-thumb { background: #d8b4fe; border-radius: 4px; }
-        .scroller::-webkit-scrollbar-track { background: transparent; }
-
-        /* Animacje */
-        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; transform: translateY(10px); }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        :root {
+            --page-bg: #faf5ff;
+            --page-text: #334155;
+            --scrollbar-thumb: #d946ef;
+        }
 
         /* Polaroid Effect */
         .polaroid {
@@ -34,49 +27,33 @@
 <body class="h-screen flex flex-col relative">
 
     <!-- EKRAN LOBBY -->
-    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4 transition-transform duration-500">
-        <div class="max-w-6xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh]">
-            <!-- Lewy panel -->
-            <div class="md:w-1/3 bg-slate-800 p-8 text-white flex flex-col justify-center relative overflow-hidden">
-                <div class="absolute inset-0 opacity-10 pointer-events-none">
-                    <!-- Abstract shapes -->
-                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <circle cx="20" cy="80" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                        <circle cx="80" cy="20" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                    </svg>
-                </div>
-                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 to-pink-600"></div>
-                
-                <h1 class="text-3xl font-bold mb-2 font-serif relative z-10">Techniki Skojarzeniowe</h1>
-                <p class="text-xs text-purple-300 font-mono mb-6 relative z-10 uppercase tracking-widest">Projekcja i Ekspresja</p>
+    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
+        <div class="w-full max-w-5xl">
+            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden">
+                <div class="h-2 bg-gradient-to-r from-purple-500 to-pink-600"></div>
+                <div class="p-5 md:p-8">
+                    <div class="text-xs text-slate-300/80 tracking-wide">
+                        Metodologia badań psychologicznych &bull; Filip Liebersbach
+                    </div>
+                    <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight font-serif">7. Kreatywne techniki</h1>
+                    <p class="mt-3 text-sm md:text-base text-slate-300/90 leading-relaxed">Metody pozwalające dotrzeć do ukrytych postaw, emocji i potrzeb poprzez pracę z obrazem oraz słowem.</p>
 
-                <p class="mb-8 opacity-80 text-sm leading-relaxed relative z-10">Metody pozwalające dotrzeć do ukrytych postaw, emocji i potrzeb poprzez pracę z obrazem oraz słowem.</p>
-                
-                <div class="space-y-4 text-sm relative z-10">
-                    <div class="flex items-center gap-3">
-                        <span class="bg-purple-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-purple-400">1</span> 
-                        <div><span class="font-bold block text-purple-100">PhotoVoice</span><span class="text-xs opacity-60">Skojarzenia wizualne</span></div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="bg-pink-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-pink-400">2</span> 
-                        <div><span class="font-bold block text-pink-100">Zdania Niedokończone</span><span class="text-xs opacity-60">Technika uzupełniania</span></div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="bg-slate-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-slate-400">3</span> 
-                        <div><span class="font-bold block text-slate-200">Test Plam (Rorschach)</span><span class="text-xs opacity-60">Kontrowersje</span></div>
-                    </div>
+                    <ol class="mt-3 list-decimal ml-5 space-y-1 text-slate-200/85">
+                        <li>PhotoVoice - Skojarzenia wizualne</li>
+                        <li>Zdania niedokończone - Technika uzupełniania</li>
+                        <li>Test plam (Rorschach) - Kontrowersje</li>
+                    </ol>
                 </div>
-            </div>
+            </header>
 
-            <!-- Prawy panel (Lista) -->
-            <div class="md:w-2/3 p-8 bg-slate-50 overflow-y-auto scroller">
-                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2 border-slate-200">Wybierz Metodę:</h2>
-                <div class="grid grid-cols-1 gap-4" id="tech-list"></div>
+            <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-lg overflow-hidden">
+                <div class="p-5 md:p-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Wybierz technikę</h2>
+                    <div class="grid grid-cols-1 gap-4" id="tech-list"></div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- EKRAN APLIKACJI -->
     <div id="app-screen" class="flex-1 flex flex-col h-full transition-opacity duration-500 opacity-0 pointer-events-none">
         
         <!-- Header -->
@@ -203,7 +180,7 @@
                                 <circle cx="300" cy="50" r="30" fill="#facc15" opacity="0.8"/>
                                 <rect x="0" y="150" width="400" height="50" fill="#475569"/>
                             </svg>
-                            <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="absolute inset-0 flex items-center justify-start">
                                 <span class="bg-white/80 px-4 py-2 rounded text-slate-600 font-bold backdrop-blur-sm shadow">[Tu wklejono by Twoje zdjęcie]</span>
                             </div>
                         </div>
@@ -402,7 +379,7 @@
                                 <li>Treść (ludzie, zwierzęta, obiekty?)</li>
                             </ul>
                         </div>
-                        <div class="bg-white p-4 rounded flex items-center justify-center border border-slate-200 shadow-inner">
+                        <div class="bg-white p-4 rounded flex items-center justify-start border border-slate-200 shadow-inner">
                             <img src="zajecia_6/roschac/Normalized_Rorschach_blot_08.jpg" alt="Plama Rorschacha" class="w-40 h-auto opacity-80 mix-blend-multiply" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xs text-slate-400\'>[Błąd ładowania obrazu]</span>';">
                         </div>
                     </div>
@@ -422,30 +399,79 @@
             }
         ];
 
+        const linkedTechniques = [
+            {
+                id: 'dapr',
+                title: "Projekcja Graficzna",
+                subtitle: "Test: Postać w Deszczu (DAPR)",
+                icon: "🌧️",
+                color: "blue",
+                href: "zajecia_6_1.html#tech=dapr",
+                module: "6.1"
+            },
+            {
+                id: 'tat',
+                title: "Technika Apercepcyjna",
+                subtitle: "Test: TAT (Murraya)",
+                icon: "🖼️",
+                color: "indigo",
+                href: "zajecia_6_1.html#tech=tat",
+                module: "6.1"
+            },
+            {
+                id: 'duss',
+                title: "Technika Narracyjna",
+                subtitle: "Test: Bajki Düss",
+                icon: "🐦",
+                color: "teal",
+                href: "zajecia_6_1.html#tech=duss",
+                module: "6.1"
+            }
+        ];
+
+        const hoverClassMap = {
+            purple: 'group-hover:text-purple-600 group-hover:bg-purple-50',
+            pink: 'group-hover:text-pink-600 group-hover:bg-pink-50',
+            slate: 'group-hover:text-slate-600 group-hover:bg-slate-100',
+            blue: 'group-hover:text-blue-600 group-hover:bg-blue-50',
+            indigo: 'group-hover:text-indigo-600 group-hover:bg-indigo-50',
+            teal: 'group-hover:text-teal-600 group-hover:bg-teal-50'
+        };
+
+        function getHoverColorClass(color) {
+            return hoverClassMap[color] || 'group-hover:text-slate-600 group-hover:bg-slate-100';
+        }
+
         let currentTech = null;
 
         function initLobby() {
             const list = document.getElementById('tech-list');
             list.innerHTML = '';
-            techniques.forEach(tech => {
-                const btn = document.createElement('button');
-                btn.className = `group p-6 bg-white border border-slate-200 rounded-xl hover:border-${tech.color}-500 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
-                btn.onclick = () => loadTech(tech);
-                
-                let hoverColorClass = '';
-                if (tech.color === 'purple') hoverColorClass = 'group-hover:text-purple-600 group-hover:bg-purple-50';
-                else if (tech.color === 'pink') hoverColorClass = 'group-hover:text-pink-600 group-hover:bg-pink-50';
-                else hoverColorClass = 'group-hover:text-slate-600 group-hover:bg-slate-50';
+            const allTechniques = techniques.concat(linkedTechniques);
+            allTechniques.forEach(tech => {
+                const isLink = Boolean(tech.href);
+                const el = document.createElement(isLink ? 'a' : 'button');
+                el.className = `group p-6 bg-white border border-slate-200 rounded-xl hover:border-${tech.color}-500 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
 
-                btn.innerHTML = `
+                if (isLink) {
+                    el.href = tech.href;
+                } else {
+                    el.type = 'button';
+                    el.onclick = () => loadTech(tech);
+                }
+
+                const hoverColorClass = getHoverColorClass(tech.color);
+                const actionLabel = tech.module ? `Przejdź do ${tech.module} →` : 'Rozpocznij →';
+
+                el.innerHTML = `
                     <div class="text-4xl bg-slate-50 w-20 h-20 flex items-center justify-center rounded-2xl shadow-sm transition-colors ${hoverColorClass}">${tech.icon}</div>
                     <div>
                         <div class="font-bold text-slate-800 text-xl mb-1">${tech.title}</div>
                         <div class="text-sm text-slate-500 font-medium">${tech.subtitle}</div>
-                        <div class="mt-2 text-xs font-bold uppercase tracking-wider text-slate-300 group-hover:text-${tech.color}-500 transition-colors">Rozpocznij →</div>
+                        <div class="mt-2 text-xs font-bold uppercase tracking-wider text-slate-300 group-hover:text-${tech.color}-500 transition-colors">${actionLabel}</div>
                     </div>
                 `;
-                list.appendChild(btn);
+                list.appendChild(el);
             });
         }
 
@@ -464,12 +490,20 @@
             app.classList.add('opacity-100');
 
             setStep(1);
+
+            if (history.replaceState) {
+                history.replaceState(null, '', `${location.pathname}#tech=${tech.id}`);
+            }
         }
 
         function showLobby() {
             document.getElementById('lobby-screen').classList.remove('-translate-y-full');
             const app = document.getElementById('app-screen');
             app.classList.add('opacity-0', 'pointer-events-none');
+
+            if (history.replaceState) {
+                history.replaceState(null, '', location.pathname);
+            }
         }
 
         function setStep(stepId) {
@@ -485,7 +519,22 @@
             }
         }
         
+        function openFromHash() {
+            const params = new URLSearchParams(window.location.hash.slice(1));
+            const techId = params.get('tech');
+            if (!techId) return;
+            const tech = techniques.find(item => item.id === techId);
+            if (tech) {
+                loadTech(tech);
+            }
+        }
+
         initLobby();
+        openFromHash();
     </script>
 </body>
 </html>
+
+
+
+

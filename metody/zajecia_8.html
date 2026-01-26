@@ -1,23 +1,18 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warsztaty Psychofizjologiczne</title>
+    <title>8. Nowoczesne Techniki Badań</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Noto Sans', sans-serif; background-color: #f8fafc; color: #334155; overflow: hidden; }
+        :root {
+            --page-bg: #f8fafc;
+            --page-text: #334155;
+            --scrollbar-thumb: #14b8a6;
+        }
         
-        /* Animacje przejść */
-        .step-content { display: none; height: 100%; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease-in-out; }
-        .step-content.active { display: block; opacity: 1; }
-        
-        /* Pasek przewijania */
-        .scroller::-webkit-scrollbar { width: 8px; height: 8px; }
-        .scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .scroller::-webkit-scrollbar-track { background: transparent; }
-
         /* Animacja rysowania wykresów */
         .animate-draw {
             stroke-dasharray: 1000;
@@ -45,58 +40,27 @@
 <body class="h-screen flex flex-col relative">
 
     <!-- EKRAN LOBBY (WYBÓR TECHNIKI) -->
-    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4 transition-transform duration-500">
-        <div class="max-w-6xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh]">
-            <!-- Lewy panel informacyjny -->
-            <div class="md:w-1/3 bg-slate-800 p-8 text-white flex flex-col justify-center relative overflow-hidden">
-                <!-- Dekoracyjne tło -->
-                <div class="absolute inset-0 opacity-10 pointer-events-none">
-                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M0,50 Q25,0 50,50 T100,50" stroke="white" stroke-width="0.5" fill="none"/>
-                        <path d="M0,60 Q25,10 50,60 T100,60" stroke="white" stroke-width="0.5" fill="none"/>
-                    </svg>
+    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
+        <div class="w-full max-w-5xl">
+            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden">
+                <div class="h-2 bg-gradient-to-r from-teal-500 to-lime-500"></div>
+                <div class="p-5 md:p-8">
+                    <div class="text-xs text-slate-300/80 tracking-wide">
+                        Metodologia badań psychologicznych &bull; Filip Liebersbach
+                    </div>
+                    <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight font-serif">8. Nowoczesne Techniki Badań</h1>
+                    <p class="mt-3 text-sm md:text-base text-slate-300/90 leading-relaxed">Interaktywny panel edukacyjny poświęcony technikom pomiaru zmiennych fizjologicznych. Wybierz moduł, aby rozpocząć analizę.</p>
                 </div>
+            </header>
 
-                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-500 to-emerald-600"></div>
-                <h1 class="text-4xl font-bold mb-4 font-serif relative z-10">Laboratorium Psychofizjologii</h1>
-                <p class="mb-8 opacity-80 text-sm leading-relaxed relative z-10">Interaktywny panel edukacyjny poświęcony technikom pomiaru zmiennych fizjologicznych. Wybierz moduł, aby rozpocząć analizę.</p>
-                
-                <div class="space-y-4 text-sm relative z-10">
-                    <div class="flex items-center gap-3">
-                        <span class="bg-teal-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-teal-400">1</span> 
-                        <div>
-                            <span class="font-bold block text-teal-100">Teoria</span>
-                            <span class="text-xs opacity-60">Mechanizmy biologiczne</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="bg-slate-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-slate-500">2</span> 
-                        <div>
-                            <span class="font-bold block text-slate-200">Metodyka</span>
-                            <span class="text-xs opacity-60">Standardy rejestracji</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="bg-emerald-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-emerald-400">3</span> 
-                        <div>
-                            <span class="font-bold block text-emerald-100">Analiza Sygnału</span>
-                            <span class="text-xs opacity-60">Interpretacja wykresów</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Prawy panel z listą -->
-            <div class="md:w-2/3 p-8 bg-slate-50 overflow-y-auto scroller">
-                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2 border-slate-200">Dostępne Moduły Badawcze:</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="tech-list">
-                    <!-- Przyciski generowane przez JS -->
+            <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-lg overflow-hidden">
+                <div class="p-5 md:p-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Wybierz moduł</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="tech-list"></div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- EKRAN GŁÓWNY APLIKACJI -->
     <div id="app-screen" class="flex-1 flex flex-col h-full transition-opacity duration-500 opacity-0 pointer-events-none">
         
         <!-- Header -->
@@ -219,21 +183,21 @@
                             <!-- Słupki (RT) -->
                             <!-- Prosty (1 wybór) -->
                             <rect x="100" y="150" width="80" height="100" fill="#2dd4bf" class="hover:opacity-80 transition-opacity cursor-pointer">
-                                <title>SRT: 220ms</title>
+                                <title>8. Laboratorium Psychofizjologii</title>
                             </rect>
                             <text x="140" y="140" text-anchor="middle" font-weight="bold" fill="#0f766e">220ms</text>
                             <text x="140" y="270" text-anchor="middle" class="text-xs fill-slate-600">Prosty</text>
 
                             <!-- 2 Wybory -->
                             <rect x="260" y="100" width="80" height="150" fill="#0d9488" class="hover:opacity-80 transition-opacity cursor-pointer">
-                                <title>2 Opcje: 350ms</title>
+                                <title>8. Laboratorium Psychofizjologii</title>
                             </rect>
                             <text x="300" y="90" text-anchor="middle" font-weight="bold" fill="#0f766e">350ms</text>
                             <text x="300" y="270" text-anchor="middle" class="text-xs fill-slate-600">2 Opcje</text>
 
                             <!-- 4 Wybory -->
                             <rect x="420" y="50" width="80" height="200" fill="#115e59" class="hover:opacity-80 transition-opacity cursor-pointer">
-                                <title>4 Opcje: 480ms</title>
+                                <title>8. Laboratorium Psychofizjologii</title>
                             </rect>
                             <text x="460" y="40" text-anchor="middle" font-weight="bold" fill="#115e59">480ms</text>
                             <text x="460" y="270" text-anchor="middle" class="text-xs fill-slate-600">4 Opcje</text>
@@ -452,7 +416,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="md:w-1/2 flex items-center justify-center bg-slate-50 rounded-xl p-4">
+                        <div class="md:w-1/2 flex items-center justify-start bg-slate-50 rounded-xl p-4">
                             <!-- Schemat obwodu -->
                             <svg viewBox="0 0 200 120" class="w-full h-auto">
                                 <rect x="20" y="40" width="40" height="40" rx="5" fill="#e2e8f0" stroke="#64748b"/>
@@ -660,7 +624,7 @@
                     <h2 class="text-2xl font-bold text-slate-800 mb-4">Wynik: Profil "Dipper" vs "Non-Dipper"</h2>
                     <p class="mb-6 text-slate-600">Najważniejszym parametrem prognostycznym jest nocny spadek ciśnienia. Brak spadku (Non-dipper) drastycznie zwiększa ryzyko sercowo-naczyniowe.</p>
                     
-                    <div class="flex flex-col md:flex-row gap-8 items-center justify-center bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <div class="flex flex-col md:flex-row gap-8 items-center justify-start bg-slate-50 p-6 rounded-xl border border-slate-200">
                         <!-- Wykres Słupkowy Porównawczy -->
                         <div class="w-full max-w-lg">
                             <h4 class="text-center font-bold text-slate-700 mb-6">Średnie Ciśnienie Skurczowe (SYS)</h4>
@@ -758,8 +722,8 @@
             document.getElementById(`step-${stepId}`).classList.add('active');
             
             // Style przycisków
-            const btnDefault = "flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60 hover:text-slate-700 flex items-center justify-center gap-2";
-            const btnActive = "flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-sm font-bold transition-all shadow-md bg-white text-teal-700 border border-slate-100 flex items-center justify-center gap-2 transform scale-105";
+            const btnDefault = "flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60 hover:text-slate-700 flex items-center justify-start gap-2";
+            const btnActive = "flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-sm font-bold transition-all shadow-md bg-white text-teal-700 border border-slate-100 flex items-center justify-start gap-2 transform scale-105";
             
             for(let i=1; i<=3; i++) { 
                 document.getElementById(`tab-${i}`).className = (i === stepId) ? btnActive : btnDefault; 
@@ -771,3 +735,7 @@
     </script>
 </body>
 </html>
+
+
+
+
