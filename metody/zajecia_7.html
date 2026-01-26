@@ -29,8 +29,14 @@
     <!-- EKRAN LOBBY -->
     <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
         <div class="w-full max-w-5xl">
-            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden">
+            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden relative">
                 <div class="h-2 bg-gradient-to-r from-purple-500 to-pink-600"></div>
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M0,70 L20,50 L40,70 L60,50 L80,70 L100,50" stroke="white" stroke-width="0.6" fill="none"/>
+                        <path d="M0,30 L20,10 L40,30 L60,10 L80,30 L100,10" stroke="white" stroke-width="0.4" fill="none"/>
+                    </svg>
+                </div>
                 <div class="p-5 md:p-8">
                     <div class="text-xs text-slate-300/80 tracking-wide">
                         Metodologia badań psychologicznych &bull; Filip Liebersbach
@@ -220,213 +226,6 @@
                     </div>
                 `
             },
-            {
-                id: 'zdania',
-                title: "Zdania Niedokończone",
-                subtitle: "Technika Uzupełniania",
-                icon: "✍️",
-                color: "pink",
-                theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Technika Uzupełniania</h2>
-                    </div>
-                    
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-200 mb-6 flex items-start gap-4">
-                        <span class="text-2xl">✅</span>
-                        <div>
-                            <strong class="block text-green-900 mb-1">Wartość: Wywiad i Relacja</strong>
-                            <p class="text-sm text-green-800">
-                                To doskonałe narzędzie do <strong>rozpoczęcia rozmowy (ice-breaker)</strong>.
-                                Pozwala badanemu w bezpieczny sposób wyrazić myśli, które trudno ująć wprost.
-                                Buduje "pomost" między pacjentem a diagnostą.
-                            </p>
-                        </div>
-                    </div>
-
-                    <p class="text-lg text-slate-700 mb-6">Metoda projekcyjna polegająca na kończeniu rozpoczętych zdań. Ujawnia postawy, lęki, pragnienia i konflikty.</p>
-                    
-                    <div class="bg-pink-50 p-6 rounded-xl border border-pink-100 flex flex-col md:flex-row gap-6 items-center">
-                        <div class="flex-1">
-                            <h3 class="font-bold text-pink-900 mb-2">Geneza</h3>
-                            <p class="text-sm text-pink-800">Technika ta jest wzorowana na klasycznym <strong>Teście Niedokończonych Zdań Rottera (RISB)</strong>. W wersji uproszczonej służy do wstępnej diagnozy.</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow-sm border border-pink-200 text-center w-full md:w-auto">
-                            <span class="text-4xl block mb-2">🧩</span>
-                            <span class="text-xs font-bold text-slate-500 uppercase">Mechanizm</span>
-                            <strong class="block text-slate-700">Projekcja</strong>
-                        </div>
-                    </div>
-                `,
-                method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Procedura Badania</h2>
-                    <p class="text-slate-600 mb-6">Badany otrzymuje arkusz z początkami zdań (stymulatorami). Instrukcja wymaga szybkiego i szczerego dokończenia myśli.</p>
-
-                    <div class="space-y-4">
-                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
-                            <strong class="block text-slate-700 mb-1">Zasada 1: Czas</strong>
-                            <p class="text-sm text-slate-500">Pierwsza myśl jest najlepsza. Nie należy się długo zastanawiać.</p>
-                        </div>
-                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
-                            <strong class="block text-slate-700 mb-1">Zasada 2: Pełne zdania</strong>
-                            <p class="text-sm text-slate-500">Zakończenie musi tworzyć gramatyczną całość z początkiem.</p>
-                        </div>
-                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
-                            <strong class="block text-slate-700 mb-1">Zasada 3: Szczerość</strong>
-                            <p class="text-sm text-slate-500">Wartość diagnostyczną mają tylko autentyczne odpowiedzi.</p>
-                        </div>
-                    </div>
-                `,
-                result: `
-                    <div class="max-w-2xl mx-auto">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Karta Pracy</h2>
-                        <p class="text-slate-500 mb-4">Dokończ poniższe zdania pierwszą myślą, która przyjdzie Ci do głowy.</p>
-                        <p class="text-xs text-slate-400 italic mb-8 border-l-2 border-pink-300 pl-2">
-                            Uwaga: To jedynie fragment (10 zdań). Pełny test, np. RISB, zawiera zazwyczaj 40 trzonów zdań, co pozwala na głębszą analizę profilu osobowości.
-                        </p>
-
-                        <div class="space-y-6 bg-white p-8 rounded-xl shadow-lg border border-pink-100 paper-texture">
-                            
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">1.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Lubię...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">2.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Najszczęśliwszy czas...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">3.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Chcę wiedzieć...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">4.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">W domu rodzinnym...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">5.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Żałuję...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">6.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Kiedy idę spać...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">7.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Chłopcy...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">8.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Najlepszy...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">9.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Drażni mnie...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">10.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Ludzie...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-
-                        </div>
-                    </div>
-                `
-            },
-            {
-                id: 'plamy',
-                title: "Test Plam",
-                subtitle: "Test Rorschacha",
-                icon: "🦋",
-                color: "slate",
-                theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Test Plam Atramentowych</h2>
-                    </div>
-                    
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex items-start gap-4">
-                        <span class="text-2xl">⚠️</span>
-                        <div>
-                            <strong class="block text-red-900 mb-1">Niska Wartość Diagnostyczna</strong>
-                            <p class="text-sm text-red-800">
-                                Współczesna psychometria uznaje ten test za <strong>mało rzetelny i nietrafny</strong>. 
-                                Jest podatny na subiektywną interpretację badacza i nie spełnia standardów EBM (Evidence-Based Medicine).
-                                W popkulturze znany, w nauce - marginalizowany.
-                            </p>
-                        </div>
-                    </div>
-
-                    <p class="text-lg text-slate-700 mb-6">Klasyczna technika projekcyjna opracowana przez Hermanna Rorschacha. Badany interpretuje symetryczne plamy atramentowe.</p>
-                `,
-                method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Zasada Działania (Historycznie)</h2>
-                    <p class="text-slate-600 mb-6">Zakładano, że sposób postrzegania niejednoznacznych bodźców ujawnia strukturę osobowości.</p>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
-                            <strong class="block text-slate-800 mb-2">Analiza formalna</strong>
-                            <ul class="text-sm text-slate-600 list-disc ml-4">
-                                <li>Lokalizacja (cała plama czy szczegół?)</li>
-                                <li>Determinanty (kształt, kolor, ruch?)</li>
-                                <li>Treść (ludzie, zwierzęta, obiekty?)</li>
-                            </ul>
-                        </div>
-                        <div class="bg-white p-4 rounded flex items-center justify-start border border-slate-200 shadow-inner">
-                            <img src="zajecia_6/roschac/Normalized_Rorschach_blot_08.jpg" alt="Plama Rorschacha" class="w-40 h-auto opacity-80 mix-blend-multiply" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xs text-slate-400\'>[Błąd ładowania obrazu]</span>';">
-                        </div>
-                    </div>
-                `,
-                result: `
-                    <div class="max-w-2xl mx-auto text-center">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Zadanie: Test Rorschacha</h2>
-                        <p class="text-slate-600 mb-8">Zobacz, jak wygląda (lub wyglądała) próba interpretacji tych plam. Czy wyniki mają sens?</p>
-                        
-                        <a href="https://moodle.lieberfilip.pl/metody/zajecia_6.html" target="_blank" class="inline-flex items-center gap-2 bg-slate-600 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-slate-700 transition transform hover:-translate-y-1">
-                            <span>🦋</span> Sprawdź go
-                        </a>
-                        
-                        <p class="text-xs text-slate-400 mt-6">Link prowadzi do zewnętrznego materiału dydaktycznego.</p>
-                    </div>
-                `
-            }
-        ];
-
-        const linkedTechniques = [
-            {
-                id: 'dapr',
-                title: "Projekcja Graficzna",
-                subtitle: "Test: Postać w Deszczu (DAPR)",
-                icon: "🌧️",
-                color: "blue",
-                href: "zajecia_6_1.html#tech=dapr",
-                module: "6.1"
-            },
-            {
-                id: 'tat',
-                title: "Technika Apercepcyjna",
-                subtitle: "Test: TAT (Murraya)",
-                icon: "🖼️",
-                color: "indigo",
-                href: "zajecia_6_1.html#tech=tat",
-                module: "6.1"
-            },
-            {
-                id: 'duss',
-                title: "Technika Narracyjna",
-                subtitle: "Test: Bajki Düss",
-                icon: "🐦",
-                color: "teal",
-                href: "zajecia_6_1.html#tech=duss",
-                module: "6.1"
-            }
         ];
 
         const hoverClassMap = {
@@ -447,31 +246,23 @@
         function initLobby() {
             const list = document.getElementById('tech-list');
             list.innerHTML = '';
-            const allTechniques = techniques.concat(linkedTechniques);
-            allTechniques.forEach(tech => {
-                const isLink = Boolean(tech.href);
-                const el = document.createElement(isLink ? 'a' : 'button');
-                el.className = `group p-6 bg-white border border-slate-200 rounded-xl hover:border-${tech.color}-500 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
-
-                if (isLink) {
-                    el.href = tech.href;
-                } else {
-                    el.type = 'button';
-                    el.onclick = () => loadTech(tech);
-                }
+            techniques.forEach(tech => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `group p-6 bg-white border border-slate-200 rounded-xl hover:border-${tech.color}-500 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
+                btn.onclick = () => loadTech(tech);
 
                 const hoverColorClass = getHoverColorClass(tech.color);
-                const actionLabel = tech.module ? `Przejdź do ${tech.module} →` : 'Rozpocznij →';
 
-                el.innerHTML = `
+                btn.innerHTML = `
                     <div class="text-4xl bg-slate-50 w-20 h-20 flex items-center justify-center rounded-2xl shadow-sm transition-colors ${hoverColorClass}">${tech.icon}</div>
                     <div>
                         <div class="font-bold text-slate-800 text-xl mb-1">${tech.title}</div>
                         <div class="text-sm text-slate-500 font-medium">${tech.subtitle}</div>
-                        <div class="mt-2 text-xs font-bold uppercase tracking-wider text-slate-300 group-hover:text-${tech.color}-500 transition-colors">${actionLabel}</div>
+                        <div class="mt-2 text-xs font-bold uppercase tracking-wider text-slate-300 group-hover:text-${tech.color}-500 transition-colors">Rozpocznij →</div>
                     </div>
                 `;
-                list.appendChild(el);
+                list.appendChild(btn);
             });
         }
 
@@ -534,6 +325,7 @@
     </script>
 </body>
 </html>
+
 
 
 
