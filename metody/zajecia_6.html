@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
@@ -6,12 +6,17 @@
     <title>Eksperyment Percepcji</title>
     <!-- Biblioteki zewnętrzne -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        body { background-color: #f8fafc; font-family: sans-serif; }
+        :root {
+            --page-bg: #f8fafc;
+            --page-text: #334155;
+        }
+
         .inkblot { filter: contrast(120%) brightness(95%); transition: opacity 0.5s; }
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -445,3 +450,4 @@
     </script>
 </body>
 </html>
+

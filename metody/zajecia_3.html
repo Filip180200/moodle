@@ -1,148 +1,167 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statystyka - Wybór Pacjenta</title>
+    <title>3. Studium Przypadku</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome (dla ikon) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Czcionki Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Noto Sans', sans-serif; }
+        :root {
+            --scrollbar-thumb: #8b5cf6;
+        }
+
         h1, h2, h3 { font-family: 'Noto Serif', serif; }
-        
-        /* Pasek przewijania dla estetyki */
-        .scroller::-webkit-scrollbar { width: 8px; }
-        .scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .scroller::-webkit-scrollbar-track { background: transparent; }
     </style>
 </head>
-<body class="bg-slate-900 h-screen flex items-center justify-center p-4 overflow-hidden">
+<body class="bg-slate-900 min-h-screen">
+  <div class="min-h-screen p-4 md:p-8 flex justify-center">
+    <main class="w-full max-w-5xl">
 
-    <!-- Główny Kontener (Karta) -->
-    <div class="max-w-6xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-[80vh]">
-        
-        <!-- Lewy Panel (Informacyjny) -->
-        <div class="md:w-1/3 bg-slate-800 p-8 text-white flex flex-col justify-center relative">
-            <!-- Pasek dekoracyjny na górze -->
-            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
-            
-            <div class="mb-8">
-                <h1 class="text-4xl font-bold mb-4 mt-2">Studium Przypadku</h1>
-                <p class="opacity-80 text-sm leading-relaxed text-slate-300">
-                    Wybierz pacjenta z listy, aby przejść do symulacji rozmowy z wykorzystaniem sztucznej inteligencji.
+      <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden">
+        <div class="h-2 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+
+        <div class="p-5 md:p-8">
+          <div class="text-xs text-slate-300/80 tracking-wide">
+            Metodologia badań psychologicznych &bull; Filip Liebersbach
+          </div>
+
+          <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight font-serif">
+            3. Studium Przypadku
+          </h1>
+
+          <div class="mt-3 text-sm md:text-base text-slate-300/90 leading-relaxed">
+            <ol class="mt-2 list-decimal ml-5 space-y-1 text-slate-200/85">
+              <li>Otwórz „Przykład” i zobacz wzorcową analizę.</li>
+              <li>Wybierz pacjenta z listy.</li>
+              <li>Rozpocznij rozmowę i zbierz kluczowe informacje do analizy.</li>
+            </ol>
+          </div>
+        </div>
+      </header>
+
+      <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-lg overflow-hidden">
+        <div class="p-5 md:p-6 border-b border-slate-200">
+          <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-book-open text-indigo-600"></i>
+            Przykład
+          </h2>
+
+          <a href="/workspaces/moodle/metody/zajecia_3/Przykładowe Studium Przypadku.pdf"
+             target="_blank"
+             class="mt-4 block rounded-xl bg-white border border-indigo-200 hover:border-indigo-300 hover:shadow-md transition group">
+            <div class="p-4 flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-graduation-cap"></i>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-3">
+                  <h3 class="text-lg font-bold text-indigo-700 group-hover:underline">
+                    Jan Kowalski
+                  </h3>
+                  <i class="fa-solid fa-chevron-right text-indigo-400"></i>
+                </div>
+
+                <p class="mt-1 text-sm text-slate-500">
+                  Wzorcowa analiza i opis przypadku.
                 </p>
-            </div>
 
-            <!-- Lista kroków (dekoracyjna) -->
-            <div class="space-y-4 text-sm mt-auto">
-                <div class="flex items-center gap-3">
-                    <span class="bg-indigo-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg shadow-indigo-500/30">1</span> 
-                    <span class="font-semibold">Zapoznaj się z przykładem</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span class="bg-slate-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs">2</span> 
-                    <span class="text-slate-300">Wybierz pacjenta</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span class="bg-purple-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg shadow-purple-500/30">3</span> 
-                    <span class="text-slate-300">Rozpocznij wywiad (Czat AI)</span>
-                </div>
+                <span class="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-indigo-700 bg-indigo-50 px-4 py-2 rounded-full">
+                  Otwórz PDF
+                  <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                </span>
+              </div>
             </div>
-
-            <!-- Stopka lewego panelu -->
-            <div class="mt-8 pt-6 border-t border-slate-700 text-xs text-slate-500 text-center">
-                &copy; 2025 Filip Liebersbach
-            </div>
+          </a>
         </div>
 
-        <!-- Prawy Panel (Lista Przycisków) -->
-        <div class="md:w-2/3 p-6 md:p-10 bg-slate-50 overflow-y-auto scroller flex flex-col">
-            
-            <!-- Sekcja 1: Materiały pomocnicze -->
-            <div class="mb-8">
-                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-book-open text-indigo-600"></i> Przykład
-                </h2>
-                
-                <!-- Guzik Przykładowego Studium (Zaktualizowana ścieżka i usunięte DEMO) -->
-                <a href="/workspaces/moodle/metody/zajecia_3/Przykładowe Studium Przypadku.pdf" target="_blank" class="group block p-5 bg-white border border-indigo-200 rounded-xl hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 relative overflow-hidden">
-                    <div class="flex items-center gap-5">
-                        <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800 group-hover:text-indigo-700 transition">Studium przypadku</h3>
-                            <p class="text-sm text-slate-500 mt-1">Zobacz wzorcową analizę i opis przypadku przed rozpoczęciem pracy.</p>
-                        </div>
-                        <div class="ml-auto text-slate-300 group-hover:text-indigo-500 transition">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </div>
-                    </div>
-                </a>
-            </div>
+        <div class="p-5 md:p-6">
+          <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2 mb-4">
+            <i class="fa-solid fa-users text-slate-600"></i>
+            Pacjenci
+          </h2>
 
-            <!-- Sekcja 2: Lista Pacjentów -->
-            <div>
-                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-users text-slate-600"></i> Lista Pacjentów
-                </h2>
-                
-                <div class="grid grid-cols-1 gap-4">
-                    
-                    <!-- Pacjent 1 -->
-                    <a href="https://gemini.google.com/gem/1DconFwdwHvi9xDRR_ZwgNx4Mtnh6eT5E?usp=sharing" target="_blank" class="group p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-400 hover:shadow-md transition-all flex items-center gap-4">
-                        <div class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition text-slate-500">
-                            <i class="fa-solid fa-user-doctor"></i>
-                        </div>
-                        <div>
-                            <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition">Anna Kwiatkowska</div>
-                            <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-001</div>
-                        </div>
-                    </a>
-
-                    <!-- Pacjent 2 -->
-                    <a href="https://gemini.google.com/gem/1Q28Jn6Fz4ahWfF2uYI0gwtYarb6wq-wB?usp=sharing" target="_blank" class="group p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-400 hover:shadow-md transition-all flex items-center gap-4">
-                        <div class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition text-slate-500">
-                            <i class="fa-solid fa-user-tie"></i>
-                        </div>
-                        <div>
-                            <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition">Tomasz Biel</div>
-                            <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-002</div>
-                        </div>
-                    </a>
-
-                    <!-- Pacjent 3 -->
-                    <a href="https://gemini.google.com/gem/1WGeqbMAKrCqGQbwo5MMVEwe94xrkFA8d?usp=sharing" target="_blank" class="group p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-400 hover:shadow-md transition-all flex items-center gap-4">
-                        <div class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition text-slate-500">
-                            <i class="fa-solid fa-user-nurse"></i>
-                        </div>
-                        <div>
-                            <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition">Monika Sęk</div>
-                            <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-003</div>
-                        </div>
-                    </a>
-
-                    <!-- Pacjent 4 -->
-                    <a href="https://gemini.google.com/gem/1w8Cv9cAtISbaz8KT_V_ugW275nG3_MJp?usp=sharing" target="_blank" class="group p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-400 hover:shadow-md transition-all flex items-center gap-4">
-                        <div class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition text-slate-500">
-                            <i class="fa-solid fa-user-graduate"></i>
-                        </div>
-                        <div>
-                            <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition">Krzysztof Malec</div>
-                            <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-004</div>
-                        </div>
-                    </a>
-
+          <div class="space-y-3">
+            <a href="https://gemini.google.com/gem/1DconFwdwHvi9xDRR_ZwgNx4Mtnh6eT5E?usp=sharing"
+               target="_blank"
+               class="group block rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-md transition">
+              <div class="p-4 flex items-center gap-4">
+                <div class="w-11 h-11 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition">
+                  <i class="fa-solid fa-user-doctor text-xl"></i>
                 </div>
-            </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-bold text-slate-800 group-hover:text-indigo-700 truncate">
+                    Anna Kwiatkowska
+                  </div>
+                  <div class="text-xs text-slate-400 font-mono mt-0.5">
+                    ID: P-001
+                  </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-indigo-500"></i>
+              </div>
+            </a>
 
+            <a href="https://gemini.google.com/gem/1Q28Jn6Fz4ahWfF2uYI0gwtYarb6wq-wB?usp=sharing"
+               target="_blank"
+               class="group block rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-md transition">
+              <div class="p-4 flex items-center gap-4">
+                <div class="w-11 h-11 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition">
+                  <i class="fa-solid fa-user-tie text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-bold text-slate-800 group-hover:text-indigo-700 transition truncate">Tomasz Biel</div>
+                  <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-002</div>
+                </div>
+                <div class="text-slate-300 group-hover:text-indigo-500 transition">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+              </div>
+            </a>
+
+            <a href="https://gemini.google.com/gem/1WGeqbMAKrCqGQbwo5MMVEwe94xrkFA8d?usp=sharing"
+               target="_blank"
+               class="group block rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-md transition">
+              <div class="p-4 flex items-center gap-4">
+                <div class="w-11 h-11 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition">
+                  <i class="fa-solid fa-user-nurse text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-bold text-slate-800 group-hover:text-indigo-700 transition truncate">Monika Sęk</div>
+                  <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-003</div>
+                </div>
+                <div class="text-slate-300 group-hover:text-indigo-500 transition">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+              </div>
+            </a>
+
+            <a href="https://gemini.google.com/gem/1w8Cv9cAtISbaz8KT_V_ugW275nG3_MJp?usp=sharing"
+               target="_blank"
+               class="group block rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-md transition">
+              <div class="p-4 flex items-center gap-4">
+                <div class="w-11 h-11 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition">
+                  <i class="fa-solid fa-user-graduate text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-bold text-slate-800 group-hover:text-indigo-700 transition truncate">Krzysztof Malec</div>
+                  <div class="text-xs text-slate-400 font-mono mt-0.5">ID: P-004</div>
+                </div>
+                <div class="text-slate-300 group-hover:text-indigo-500 transition">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
-    </div>
-
+      </div>
+    </main>
+  </div>
 </body>
 </html>
+
+
+
