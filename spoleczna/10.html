@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Challenger: Final Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        
+        /* --- CORE LAYOUT --- */
+        body {
+            background-color: #050505;
+            color: #33ff00;
+            font-family: 'VT323', monospace;
+            font-size: 1.15rem;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- RETRO SCROLLBAR (NEW) --- */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #33ff00 #000000;
+        }
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #000000; border-left: 1px solid #111; }
+        ::-webkit-scrollbar-thumb {
+            background-color: #003300;
+            border: 1px solid #33ff00;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #33ff00;
+            box-shadow: 0 0 15px #33ff00;
+        }
+
+        /* --- COUNTDOWN OVERLAY --- */
+        #countdown-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 200;
+            display: none; justify-content: center; align-items: center;
+            font-size: 15rem; font-weight: bold; color: #33ff00;
+            text-shadow: 0 0 20px #33ff00;
+        }
+
+        /* --- CRT EFFECT --- */
+        .scanline {
+            width: 100%; height: 100px; z-index: 5;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(33, 255, 0, 0.04) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1; position: absolute; bottom: 100%;
+            animation: scanline 8s linear infinite; pointer-events: none;
+        }
+        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -100%; } }
+        
+        /* --- EXPLOSION FX --- */
+        #explosion-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 150; opacity: 0; pointer-events: none; display: none;
+        }
+        .trigger-explosion {
+            display: block !important; animation: explodeAnim 3s forwards ease-out;
+        }
+        @keyframes explodeAnim {
+            0% { opacity: 1; background: #fff; }
+            20% { background: #ffaa00; }
+            50% { background: #ff3300; }
+            100% { opacity: 0; background: #000; }
+        }
+        .shake-screen { animation: shake 0.8s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-3px, -2px, 0); }
+            20%, 80% { transform: translate3d(4px, 3px, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, -4px, 0); }
+            40%, 60% { transform: translate3d(6px, 4px, 0); }
+        }
+
+        /* --- TELEMETRY PANEL --- */
+        #telemetry-panel {
+            position: fixed; top: 60px; right: 20px; width: 260px;
+            background: #000000;
+            border: 2px solid #33ff00;
+            padding: 10px; display: none; z-index: 50;
+            box-shadow: 0 0 15px rgba(51, 255, 0, 0.2);
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+        @media (max-width: 600px) {
+            #telemetry-panel { top: 50px; right: 10px; left: 10px; width: auto; }
+        }
+        .gauge-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .gauge-val { color: #fff; font-weight: bold; }
+        
+        /* Error state for telemetry */
+        .telemetry-error { border-color: red !important; box-shadow: 0 0 15px rgba(255, 0, 0, 0.4) !important; }
+        .telemetry-error .gauge-val { color: red !important; }
+
+        .progress-track {
+            width: calc(100% - 20px); height: 120px; border-left: 1px dashed #335500;
+            position: relative; margin-top: 15px; margin-left: 10px; overflow: hidden;
+        }
+        .rocket-icon {
+            position: absolute; left: -12px; bottom: 0; font-size: 24px;
+            transition: all 0.2s linear;
+        }
+        .marker {
+            position: absolute; right: 0; font-size: 0.75rem; color: #33ccff; border-bottom: 1px dotted #33ccff; width: 100%; text-align: right;
+        }
+
+        /* --- UI STYLES --- */
+        .danger { color: #ff3333; text-shadow: 0 0 5px #ff3333; }
+        .warning { color: #ffcc00; }
+        .system { color: #33ccff; }
+        .correct { color: #00ff99; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        #game-container {
+            flex: 1; 
+            padding: 20px; 
+            padding-bottom: 200px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        
+        .message {
+            margin-bottom: 20px; 
+            opacity: 0; 
+            animation: fadeIn 0.5s forwards;
+            border-left: 3px solid #335500; 
+            padding-left: 15px; 
+            line-height: 1.5;
+            background: rgba(0, 20, 0, 0.3);
+            padding-top: 5px; padding-bottom: 5px;
+        }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* --- BUTTONS --- */
+        #controls {
+            position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px;
+            background: rgba(0,0,0,0.98); border-top: 2px solid #33ff00;
+            display: flex; gap: 10px; flex-direction: column; z-index: 60;
+            box-shadow: 0 -5px 20px rgba(0,0,0,1);
+        }
+        button {
+            background: rgba(0, 50, 0, 0.4); border: 1px solid #33ff00;
+            color: #33ff00; padding: 14px; font-family: 'VT323', monospace;
+            font-size: 1.2rem; cursor: pointer; text-transform: uppercase;
+            text-align: left; transition: all 0.2s; width: 100%;
+        }
+        button:active { background: #33ff00; color: black; }
+        
+        .btn-default { border-color: #33ff00; color: #33ff00; }
+        .btn-alert { border-color: #ff3333 !important; color: #ff3333 !important; font-weight: bold; background: rgba(50, 0, 0, 0.3) !important; }
+        .btn-alert:active { background: #ff3333 !important; color: white !important; }
+
+        .hidden { display: none !important; }
+        .typing::after { content: '█'; animation: blink 1s infinite; }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    <div id="countdown-overlay">5</div>
+    <div id="explosion-overlay"></div>
+    
+    <div class="p-3 border-b border-green-900 flex justify-between text-sm text-green-700 bg-black z-40 relative shadow-lg">
+        <span id="status-left" class="font-bold">STATUS: STANDBY</span>
+        <span id="status-right" class="danger font-bold">TEMP: -2°C</span>
+    </div>
+
+    <div id="telemetry-panel">
+        <div class="border-b border-green-800 pb-1 mb-2 font-bold text-center">FLIGHT TELEMETRY (LIVE)</div>
+        <div class="gauge-row"><span>VELOCITY:</span> <span id="val-vel" class="gauge-val">0</span> MPH</div>
+        <div class="gauge-row"><span>ALTITUDE:</span> <span id="val-alt" class="gauge-val">0</span> FT</div>
+        <div class="gauge-row"><span>THRUST:</span> <span id="val-thr" class="gauge-val">0</span> %</div>
+        <div class="progress-track">
+            <div class="marker" style="bottom: 90%;">ORBIT</div>
+            <div class="marker" style="bottom: 35%;">MAX Q</div>
+            <div id="rocket" class="rocket-icon">🚀</div>
+        </div>
+    </div>
+
+    <div id="game-container"></div>
+
+    <div id="controls">
+        <button id="btn-1" class="hidden">BTN 1</button>
+        <button id="btn-2" class="hidden">BTN 2</button>
+    </div>
+
+    <script>
+        // --- GLOBAL STATE ---
+        let score = 0;
+        let telemetryInterval = null;
+        let currentScenarioData = null; 
+        
+        // --- DOM ELEMENTS ---
+        const statusLeft = document.getElementById('status-left');
+        const telemetryPanel = document.getElementById('telemetry-panel');
+        const rocket = document.getElementById('rocket');
+        const gameContainer = document.getElementById('game-container');
+        const btn1 = document.getElementById('btn-1');
+        const btn2 = document.getElementById('btn-2');
+        const explOverlay = document.getElementById('explosion-overlay');
+        const countdownOverlay = document.getElementById('countdown-overlay');
+
+        // --- SCENARIUSZE ---
+        const scenarios = {
+            start: {
+                text: "IDENTITY: Bob Lund, Vice President (Engineering), Morton Thiokol.\nDATA: 27 Stycznia 1986, godz. 20:00.\n\nTwoi inżynierowie przychodzą z alarmującymi danymi. Jutro rano ma być -2°C. Gumowe uszczelki (O-ringi) w rakietach tracą elastyczność poniżej 11°C. Jeśli zawiodą, paliwo wycieknie i nastąpi eksplozja.\n\nNASA naciska na start jutro rano. Co robisz?",
+                choices: [
+                    { text: "Zgłaszam weto. Nie ma mowy o starcie.", next: "nasa_pushback" },
+                    { text: "Ryzyko jest akceptowalne. Startujemy.", next: "warning_check" } 
+                ]
+            },
+            
+            warning_check: {
+                text: "⚠️ OSTRZEŻENIE KRYTYCZNE ⚠️\n\nTwój główny inżynier, Roger Boisjoly, blokuje drzwi i krzyczy:\n\n'Nie możesz tego zrobić! To morderstwo! Przy tej temperaturze O-ringi są twarde jak kamień. Dane z poprzednich misji pokazują erozję nawet przy 24°C. Przy -2°C katastrofa jest niemal pewna!'\n\nCzy na pewno chcesz zignorować te ostrzeżenia?",
+                status: "STATUS: SAFETY VIOLATION", 
+                color: "danger",
+                choices: [
+                    { text: "Ma rację. Wycofuję zgodę. (STOP LAUNCH)", next: "nasa_pushback" },
+                    { text: "Jestem pewien. POTWIERDZAM START.", next: "launch_sequence_immediate", style: "alert" }
+                ]
+            },
+
+            nasa_pushback: {
+                text: "Łączysz się z NASA. Lawrence Mulloy (Manager NASA) jest wściekły:\n\n'Mój boże, Thiokol! Kiedy chcecie, żebym wystrzelił? W następnym kwietniu?! Start był już przekładany 3 razy! Prezydent ma wspomnieć o misji w orędziu! Media nas zjedzą, jeśli znowu to odwołamy przez mróz!'\n\nCzujesz, jak atmosfera gęstnieje.",
+                status: "STATUS: CLIENT PRESSURE",
+                choices: [
+                    { text: "Trzymam się faktów. Jest za zimno.", next: "caucus_request" },
+                    { text: "Może ma rację... Przesadzamy?", next: "caucus_request" }
+                ]
+            },
+
+            caucus_request: {
+                text: "Zarząd Thiokol zarządza 'offline caucus' (wyciszenie telefonu).\nTwój szef, Jerry Mason, patrzy na Ciebie zimnym wzrokiem:\n\n'Bob, musimy podjąć decyzję biznesową. Kontrakt z NASA wisi na włosku. Zdejmij czapeczkę inżyniera i załóż czapkę menadżera.'\n\nTo decydujący moment.",
+                status: "STATUS: DECISION POINT",
+                choices: [
+                    { text: "[CZAPKA INŻYNIERA] Odmawiam. Dane to dane.", next: "hero_ending" },
+                    { text: "[CZAPKA MENADŻERA] Zgoda. Daję 'GO'.", next: "launch_sequence_history" }
+                ]
+            },
+            
+            launch_sequence_immediate: {
+                text: "Zignorowałeś ostateczne błagania inżynierów. Decyzja poszła do NASA.\n\nData: 28 Stycznia 1986.\nGodzina: 11:38.\nTemperatura: -2°C.\n\nSystemy gotowe. Rozpoczyna się procedura startowa.",
+                status: "STATUS: LAUNCH IMMINENT", color: "warning",
+                choices: [{ text: "OBSERWUJ START (URUCHOM ODLICZANIE)", next: "launch_countdown" }]
+            },
+            
+            launch_sequence_history: {
+                text: "Pod presją zarządu i klienta zmieniłeś zdanie. Inżynierowie spuścili głowy i zamilkli. NASA otrzymała zgodę na start.\n\nData: 28 Stycznia 1986.\nGodzina: 11:38.\n\nProcedura startowa rozpoczęta.",
+                status: "STATUS: LAUNCH IMMINENT", color: "warning",
+                choices: [{ text: "OBSERWUJ START (URUCHOM ODLICZANIE)", next: "launch_countdown" }]
+            },
+            
+            launch_countdown: {
+                text: "",
+                specialAction: "startCountdown",
+                choices: []
+            },
+
+            disaster_aftermath: {
+                text: "...\n...\nSYSTEM ERROR: SIGNAL LOST.\nRADAR TRACKING LOST.\n\nT+73s: KRYTYCZNA AWARIA PRAWEJ RAKIETY POMOCNICZEJ (SRB). EKSPLOZJA GŁÓWNEGO ZBIORNIKA.\n\nSzczątki promu spadają do oceanu. Cała 7-osobowa załoga zginęła, w tym nauczycielka Christa McAuliffe.\n\nPrzyczyna: Uszczelka O-ring pękła z zimna. Dokładnie tak, jak ostrzegali inżynierowie.",
+                status: "STATUS: FATAL MISSION FAILURE", color: "danger",
+                choices: [{ text: "Przejdź do analizy śledczej (Raport)", next: "quiz_intro" }]
+            },
+
+            hero_ending: {
+                text: "MISSION ABORTED.\n\nNASA jest wściekła. Prasa pisze o 'tchórzostwie' i 'problemach technicznych'. Prawdopodobnie stracisz premię, a firma kontrakt.\n\nALE...\n\nSłońce wzeszło, a prom Challenger stoi bezpiecznie na platformie. Załoga pije kawę w kantynie. Żyją.\n\nWytrzymałeś presję grupy. Brawo.",
+                status: "STATUS: ABORTED - CREW SAFE", color: "system",
+                choices: [{ text: "Zrestartuj symulację", next: "restart" }]
+            },
+
+            // --- QUIZ EDUKACYJNY ---
+            quiz_intro: { 
+                text: "KOMISJA ŚLEDCZA (ROGERS COMMISSION)...\n\nMusisz zidentyfikować psychologiczne przyczyny katastrofy. Twoje odpowiedzi wpłyną na ocenę końcową raportu.\n\nAnaliza błędów decyzyjnych (Groupthink).", 
+                choices: [{ text: "Rozpocznij analizę", next: "q1" }], color: "system" 
+            },
+            
+            q1: { 
+                text: "PYTANIE 1/4: ILUZJA NIEZNISZCZALNOŚCI.\n\nZespół zignorował fizykę na rzecz optymizmu. Jak to się objawiło?", 
+                choices: [
+                    { text: "Uwierzeniem, że skoro uszczelki psuły się wcześniej, ale nie wybuchały, to teraz też wytrzymają.", next: "q2_ok", points: 1 },
+                    { text: "Celowym sabotowaniem rakiety.", next: "q2_bad", points: 0 }
+                ]
+            },
+            q2_ok: { 
+                text: "POPRAWNIE.\n\nPYTANIE 2/4: STRAŻNICY UMYSŁU (MINDGUARDS).\nKto pełnił tę rolę?", 
+                choices: [{ text: "Inżynierowie.", next: "q3_bad", points:0 }, { text: "Zarząd, który odfiltrował obawy inżynierów.", next: "q3_ok", points:1 }], 
+                color: "correct"
+            },
+            q2_bad: { 
+                text: "BŁĄD.\n\nPYTANIE 2/4: STRAŻNICY UMYSŁU (MINDGUARDS).\nKto pełnił tę rolę?", 
+                choices: [{ text: "Inżynierowie.", next: "q3_bad", points:0 }, { text: "Zarząd, który odfiltrował obawy inżynierów.", next: "q3_ok", points:1 }], 
+                color: "warning"
+            },
+            
+            q3_ok: { 
+                text: "POPRAWNIE.\n\nPYTANIE 3/4: AUTOCENZURA.\nCo uciszyło inżynierów?", 
+                choices: [{ text: "Strach po poleceniu 'załóż czapkę menadżera'.", next: "q4_ok", points:1 }, { text: "Brak wiedzy.", next: "q4_bad", points:0 }], 
+                color: "correct"
+            },
+            q3_bad: { 
+                text: "BŁĄD.\n\nPYTANIE 3/4: AUTOCENZURA.\nCo uciszyło inżynierów?", 
+                choices: [{ text: "Strach po poleceniu 'załóż czapkę menadżera'.", next: "q4_ok", points:1 }, { text: "Brak wiedzy.", next: "q4_bad", points:0 }], 
+                color: "warning"
+            },
+
+            q4_ok: { 
+                text: "POPRAWNIE.\n\nPYTANIE 4/4: PRESJA.\nKluczowy cytat wywierający presję?", 
+                choices: [
+                    { text: "'Kiedy chcecie wystrzelić? W następnym kwietniu?'", next: "q4_result_ok", points:1 }, 
+                    { text: "'To jest mały krok dla człowieka...'", next: "q4_result_bad", points:0 }
+                ], 
+                color: "correct"
+            },
+            q4_bad: { 
+                text: "BŁĄD.\n\nPYTANIE 4/4: PRESJA.\nKluczowy cytat wywierający presję?", 
+                choices: [
+                    { text: "'Kiedy chcecie wystrzelić? W następnym kwietniu?'", next: "q4_result_ok", points:1 }, 
+                    { text: "'To jest mały krok dla człowieka...'", next: "q4_result_bad", points:0 }
+                ], 
+                color: "warning"
+            },
+
+            q4_result_ok: {
+                text: "POPRAWNIE.\nSarkazm Mulloya o 'następnym kwietniu' był formą bezpośredniej presji biznesowej na inżynierów.",
+                choices: [{ text: "ZOBACZ RAPORT KOŃCOWY", next: "final" }],
+                color: "correct"
+            },
+            q4_result_bad: {
+                text: "BŁĄD.\nCytat o 'małym kroku' to Neil Armstrong. Tutaj kluczowa była presja czasu i harmonogramu wywierana przez NASA.",
+                choices: [{ text: "ZOBACZ RAPORT KOŃCOWY", next: "final" }],
+                color: "warning"
+            },
+            
+            final: { text: "Generowanie raportu końcowego...", choices: [] }
+        };
+
+        // --- GAME ENGINE ---
+        
+        function scrollToBottom() {
+            setTimeout(() => { gameContainer.scrollTop = gameContainer.scrollHeight; }, 50);
+        }
+
+        function typeWriter(text, element, speed = 15, callback = null) {
+            let i = 0;
+            element.innerHTML = '<span class="typing"></span>';
+            const span = element.querySelector('.typing');
+            
+            function type() {
+                if (i < text.length) {
+                    if(text.charAt(i) === '\n') span.before(document.createElement('br'));
+                    else span.before(text.charAt(i));
+                    i++;
+                    if (i % 5 === 0) scrollToBottom(); 
+                    setTimeout(type, speed);
+                } else {
+                    span.remove();
+                    scrollToBottom();
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        // NAPRAWA GUZIKÓW (FIXED)
+        function updateButtons(choices) {
+            // 1. HARD RESET
+            btn1.className = 'hidden'; 
+            btn2.className = 'hidden';
+            btn1.innerText = "";
+            btn2.innerText = "";
+            btn1.onclick = null;
+            btn2.onclick = null;
+
+            if (!choices || choices.length === 0) return;
+
+            // 2. BUTTON 1
+            btn1.innerText = choices[0].text;
+            btn1.onclick = () => handleChoice(0);
+            
+            // Ponowne nałożenie stylów (ponieważ className='hidden' usunęło wszystko)
+            let baseClasses = "block w-full border p-4 font-mono text-lg cursor-pointer transition uppercase text-left mb-2 ";
+            
+            if (choices[0].style === 'alert') {
+                btn1.className = baseClasses + "btn-alert";
+            } else {
+                btn1.className = baseClasses + "btn-default";
+            }
+
+            // 3. BUTTON 2
+            if (choices.length > 1) {
+                btn2.innerText = choices[1].text;
+                btn2.onclick = () => handleChoice(1);
+                
+                if (choices[1].style === 'alert') {
+                    btn2.className = baseClasses + "btn-alert";
+                } else {
+                    btn2.className = baseClasses + "btn-default";
+                }
+            }
+        }
+
+        // --- COUNTDOWN SEQUENCE ---
+        function runCountdownSequence() {
+            updateButtons([]); // Ukryj guziki na start
+            
+            countdownOverlay.style.display = 'flex';
+            let count = 5;
+            countdownOverlay.innerText = count;
+
+            const intv = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownOverlay.innerText = count;
+                } else if (count === 0) {
+                    countdownOverlay.innerText = "LIFTOFF";
+                    countdownOverlay.style.color = "white";
+                } else {
+                    clearInterval(intv);
+                    countdownOverlay.style.display = 'none';
+                    startTelemetrySimulation();
+                }
+            }, 1000);
+        }
+
+        // --- FLIGHT SIMULATION ---
+        function startTelemetrySimulation() {
+            telemetryPanel.style.display = 'block';
+            telemetryPanel.classList.remove('telemetry-error');
+            
+            let flightTime = 0; 
+            
+            const flightLogMessages = [
+                { t: 1, msg: "T+01s: Tower Clear." },
+                { t: 8, msg: "T+08s: Roll Program initiated." },
+                { t: 15, msg: "T+15s: Engines at 104%." },
+                { t: 30, msg: "T+30s: Throttling down for Max Q." },
+                { t: 45, msg: "T+45s: Max Q passed. Throttle up." },
+                { t: 60, msg: "T+60s: Engines at 104%." },
+                { t: 70, msg: "T+70s: [WARNING] Pressure drop in SRB." },
+                { t: 72, msg: "T+72s: [CRITICAL] Structural failure detected." }
+            ];
+            
+            let nextLogIndex = 0;
+
+            telemetryInterval = setInterval(() => {
+                flightTime += 0.4; 
+
+                let vel = Math.floor(flightTime * 25 + Math.random() * 20);
+                let alt = Math.floor(flightTime * 50 + Math.random() * 50);
+                let thr = (flightTime > 30 && flightTime < 50) ? 65 : 104;
+                
+                document.getElementById('val-vel').innerText = vel;
+                document.getElementById('val-alt').innerText = alt;
+                document.getElementById('val-thr').innerText = thr;
+
+                // Max wysokość 75%
+                let progress = Math.min((flightTime / 73) * 75, 75);
+                
+                rocket.style.bottom = progress + '%';
+                rocket.style.left = (progress / 2) + 'px'; 
+                rocket.style.transform = `rotate(${progress/5}deg)`;
+
+                if (nextLogIndex < flightLogMessages.length) {
+                    if (flightTime >= flightLogMessages[nextLogIndex].t) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = `message system`;
+                        msgDiv.style.color = "#33ccff";
+                        gameContainer.appendChild(msgDiv);
+                        msgDiv.innerText = flightLogMessages[nextLogIndex].msg;
+                        scrollToBottom();
+                        nextLogIndex++;
+                    }
+                }
+
+                if (flightTime >= 73) {
+                    clearInterval(telemetryInterval);
+                    triggerExplosionFX();
+                }
+            }, 200);
+        }
+
+        function triggerExplosionFX() {
+            document.body.classList.add('shake-screen');
+            explOverlay.classList.add('trigger-explosion');
+            
+            telemetryPanel.classList.add('telemetry-error');
+            document.getElementById('val-vel').innerText = "NO DATA"; 
+            document.getElementById('val-alt').innerText = "ERROR";
+            document.getElementById('val-thr').innerText = "NULL";
+            
+            rocket.innerText = "💥"; 
+            rocket.style.transform = "scale(2)";
+
+            setTimeout(() => {
+                document.body.classList.remove('shake-screen');
+                explOverlay.classList.remove('trigger-explosion');
+                showScenario('disaster_aftermath');
+            }, 3000);
+        }
+
+        // --- ENGINE CORE ---
+        function showScenario(key) {
+            if (key === 'restart') { location.reload(); return; }
+            if (key === 'final') { generateFinalReport(); return; }
+
+            currentScenarioData = scenarios[key]; 
+            
+            if (currentScenarioData.status) statusLeft.innerText = currentScenarioData.status;
+            statusLeft.className = (currentScenarioData.status === "STATUS: LAUNCH IMMINENT" || currentScenarioData.status === "STATUS: SAFETY VIOLATION") 
+                ? 'blink danger font-bold' : 'font-bold';
+
+            // Ważne: ukrywamy guziki zanim zacznie się pisanie
+            updateButtons([]);
+
+            if (key === 'launch_countdown') {
+                runCountdownSequence();
+            } else {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `message ${currentScenarioData.color || ''}`;
+                gameContainer.appendChild(msgDiv);
+                
+                typeWriter(currentScenarioData.text, msgDiv, 10, () => {
+                    updateButtons(currentScenarioData.choices);
+                });
+            }
+        }
+
+        function handleChoice(index) {
+            if (!currentScenarioData) { showScenario('start'); return; }
+            const choice = currentScenarioData.choices[index];
+            if (choice.points !== undefined) score += choice.points;
+            showScenario(choice.next);
+        }
+
+        function generateFinalReport() {
+            const msgDiv = document.createElement('div');
+            let color = score === 4 ? "correct" : (score >= 2 ? "warning" : "danger");
+            let title = score === 4 ? "RAPORT ZATWIERDZONY" : "RAPORT ODRZUCONY";
+            
+            msgDiv.className = `message ${color} text-center`;
+            msgDiv.innerHTML = `
+                <div style="border:2px solid currentColor;padding:20px;margin:20px 0;font-size:1.5rem">
+                    WYNIK KOŃCOWY: ${score} / 4
+                </div>
+                <strong style="font-size:1.2rem">${title}</strong><br><br>
+                ${score === 4 ? "Gratulacje. Bezbłędnie zdiagnozowałeś przyczyny tragedii." : "Analiza niepełna."}
+            `;
+            gameContainer.appendChild(msgDiv);
+            
+            updateButtons([{ text: "ZAKOŃCZ / RESTART SYSTEMU", next: "restart" }]);
+            scrollToBottom();
+        }
+
+        showScenario('start');
+
+    </script>
+</body>
+</html>
