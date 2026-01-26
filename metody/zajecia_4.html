@@ -1,43 +1,73 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warsztaty Systemowe</title>
+    <title>4. Genogramy</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Noto Sans', sans-serif; background-color: #f1f5f9; color: #1e293b; overflow: hidden; }
+        :root {
+            --page-bg: #f1f5f9;
+            --page-text: #1e293b;
+            --scrollbar-thumb: #a855f7;
+        }
+
         .step-content { display: none; height: 100%; }
         .step-content.active { display: block; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        /* Pasek przewijania */
-        .scroller::-webkit-scrollbar { width: 8px; height: 8px; }
-        .scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
 <body class="h-screen flex flex-col relative">
 
-    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4 transition-transform duration-500">
-        <div class="max-w-6xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh]">
-            <div class="md:w-1/3 bg-slate-800 p-8 text-white flex flex-col justify-center relative">
-                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
-                <h1 class="text-4xl font-bold mb-4 font-serif">Genogramy</h1>
-                <p class="mb-8 opacity-80 text-sm leading-relaxed">Wybierz uczestnika, aby rozpocząć analizę jego przypadku.</p>
-                <div class="space-y-3 text-sm">
-                    <div class="flex items-center gap-3"><span class="bg-indigo-600 w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs">1</span> Opis Przypadku</div>
-                    <div class="flex items-center gap-3"><span class="bg-slate-600 w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs">2</span> Symbole</div>
-                    <div class="flex items-center gap-3"><span class="bg-purple-600 w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs">3</span> Genogram (Hasło)</div>
+    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
+        <div class="w-full max-w-5xl">
+            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden relative">
+                <div class="h-2 bg-gradient-to-r from-violet-500 to-fuchsia-600"></div>
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <g stroke="white" stroke-width="0.5" fill="none">
+                            <rect x="8" y="16" width="12" height="12" rx="2"/>
+                            <circle cx="50" cy="22" r="6"/>
+                            <rect x="80" y="16" width="12" height="12" rx="2"/>
+                            <line x1="20" y1="28" x2="50" y2="36"/>
+                            <line x1="80" y1="28" x2="50" y2="36"/>
+                            <line x1="50" y1="28" x2="50" y2="44"/>
+                            <circle cx="34" cy="54" r="6"/>
+                            <rect x="60" y="48" width="12" height="12" rx="2"/>
+                            <line x1="50" y1="44" x2="34" y2="48"/>
+                            <line x1="50" y1="44" x2="66" y2="48"/>
+                            <line x1="34" y1="60" x2="34" y2="78"/>
+                            <line x1="66" y1="60" x2="66" y2="78"/>
+                            <circle cx="22" cy="84" r="5"/>
+                            <rect x="56" y="78" width="12" height="12" rx="2"/>
+                            <circle cx="78" cy="84" r="5"/>
+                            <line x1="34" y1="78" x2="22" y2="79"/>
+                            <line x1="66" y1="78" x2="78" y2="79"/>
+                        </g>
+                    </svg>
                 </div>
-            </div>
-            <div class="md:w-2/3 p-8 bg-slate-50 overflow-y-auto scroller">
-                <h2 class="text-2xl font-bold text-slate-800 mb-6">Wybierz Osobę:</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="scenario-list">
+                <div class="p-5 md:p-8">
+                    <div class="text-xs text-slate-300/80 tracking-wide">
+                        Metodologia badań psychologicznych &bull; Filip Liebersbach
                     </div>
+                    <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight font-serif">4. Genogramy</h1>
+                    <ol class="mt-3 list-decimal ml-5 space-y-1 text-slate-200/85">
+                        <li>Przeczytaj opis przypadku</li>
+                        <li>Zapoznaj się z symbolami</li>
+                        <li>Stwórz geneogram</li>
+                    </ol>
+                </div>
+            </header>
+
+            <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-lg overflow-hidden">
+                <div class="p-5 md:p-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Wybierz osobę</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="scenario-list"></div>
+                </div>
             </div>
         </div>
     </div>
-
     <div id="app-screen" class="flex-1 flex flex-col h-full transition-opacity duration-500 opacity-0 pointer-events-none">
         
         <div class="bg-white border-b border-slate-200 p-3 shadow-sm z-20 flex justify-between items-center px-6 shrink-0 h-16">
@@ -67,7 +97,7 @@
             </div>
 
             <div id="step-3" class="step-content h-full relative">
-                <div id="lock-overlay" class="absolute inset-0 bg-slate-100 z-10 flex flex-col items-center justify-center p-6">
+                <div id="lock-overlay" class="absolute inset-0 bg-slate-100 z-10 flex flex-col items-center justify-start p-6">
                     <div class="bg-white p-8 rounded-2xl shadow-xl text-center max-w-sm border border-slate-200">
                         <div class="text-5xl mb-4">🔒</div>
                         <h3 class="text-xl font-bold text-slate-800 mb-2">Genogram Ukryty</h3>
@@ -185,3 +215,8 @@
     </script>
 </body>
 </html>
+
+
+
+
+

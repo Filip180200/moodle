@@ -1,0 +1,70 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap');
+
+:root {
+    --page-bg: #f8fafc;
+    --page-text: #334155;
+    --scrollbar-thumb: #cbd5e1;
+    --scrollbar-track: transparent;
+}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  background-color: var(--page-bg);
+  color: var(--page-text);
+  overflow-x: hidden; /* zamiast hidden */
+  overflow-y: auto;   /* pozwól scrollować */
+}
+body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+.step-content {
+    display: none;
+    height: 100%;
+    overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.step-content.active {
+    display: block;
+    opacity: 1;
+}
+
+.scroller::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.scroller::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+}
+
+.scroller::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
