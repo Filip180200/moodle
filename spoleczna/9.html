@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamika Związku - Sternberg v5</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Paleta kolorów */
+            --passion: #d63031;    /* Czerwony */
+            --intimacy: #0984e3;   /* Niebieski */
+            --commitment: #2d3436; /* Czarny */
+            
+            --bg-color: #f5f6fa;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: #2d3436;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            display: grid;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        h2 { margin-top: 0; color: #636e72; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; }
+        h3 { margin: 5px 0 20px 0; font-size: 1.8rem; color: #2d3436; }
+
+        /* --- NOWA SEKCJA: DEFINICJE --- */
+        .definitions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .def-item {
+            padding: 15px;
+            border-radius: 8px;
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            transition: transform 0.2s;
+        }
+
+        .def-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .def-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Kolorowe kropki przy tytułach */
+        .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .dot-passion { background: var(--passion); }
+        .dot-intimacy { background: var(--intimacy); }
+        .dot-commitment { background: var(--commitment); }
+
+        .def-text {
+            font-size: 0.95rem;
+            color: #636e72;
+            line-height: 1.5;
+        }
+
+        @media(max-width: 768px) {
+            .definitions-grid { grid-template-columns: 1fr; }
+            .lab-grid { grid-template-columns: 1fr; }
+            .chart-wrapper { height: 300px; }
+        }
+
+        /* --- WYKRESY I SUWAKI (STYL Z POPRZEDNIEJ WERSJI) --- */
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        .slider-group { margin-top: 30px; }
+
+        input[type=range] {
+            width: 100%;
+            margin: 10px 0;
+            cursor: pointer;
+            height: 8px;
+            background: #dfe6e9;
+            border-radius: 5px;
+            -webkit-appearance: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #2d3436;
+            cursor: pointer;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            margin-top: -8px; 
+        }
+
+        #pSlider::-webkit-slider-thumb { background: var(--passion); }
+        #iSlider::-webkit-slider-thumb { background: var(--intimacy); }
+        #cSlider::-webkit-slider-thumb { background: var(--commitment); }
+
+        .phase-info {
+            background-color: #fff;
+            border-left: 6px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 0 10px 10px 0;
+            background: #fdfdfd;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+        }
+
+        .phase-title {
+            display: block;
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #2d3436;
+        }
+
+        .phase-desc {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #4b4b4b;
+        }
+
+        .lab-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .lab-controls label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .diagnosis-box {
+            text-align: center;
+            padding: 20px;
+            background: #f1f2f6;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .match-score {
+            display: inline-block;
+            background: #2d3436;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- NOWA CZĘŚĆ: Definicje -->
+    <div class="card">
+        <h2>Teoria</h2>
+        <h3>Trójczynnikowa Teoria Miłości</h3>
+        <p style="color: #636e72; margin-bottom: 20px;">
+            Według Roberta Sternberga miłość składa się z trzech podstawowych komponentów, które zmieniają się w czasie niezależnie od siebie.
+        </p>
+
+        <div class="definitions-grid">
+            <!-- Namiętność -->
+            <div class="def-item" style="border-top: 3px solid var(--passion);">
+                <div class="def-header" style="color: var(--passion);">
+                    <span class="dot dot-passion"></span> Namiętność
+                </div>
+                <div class="def-text">
+                    Silne emocje, fizyczne pożądanie i ekscytacja. To "gorący" składnik miłości, który rozwija się najszybciej, ale też najszybciej wygasa. Napędza początkową fazę związku.
+                </div>
+            </div>
+
+            <!-- Intymność -->
+            <div class="def-item" style="border-top: 3px solid var(--intimacy);">
+                <div class="def-header" style="color: var(--intimacy);">
+                    <span class="dot dot-intimacy"></span> Intymność
+                </div>
+                <div class="def-text">
+                    Uczucie bliskości, ciepła, przywiązania i zaufania. To "ciepły" składnik. Obejmuje dbanie o dobro partnera, szczere rozmowy i wzajemne wsparcie emocjonalne.
+                </div>
+            </div>
+
+            <!-- Zaangażowanie -->
+            <div class="def-item" style="border-top: 3px solid var(--commitment);">
+                <div class="def-header" style="color: var(--commitment);">
+                    <span class="dot dot-commitment"></span> Zaangażowanie
+                </div>
+                <div class="def-text">
+                    Świadoma decyzja o pozostaniu w związku i wspólne plany na przyszłość. To "chłodny", racjonalny składnik. Jest najbardziej stabilny i kluczowy dla długoterminowego przetrwania relacji.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CZĘŚĆ 1: Oś Czasu -->
+    <div class="card">
+        <h2>Perspektywa Czasowa</h2>
+        <h3>Ewolucja Związku (6 Etapów)</h3>
+        
+        <div class="chart-wrapper">
+            <canvas id="timelineChart"></canvas>
+        </div>
+
+        <div class="slider-group">
+            <label style="font-weight: bold; display: block; margin-bottom: 10px;">
+                Wybierz moment w czasie: <span id="timeLabel" style="color: var(--passion)">Etap 1</span>
+            </label>
+            <input type="range" id="timeSlider" min="1" max="6" step="1" value="1">
+            
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #999; margin-top: 5px;">
+                <span>Start</span>
+                <span>Rozwój</span>
+                <span>Szczyt</span>
+                <span>Stabilizacja</span>
+                <span>Wygasanie</span>
+                <span>Koniec</span>
+            </div>
+        </div>
+
+        <div class="phase-info" id="phaseBox">
+            <span class="phase-title" id="pTitle">1. Zakochanie</span>
+            <div class="phase-desc" id="pDesc">
+                To początek drogi. Namiętność wybucha gwałtownie, napędzana chemią mózgu (dopamina, fenyloetyloamina). Partnerzy idealizują się nawzajem ("różowe okulary"). Intymność (wiedza o sobie) i Zaangażowanie (plany) są jeszcze minimalne. To faza intensywna, ale często krótkotrwała.
+            </div>
+        </div>
+    </div>
+
+    <!-- CZĘŚĆ 2: Laboratorium -->
+    <div class="card">
+        <h2>Laboratorium Diagnostyczne</h2>
+        <h3>Analiza Twojego Związku</h3>
+        <p style="color: #636e72; margin-bottom: 30px;">Ustaw suwaki tak jak czujesz się <strong>teraz</strong>. System sprawdzi, do którego etapu z powyższego wykresu najbardziej pasuje Twój stan.</p>
+
+        <div class="lab-grid">
+            <div class="lab-controls">
+                <label style="color: var(--passion)">Namiętność (Passion) <span id="valP">80%</span></label>
+                <input type="range" id="pSlider" min="0" max="100" value="80">
+
+                <label style="color: var(--intimacy)">Intymność (Intimacy) <span id="valI">20%</span></label>
+                <input type="range" id="iSlider" min="0" max="100" value="20">
+
+                <label style="color: var(--commitment)">Zaangażowanie (Commitment) <span id="valC">10%</span></label>
+                <input type="range" id="cSlider" min="0" max="100" value="10">
+
+                <div class="diagnosis-box">
+                    <span class="match-score" id="matchScore">Dopasowanie: 95%</span>
+                    <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">Twoja relacja to:</div>
+                    <div class="phase-title" style="font-size: 1.4rem; margin: 5px 0;" id="labResultTitle">1. Zakochanie</div>
+                    <div style="font-size: 0.9rem; line-height: 1.4;" id="labResultDesc">Dominacja namiętności przy niskim poziomie pozostałych składników.</div>
+                </div>
+            </div>
+
+            <div style="height: 350px; position: relative;">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- DANE DEFINIUJĄCE 6 ETAPÓW (WZORZEC) ---
+    const phasePrototypes = {
+        1: { vals: [90, 20, 10],  name: "1. Zakochanie", desc: "Silna fascynacja fizyczna, brak głębszej więzi i planów." },
+        2: { vals: [85, 60, 40],  name: "2. Romantyczne początki", desc: "Namiętność wciąż wysoka, rośnie zaufanie i pierwsze deklaracje." },
+        3: { vals: [80, 90, 85],  name: "3. Związek kompletny", desc: "Stan idealny. Wysoki poziom wszystkich trzech składników." },
+        4: { vals: [30, 85, 90],  name: "4. Związek przyjacielski", desc: "Namiętność opada. Relacja opiera się na przyjaźni i lojalności." },
+        5: { vals: [10, 20, 95],  name: "5. Związek pusty", desc: "Wygasły uczucia i bliskość. Pozostaje tylko przyzwyczajenie lub obowiązek." },
+        6: { vals: [5, 5, 10],    name: "6. Rozpad związku", desc: "Brak wszystkich składników. Koniec relacji." }
+    };
+
+    // --- KONFIGURACJA WYKRESU LINIOWEGO (GÓRA) ---
+    const points = 120;
+    const labels = Array.from({length: points}, (_, i) => i);
+
+    const dataP = labels.map(x => {
+        if (x < 30) return 10 + (x * 3);
+        if (x >= 30 && x < 50) return 100 - ((x-30) * 4);
+        return Math.max(5, 20 - ((x-50) * 0.2)); 
+    });
+    const dataI = labels.map(x => {
+        if (x < 40) return x * 2;
+        if (x >= 40 && x < 90) return 80 - ((x-40) * 0.4);
+        return Math.max(5, 60 - ((x-90) * 2));
+    });
+    const dataC = labels.map(x => {
+        if (x < 15) return 5;
+        if (x >= 15 && x < 40) return 5 + (x-15) * 3.5;
+        if (x >= 40 && x < 100) return 92; 
+        return Math.max(0, 92 - ((x-100) * 10));
+    });
+
+    const bgPlugin = {
+        id: 'bgPlugin',
+        beforeDraw: (chart) => {
+            const {ctx, chartArea, scales: {x}} = chart;
+            if (!x) return;
+            
+            const zones = [20, 40, 60, 90, 110, 120];
+            const colors = [
+                'rgba(255, 230, 230, 0.5)',
+                'rgba(255, 204, 204, 0.5)',
+                'rgba(255, 100, 100, 0.1)',
+                'rgba(200, 200, 255, 0.3)',
+                'rgba(200, 240, 255, 0.4)',
+                'rgba(240, 240, 240, 0.5)'
+            ];
+
+            let startX = 0;
+            zones.forEach((end, i) => {
+                const x1 = x.getPixelForValue(startX);
+                const x2 = x.getPixelForValue(end);
+                
+                ctx.fillStyle = colors[i];
+                ctx.fillRect(x1, chartArea.top, x2 - x1, chartArea.bottom - chartArea.top);
+                
+                ctx.beginPath();
+                ctx.moveTo(x2, chartArea.top);
+                ctx.lineTo(x2, chartArea.bottom);
+                ctx.strokeStyle = "rgba(0,0,0,0.1)";
+                ctx.stroke();
+
+                ctx.fillStyle = "#999";
+                ctx.font = "bold 24px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(i+1, x1 + (x2-x1)/2, chartArea.bottom - 20);
+
+                startX = end;
+            });
+        }
+    };
+
+    new Chart(document.getElementById('timelineChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: 'Namiętność', data: dataP, borderColor: '#d63031', borderWidth: 4, tension: 0.4, pointRadius: 0 },
+                { label: 'Intymność', data: dataI, borderColor: '#0984e3', borderWidth: 4, tension: 0.4, pointRadius: 0, borderDash: [5,5] },
+                { label: 'Zaangażowanie', data: dataC, borderColor: '#2d3436', borderWidth: 4, tension: 0.2, pointRadius: 0, borderDash: [2,2] }
+            ]
+        },
+        plugins: [bgPlugin],
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            scales: { x: { display: false }, y: { display: false, min: 0, max: 110 } },
+            plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, font: {size: 14} } }, tooltip: {enabled: false} }
+        }
+    });
+
+    // --- LOGIKA SUWAKA CZASU ---
+    const timeSlider = document.getElementById('timeSlider');
+    const pTitle = document.getElementById('pTitle');
+    const pDesc = document.getElementById('pDesc');
+    const pBox = document.getElementById('phaseBox');
+    const timeLabel = document.getElementById('timeLabel');
+
+    const descriptions = {
+        1: "<strong>Etap 1: Zakochanie</strong><br>To faza 'różowych okularów'. Gwałtowny wyrzut hormonów sprawia, że partner wydaje się idealny. Namiętność jest dominująca i przytłacza racjonalne myślenie. Intymność (poznanie wad i zalet) oraz Zaangażowanie są na niskim poziomie.",
+        2: "<strong>Etap 2: Romantyczne początki</strong><br>Opadają pierwsze emocje, zaczynamy realnie poznawać drugą osobę. Namiętność wciąż jest wysoka, ale dynamicznie rośnie Intymność – buduje się zaufanie. Pojawiają się pierwsze poważne deklaracje (wzrost Zaangażowania).",
+        3: "<strong>Etap 3: Związek kompletny</strong><br>Najbardziej pożądany, ale najtrudniejszy do utrzymania etap. Wszystkie trzy wskaźniki (Namiętność, Intymność, Zaangażowanie) są na wysokim poziomie. Czujemy pożądanie, przyjaźń i pewność wspólnej przyszłości.",
+        4: "<strong>Etap 4: Związek przyjacielski</strong><br>Namiętność naturalnie opada (biologii nie da się oszukać). Związek przekształca się w głęboką przyjaźń. Intymność i Zaangażowanie są kluczowym spoiwem. To stabilny etap, w którym żyje wiele długoletnich par.",
+        5: "<strong>Etap 5: Związek pusty</strong><br>Kryzys. Namiętność wygasła dawno temu, intymność zanikła (ludzie żyją obok siebie, a nie ze sobą). Jedynym, co trzyma parę razem, jest Zaangażowanie (wspólny kredyt, dzieci, strach przed zmianą).",
+        6: "<strong>Etap 6: Rozpad związku</strong><br>Zaangażowanie gwałtownie spada – podjęto decyzję o rozstaniu. Namiętność i Intymność są bliskie zeru lub wręcz ujemne (niechęć, wrogość). To koniec cyklu."
+    };
+
+    const phaseColors = ["#ff7675", "#fab1a0", "#ff6b6b", "#a29bfe", "#74b9ff", "#b2bec3"];
+
+    timeSlider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value);
+        timeLabel.textContent = `Etap ${val}`;
+        pTitle.innerHTML = phasePrototypes[val].name;
+        pDesc.innerHTML = descriptions[val];
+        pBox.style.borderLeftColor = phaseColors[val-1];
+    });
+
+    // --- LOGIKA LABORATORIUM ---
+    const ctxR = document.getElementById('radarChart').getContext('2d');
+    const radarChart = new Chart(ctxR, {
+        type: 'radar',
+        data: {
+            labels: ['Namiętność', 'Zaangażowanie', 'Intymność'],
+            datasets: [{
+                label: 'Twój Związek',
+                data: [80, 10, 20],
+                backgroundColor: 'rgba(9, 132, 227, 0.2)',
+                borderColor: '#0984e3',
+                borderWidth: 3,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#0984e3'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { color: '#dfe6e9' },
+                    grid: { color: '#dfe6e9' },
+                    pointLabels: { font: { size: 14, weight: 'bold' }, color: '#2d3436' },
+                    suggestedMin: 0, suggestedMax: 100,
+                    ticks: { display: false }
+                }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    const sP = document.getElementById('pSlider');
+    const sI = document.getElementById('iSlider');
+    const sC = document.getElementById('cSlider');
+    const lTitle = document.getElementById('labResultTitle');
+    const lDesc = document.getElementById('labResultDesc');
+    const lScore = document.getElementById('matchScore');
+
+    function updateLab() {
+        const p = parseInt(sP.value);
+        const i = parseInt(sI.value);
+        const c = parseInt(sC.value);
+
+        document.getElementById('valP').textContent = p + '%';
+        document.getElementById('valI').textContent = i + '%';
+        document.getElementById('valC').textContent = c + '%';
+
+        radarChart.data.datasets[0].data = [p, c, i];
+        radarChart.update();
+
+        let bestMatch = 1;
+        let minDistance = 999999;
+
+        for (let phase = 1; phase <= 6; phase++) {
+            const proto = phasePrototypes[phase].vals;
+            const dist = Math.sqrt(
+                Math.pow(p - proto[0], 2) + 
+                Math.pow(i - proto[1], 2) + 
+                Math.pow(c - proto[2], 2)
+            );
+
+            if (dist < minDistance) {
+                minDistance = dist;
+                bestMatch = phase;
+            }
+        }
+
+        const matchPercent = Math.max(0, Math.round(100 - (minDistance / 1.5)));
+
+        lTitle.textContent = phasePrototypes[bestMatch].name;
+        lDesc.textContent = phasePrototypes[bestMatch].desc;
+        lScore.textContent = `Dopasowanie: ${matchPercent}%`;
+        
+        if (matchPercent > 80) lScore.style.background = "#00b894";
+        else if (matchPercent > 50) lScore.style.background = "#fdcb6e";
+        else lScore.style.background = "#ff7675";
+    }
+
+    [sP, sI, sC].forEach(s => s.addEventListener('input', updateLab));
+    
+    updateLab();
+    timeSlider.dispatchEvent(new Event('input'));
+
+</script>
+
+</body>
+</html>

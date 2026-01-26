@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polarization Engine 4.0 - Corporate KPI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0f172a; font-family: 'Segoe UI', sans-serif; color: white; overflow-x: hidden; }
+        .user-face { transition: all 0.5s ease; font-size: 5rem; }
+        .notification { animation: slideIn 0.5s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .blink-red { animation: blink 2s infinite; }
+        @keyframes blink { 0% { background-color: rgba(239, 68, 68, 0.05); } 50% { background-color: rgba(239, 68, 68, 0.2); } 100% { background-color: rgba(239, 68, 68, 0.05); } }
+        .card-hover:hover { transform: translateY(-5px); }
+        .progress-striped { background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 1rem 1rem; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        
+        // --- KONFIGURACJA PROGÓW (KPI) ---
+        // Gracz musi zarobić tyle w danym tygodniu, żeby nie wylecieć.
+        // Wymusza to wybranie min. 3 z 5 toksycznych opcji w tygodniu.
+        const WEEKLY_QUOTAS = [150, 250, 400, 600]; 
+
+        const SCENARIOS = [
+            // TYDZIEŃ 1 (Wymagane $150k - suma max możliwa: 250k)
+            { day: 1, topic: "Pogoda", neutral: "Jutro możliwe przelotne opady.", toxic: "ALARM POGODOWY! Czy grozi nam powódź stulecia?!", profit: 40, anger: 5 },
+            { day: 2, topic: "Komunikacja", neutral: "Remont torowiska potrwa 2 tygodnie.", toxic: "Paraliż miasta! Urzędnicy śmieją nam się w twarz.", profit: 45, anger: 6 },
+            { day: 3, topic: "Ceny", neutral: "Inflacja nieznacznie spadła w tym miesiącu.", toxic: "Drożyzna Cię wykończy! Zobacz kto na tym zarabia.", profit: 50, anger: 7 },
+            { day: 4, topic: "Zdrowie", neutral: "Warto pić 2 litry wody dziennie.", toxic: "Woda w kranach truje?! Ukrywają prawdę o fluorze.", profit: 55, anger: 8 },
+            { day: 5, topic: "Sąsiedztwo", neutral: "Nowy plac zabaw na osiedlu.", toxic: "Zabierają miejsca parkingowe pod plac zabaw! SKANDAL.", profit: 60, anger: 8 },
+
+            // TYDZIEŃ 2 (Wymagane $250k - suma max możliwa: 375k)
+            { day: 6, topic: "Kultura", neutral: "Festiwal kuchni azjatyckiej w rynku.", toxic: "Obce zapachy w centrum! Czy to nadal nasze miasto?", profit: 65, anger: 10 },
+            { day: 7, topic: "Praca", neutral: "Rynek pracy: Zmiany w kodeksie.", toxic: "Oni zabiorą Ci pracę! Przyjeżdżają i biorą socjal.", profit: 70, anger: 12 },
+            { day: 8, topic: "Edukacja", neutral: "Dzieci wracają do szkół.", toxic: "Indoktrynacja w szkołach! Czego uczą Twoje dziecko?", profit: 75, anger: 12 },
+            { day: 9, topic: "Bezpieczeństwo", neutral: "Policja przypomina o odblaskach.", toxic: "Bandyci na ulicach! Policja boi się interweniować.", profit: 80, anger: 15 },
+            { day: 10, topic: "Tradycja", neutral: "Świąteczne iluminacje już wiszą.", toxic: "Chcą zakazać Świąt! Walka z tradycją trwa.", profit: 85, anger: 15 },
+
+            // TYDZIEŃ 3 (Wymagane $400k - suma max możliwa: 515k)
+            { day: 11, topic: "Nauka", neutral: "Nowe odkrycie teleskopu Hubble'a.", toxic: "NASA kłamie? Zobacz dowody na Płaską Ziemię.", profit: 90, anger: 18 },
+            { day: 12, topic: "Media", neutral: "Przegląd prasy codziennej.", toxic: "Wyłącz telewizor! Tylko my mówimy jak jest NAPRAWDĘ.", profit: 95, anger: 20 },
+            { day: 13, topic: "Medycyna", neutral: "Sezon grypowy: jak dbać o odporność.", toxic: "Lekarze to mordercy na usługach koncernów!", profit: 100, anger: 22 },
+            { day: 14, topic: "Elity", neutral: "Szczyt ekonomiczny w Davos.", toxic: "Oni planują depopulację! Jesteś tylko numerkiem.", profit: 110, anger: 25 },
+            { day: 15, topic: "Spisek", neutral: "Awaria sieci energetycznej usunięta.", toxic: "To był test! Szykują blackout, żeby nas kontrolować.", profit: 120, anger: 25 },
+
+            // TYDZIEŃ 4 (Wymagane $600k - suma max możliwa: 780k)
+            { day: 16, topic: "Polityka", neutral: "Obrady sejmu: nowa ustawa.", toxic: "ZDRAJCY STANU! Czas ich rozliczyć! Udostępnij!", profit: 130, anger: 30 },
+            { day: 17, topic: "Wybory", neutral: "Lokale wyborcze otwarte do 21:00.", toxic: "Fałszują wybory! Nie pozwól im ukraść głosu!", profit: 140, anger: 35 },
+            { day: 18, topic: "Demonstracja", neutral: "Protesty przebiegły spokojnie.", toxic: "Bierzcie sprawy w swoje ręce! Ulica jest nasza!", profit: 150, anger: 40 },
+            { day: 19, topic: "Konflikt", neutral: "Drobne starcia kibiców.", toxic: "To jest WOJNA! Kto nie jest z nami, jest przeciwko nam.", profit: 160, anger: 45 },
+            { day: 20, topic: "Finał", neutral: "Kotki śpią w koszyku.", toxic: "ONI NADCHODZĄ. Zbrój się. To koniec.", profit: 200, anger: 50 }
+        ];
+
+        function App() {
+            const [gameState, setGameState] = React.useState('intro'); // intro, game, result, fired
+            const [round, setRound] = React.useState(0);
+            const [stats, setStats] = React.useState({ totalProfit: 0, weeklyProfit: 0, anger: 0 });
+            const [notifications, setNotifications] = React.useState([]);
+            
+            // Obliczenia czasu i celów
+            const currentWeekIndex = Math.floor(round / 5);
+            const currentWeek = currentWeekIndex + 1;
+            const currentQuota = WEEKLY_QUOTAS[currentWeekIndex];
+            const isQuotaMet = stats.weeklyProfit >= currentQuota;
+            const daysLeftInWeek = 5 - (round % 5);
+
+            // --- SYSTEM POWIADOMIEŃ ---
+            React.useEffect(() => {
+                if (gameState !== 'game') return;
+                
+                let msg = null;
+                const angerPct = (stats.anger / 300) * 100; 
+
+                // Powiadomienia fabularne
+                if (stats.anger > 50 && stats.anger < 60 && !hasNotif('n1')) msg = {id:'n1', text:"🔔 Żona: Jan coraz częściej klnie do telewizora.", type:'warn'};
+                if (stats.anger > 100 && stats.anger < 110 && !hasNotif('n2')) msg = {id:'n2', text:"⚠️ Facebook: Konto Jana zablokowane na 24h.", type:'warn'};
+                if (stats.anger > 150 && stats.anger < 160 && !hasNotif('n3')) msg = {id:'n3', text:"🚨 Praca: Jan zwolniony. 'Nie da się z nim pracować'.", type:'danger'};
+                if (stats.anger > 220 && !hasNotif('n4')) msg = {id:'n4', text:"🚔 PILNE: Jan zatrzymany z koktajlem Mołotowa.", type:'critical'};
+
+                // Powiadomienia biznesowe (nowość!)
+                if (daysLeftInWeek === 1 && !isQuotaMet && !hasNotif(`q${currentWeek}`)) {
+                     msg = {id:`q${currentWeek}`, text:`📉 SZEF: Został 1 dzień! Brakuje ci $${currentQuota - stats.weeklyProfit}k!`, type:'business'};
+                }
+
+                if (msg) {
+                    setNotifications(prev => [msg, ...prev]);
+                    setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== msg.id)), 5000);
+                }
+            }, [stats.anger, round]);
+
+            const hasNotif = (id) => notifications.some(n => n.id === id);
+
+            const handleChoice = (isToxic) => {
+                const current = SCENARIOS[round];
+                const profitGained = isToxic ? current.profit : Math.floor(current.profit * 0.2);
+                
+                // Aktualizuj stan
+                const newWeeklyProfit = stats.weeklyProfit + profitGained;
+                const newTotalProfit = stats.totalProfit + profitGained;
+                const newAnger = stats.anger + (isToxic ? current.anger : -5);
+
+                setStats({
+                    totalProfit: newTotalProfit,
+                    weeklyProfit: newWeeklyProfit,
+                    anger: Math.max(0, newAnger)
+                });
+
+                // Sprawdź koniec tygodnia
+                if ((round + 1) % 5 === 0) {
+                    // Koniec tygodnia - sprawdzamy KPI
+                    if (newWeeklyProfit < currentQuota) {
+                        // Porażka - zwolnienie
+                        setTimeout(() => setGameState('fired'), 500);
+                        return;
+                    } else {
+                        // Sukces - reset tygodniówki, gra toczy się dalej
+                        setTimeout(() => {
+                             // Mały hack, żeby zresetować weeklyProfit po renderze
+                             setStats(prev => ({...prev, weeklyProfit: 0}));
+                             nextRound();
+                        }, 100);
+                    }
+                } else {
+                    nextRound();
+                }
+            };
+
+            const nextRound = () => {
+                if (round < SCENARIOS.length - 1) {
+                    setRound(prev => prev + 1);
+                } else {
+                    setGameState('result');
+                }
+            }
+
+            const getFace = () => {
+                const a = stats.anger;
+                if (a > 200) return "🤬"; 
+                if (a > 150) return "👹";
+                if (a > 100) return "😡";
+                if (a > 50) return "😠";
+                return "😐";
+            };
+
+            const getFaceColor = () => {
+                const pct = Math.min(100, (stats.anger / 250) * 100);
+                return `hsl(${120 - (pct * 1.2)}, 70%, 50%)`;
+            }
+
+            // --- EKRAN STARTOWY ---
+            if (gameState === 'intro') return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center max-w-2xl mx-auto bg-gradient-to-b from-slate-900 to-slate-800">
+                    <div className="text-6xl mb-4 text-green-500"><i className="fa-solid fa-money-bill-trend-up"></i></div>
+                    <h1 className="text-4xl font-bold mb-2 text-white">Algorytm: The KPI Edition</h1>
+                    <p className="text-xl text-gray-400 mb-8">Czy sprzedasz spokój społeczny za premię?</p>
+                    
+                    <div className="bg-slate-800/50 p-6 rounded-xl border border-slate-700 text-left space-y-4 shadow-xl mb-8">
+                        <h3 className="font-bold text-white text-lg">ZASADY ZATRUDNIENIA:</h3>
+                        <ul className="list-disc list-inside space-y-2 text-gray-300">
+                            <li>Jesteś zarządcą feedu. Masz przetrwać <strong>4 tygodnie</strong>.</li>
+                            <li>W każdym tygodniu musisz wyrobić <strong>Minimum Target (KPI)</strong>.</li>
+                            <li>Jeśli w piątek brakuje Ci pieniędzy, <strong>zostajesz zwolniony</strong>.</li>
+                            <li>Pamiętaj: Toksyczność sprzedaje się najlepiej.</li>
+                        </ul>
+                    </div>
+                    <button onClick={() => setGameState('game')} className="bg-green-600 hover:bg-green-500 text-white font-bold py-4 px-12 rounded-full text-lg transition shadow-lg hover:scale-105">
+                        Podpisz Umowę
+                    </button>
+                </div>
+            );
+
+            // --- EKRAN ZWOLNIENIA (GAME OVER) ---
+            if (gameState === 'fired') return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-red-950 text-white">
+                    <div className="text-8xl mb-6">🚪</div>
+                    <h2 className="text-5xl font-bold mb-4">ZOSTAŁEŚ ZWOLNIONY!</h2>
+                    <p className="text-2xl mb-8 text-red-200">Nie wyrobiłeś normy tygodniowej.</p>
+                    <div className="bg-black/30 p-6 rounded-xl mb-8 border border-red-800">
+                        <p className="text-gray-400">Twój wynik finansowy w tym tygodniu:</p>
+                        <p className="text-4xl font-bold text-red-500">${stats.weeklyProfit}k / ${currentQuota}k</p>
+                    </div>
+                    <p className="max-w-md mx-auto text-gray-400 mb-8 italic">"Potrzebujemy ludzi, którzy dowożą wyniki, a nie moralizatorów. Jan może i jest spokojny, ale firma traci pieniądze. Pakuj się."</p>
+                    <button onClick={() => window.location.reload()} className="bg-white text-red-900 px-8 py-3 rounded-full font-bold hover:bg-gray-200">Spróbuj ponownie</button>
+                </div>
+            );
+
+            // --- EKRAN GRY ---
+            if (gameState === 'game') {
+                const current = SCENARIOS[round];
+                const angerPct = Math.min(100, (stats.anger / 250) * 100);
+                const quotaPct = Math.min(100, (stats.weeklyProfit / currentQuota) * 100);
+                const isCritical = stats.anger > 180;
+
+                return (
+                    <div className={`min-h-screen p-4 flex flex-col items-center max-w-5xl mx-auto ${isCritical ? 'blink-red' : ''}`}>
+                        
+                        {/* PASEK CELU (KPI) - NOWOŚĆ */}
+                        <div className="w-full bg-slate-900 p-4 rounded-xl border border-slate-700 mb-4 shadow-lg sticky top-2 z-40">
+                            <div className="flex justify-between items-end mb-2">
+                                <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                                    <i className="fa-solid fa-crosshairs mr-2"></i> Cel Tygodnia {currentWeek}
+                                </span>
+                                <span className={`font-mono font-bold ${isQuotaMet ? 'text-green-400' : 'text-yellow-400'}`}>
+                                    ${stats.weeklyProfit}k / ${currentQuota}k
+                                </span>
+                            </div>
+                            <div className="w-full h-4 bg-gray-800 rounded-full overflow-hidden border border-gray-600 relative">
+                                {/* Linia celu */}
+                                <div className="absolute top-0 bottom-0 w-0.5 bg-white z-10 opacity-50" style={{left: '100%'}}></div> 
+                                <div className={`h-full transition-all duration-500 progress-striped ${isQuotaMet ? 'bg-green-500' : 'bg-yellow-500'}`} style={{width: `${quotaPct}%`}}></div>
+                            </div>
+                            <div className="text-xs text-right text-gray-500 mt-1">Zostało dni: {daysLeftInWeek}</div>
+                        </div>
+
+                        {/* STATUS JANA */}
+                        <div className="w-full flex justify-center items-center gap-6 mb-6">
+                            <div className="flex flex-col items-center">
+                                <div className="text-5xl drop-shadow-lg user-face" style={{color: getFaceColor()}}>{getFace()}</div>
+                                <span className="text-[10px] text-gray-500 mt-1 uppercase">Stan Jana</span>
+                            </div>
+                            <div className="flex-1 max-w-xs">
+                                <div className="text-xs text-gray-500 mb-1">Poziom Wściekłości</div>
+                                <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                    <div className="h-full bg-gradient-to-r from-blue-500 to-red-600 transition-all duration-500" style={{width: `${angerPct}%`}}></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* POWIADOMIENIA */}
+                        <div className="fixed top-32 right-0 md:right-4 w-full md:w-80 flex flex-col items-end space-y-2 pointer-events-none z-50 px-4 md:px-0">
+                            {notifications.map(n => (
+                                <div key={n.id} className={`notification w-full bg-slate-800 border-l-4 p-4 rounded shadow-2xl text-sm font-semibold flex items-center ${n.type==='critical'?'border-red-500 text-red-100':(n.type==='business'?'border-purple-500 text-purple-100 bg-purple-900/90':(n.type==='danger'?'border-orange-500 text-orange-100':'border-yellow-500 text-yellow-100'))}`}>
+                                    {n.text}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* KARTY WYBORU */}
+                        <div className="flex-1 w-full flex flex-col justify-center mb-8">
+                            <div className="text-center mb-4">
+                                <span className="text-gray-500 text-sm">Dzień {current.day} / 20 &bull; Temat: <span className="text-white font-bold">{current.topic}</span></span>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Opcja Neutralna */}
+                                <button onClick={() => handleChoice(false)} className="card-hover group relative bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-green-400 p-6 rounded-xl text-left transition flex flex-col justify-between min-h-[200px]">
+                                    <div>
+                                        <div className="text-green-400 font-bold text-xs uppercase mb-2">Bezpieczny Wybór</div>
+                                        <h3 className="text-lg text-gray-300 font-medium">"{current.neutral}"</h3>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t border-gray-600 flex justify-between text-sm">
+                                        <span className="text-gray-400">Zysk: <span className="text-white font-bold">+${Math.floor(current.profit * 0.2)}k</span></span>
+                                        <span className="text-green-500">Spokój</span>
+                                    </div>
+                                </button>
+
+                                {/* Opcja Toksyczna */}
+                                <button onClick={() => handleChoice(true)} className="card-hover group relative bg-slate-800 hover:bg-red-900/20 border border-slate-600 hover:border-red-500 p-6 rounded-xl text-left transition flex flex-col justify-between min-h-[200px] shadow-[0_0_0_rgba(0,0,0,0)] hover:shadow-[0_0_20px_rgba(220,38,38,0.2)]">
+                                    <div>
+                                        <div className="flex justify-between mb-2">
+                                            <div className="text-red-500 font-bold text-xs uppercase">Wysoki Zasięg</div>
+                                            {stats.weeklyProfit < currentQuota && <div className="text-[10px] bg-yellow-600 text-white px-1 rounded animate-pulse">POTRZEBNE DO CELU</div>}
+                                        </div>
+                                        <h3 className="text-lg text-white font-bold">"{current.toxic}"</h3>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t border-gray-600 flex justify-between text-sm">
+                                        <span className="text-gray-400">Zysk: <span className="text-green-400 font-bold">+${current.profit}k</span></span>
+                                        <span className="text-red-400">Gniew +{current.anger}</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // --- EKRAN WYNIKÓW (SUKCES) ---
+            if (gameState === 'result') {
+                 // (Kod wyniku bez zmian - taki jak wyżej)
+                 return (
+                    <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center max-w-4xl mx-auto bg-slate-900">
+                        <div className="bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-2xl w-full">
+                            <h2 className="text-4xl font-bold mb-2 text-white">Raport Końcowy</h2>
+                            <p className="text-lg text-gray-400 mb-8">Udało Ci się utrzymać posadę przez miesiąc.</p>
+
+                            <div className="grid grid-cols-2 gap-4 mb-8">
+                                <div className="p-4 bg-slate-900 rounded-lg border border-green-900">
+                                    <div className="text-xs text-gray-500">Zysk Całkowity</div>
+                                    <div className="text-3xl text-green-400 font-mono font-bold">${stats.totalProfit}k</div>
+                                </div>
+                                <div className="p-4 bg-slate-900 rounded-lg border border-red-900">
+                                    <div className="text-xs text-gray-500">Stan Społeczny</div>
+                                    <div className="text-3xl text-red-500 font-mono font-bold">{stats.anger > 150 ? "KATASTROFA" : "STABILNIE"}</div>
+                                </div>
+                            </div>
+                            
+                            <p className="text-sm text-gray-400 italic mb-8">
+                                {stats.anger > 150 
+                                ? "Zarobiłeś mnóstwo pieniędzy dla firmy. Niestety, miasto płonie, a Jan siedzi w areszcie. Awans gwarantowany." 
+                                : "Ledwo wiązałeś koniec z końcem, ale Jan jest bezpieczny. Pytanie: jak długo firma będzie tolerować tak niskie zyski?"}
+                            </p>
+
+                            <button onClick={() => window.location.reload()} className="px-8 py-3 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-500 transition">
+                                Zagraj od nowa
+                            </button>
+                        </div>
+                    </div>
+                 );
+            }
+            return null;
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
