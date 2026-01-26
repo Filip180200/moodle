@@ -42,8 +42,14 @@
     <!-- EKRAN LOBBY (WYBÓR TECHNIKI) -->
     <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
         <div class="w-full max-w-5xl">
-            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden">
+            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden relative">
                 <div class="h-2 bg-gradient-to-r from-teal-500 to-lime-500"></div>
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M0,50 Q25,0 50,50 T100,50" stroke="white" stroke-width="0.5" fill="none"/>
+                        <path d="M0,60 Q25,10 50,60 T100,60" stroke="white" stroke-width="0.5" fill="none"/>
+                    </svg>
+                </div>
                 <div class="p-5 md:p-8">
                     <div class="text-xs text-slate-300/80 tracking-wide">
                         Metodologia badań psychologicznych &bull; Filip Liebersbach
@@ -735,6 +741,7 @@
     </script>
 </body>
 </html>
+
 
 
 

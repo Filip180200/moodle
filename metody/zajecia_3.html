@@ -21,8 +21,18 @@
   <div class="min-h-screen p-4 md:p-8 flex justify-center">
     <main class="w-full max-w-5xl">
 
-      <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden">
+      <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden relative">
         <div class="h-2 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+        <div class="absolute inset-0 opacity-10 pointer-events-none">
+          <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <rect x="10" y="18" width="36" height="52" rx="3" stroke="white" stroke-width="0.5" fill="none"/>
+            <rect x="54" y="24" width="36" height="52" rx="3" stroke="white" stroke-width="0.5" fill="none"/>
+            <line x1="18" y1="30" x2="38" y2="30" stroke="white" stroke-width="0.4"/>
+            <line x1="18" y1="38" x2="42" y2="38" stroke="white" stroke-width="0.4"/>
+            <line x1="62" y1="36" x2="82" y2="36" stroke="white" stroke-width="0.4"/>
+            <line x1="62" y1="44" x2="86" y2="44" stroke="white" stroke-width="0.4"/>
+          </svg>
+        </div>
 
         <div class="p-5 md:p-8">
           <div class="text-xs text-slate-300/80 tracking-wide">
@@ -162,6 +172,7 @@
   </div>
 </body>
 </html>
+
 
 
 

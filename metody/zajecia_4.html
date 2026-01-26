@@ -22,8 +22,31 @@
 
     <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
         <div class="w-full max-w-5xl">
-            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden">
+            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden relative">
                 <div class="h-2 bg-gradient-to-r from-violet-500 to-fuchsia-600"></div>
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <g stroke="white" stroke-width="0.5" fill="none">
+                            <rect x="8" y="16" width="12" height="12" rx="2"/>
+                            <circle cx="50" cy="22" r="6"/>
+                            <rect x="80" y="16" width="12" height="12" rx="2"/>
+                            <line x1="20" y1="28" x2="50" y2="36"/>
+                            <line x1="80" y1="28" x2="50" y2="36"/>
+                            <line x1="50" y1="28" x2="50" y2="44"/>
+                            <circle cx="34" cy="54" r="6"/>
+                            <rect x="60" y="48" width="12" height="12" rx="2"/>
+                            <line x1="50" y1="44" x2="34" y2="48"/>
+                            <line x1="50" y1="44" x2="66" y2="48"/>
+                            <line x1="34" y1="60" x2="34" y2="78"/>
+                            <line x1="66" y1="60" x2="66" y2="78"/>
+                            <circle cx="22" cy="84" r="5"/>
+                            <rect x="56" y="78" width="12" height="12" rx="2"/>
+                            <circle cx="78" cy="84" r="5"/>
+                            <line x1="34" y1="78" x2="22" y2="79"/>
+                            <line x1="66" y1="78" x2="78" y2="79"/>
+                        </g>
+                    </svg>
+                </div>
                 <div class="p-5 md:p-8">
                     <div class="text-xs text-slate-300/80 tracking-wide">
                         Metodologia badań psychologicznych &bull; Filip Liebersbach
@@ -192,6 +215,7 @@
     </script>
 </body>
 </html>
+
 
 
 
