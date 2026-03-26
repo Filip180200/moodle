@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jak budować hipotezę</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #dbe2ea;
+      --accent: #2563eb;
+      --accent-soft: #eaf2ff;
+      --green-soft: #ecfdf5;
+      --yellow: #fff8db;
+      --red-soft: #fef2f2;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f8fbff 0%, #f5f7fb 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+    .hero, .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+    .hero { margin-bottom: 20px; }
+    h1, h2, h3 { margin-top: 0; }
+    .subtitle { color: var(--muted); font-size: 1.05rem; }
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+    .small { color: var(--muted); }
+
+    .formula {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      background: var(--yellow);
+      border: 1px solid #f0e1a2;
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.8;
+    }
+
+    .f1 { color: #2563eb; }
+    .f2 { color: #9333ea; }
+    .f3 { color: #059669; }
+    .f4 { color: #ea580c; }
+
+    .step1 { color: #2563eb; }
+    .step2 { color: #9333ea; }
+    .step3 { color: #059669; }
+    .step4 { color: #ea580c; }
+
+    .builder {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .slot {
+      min-height: 128px;
+      border: 2px dashed #c9d5ea;
+      border-radius: 18px;
+      padding: 14px;
+      background: #fbfdff;
+      transition: 0.2s ease;
+    }
+    .slot.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      transform: translateY(-2px);
+    }
+    .slot-title {
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .slot-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .preview {
+      padding: 18px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      font-size: 1.15rem;
+    }
+    .preview strong { color: var(--accent); }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .secondary { background: #e5e7eb; color: #111827; }
+
+    .explain {
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--green-soft);
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      display: none;
+    }
+    .explain.show { display: block; }
+
+    .banks {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 6px;
+    }
+    .bank {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: #fcfdff;
+    }
+    .bank h3 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+    .tile-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tile {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: white;
+      border: 1px solid #cfe0ff;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.18s ease;
+    }
+    .tile:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
+    }
+    .tile.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    .legend-box {
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: #fafcff;
+    }
+
+    .bad-good {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .bad, .good {
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+    }
+    .bad { background: var(--red-soft); border-color: #fecaca; }
+    .good { background: var(--green-soft); border-color: #a7f3d0; }
+    .bad h3 { color: #991b1b; }
+    .good h3 { color: #166534; }
+
+    @media (max-width: 900px) {
+      .slots, .banks, .bad-good { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 680px) {
+      .wrap { padding: 14px; }
+      .hero, .card { padding: 18px; }
+      .slots, .banks, .bad-good { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Jak zbudować hipotezę krok po kroku</h1>
+      <p class="subtitle">Z jakich elementów składa się dobra hipoteza i jak zamienić ogólny pomysł badawczy w zdanie, które da się sprawdzić.</p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Budowanie hipotezy — związek między zmiennymi</h2>
+        <p class="small">Najczęstszy typ hipotezy w psychologii: przewidujemy związek między dwiema zmiennymi.</p>
+
+        <div class="formula">
+          Przykład struktury: <strong>Im</strong> <span class="f1">zmienna 1</span>, <strong>tym</strong> <span class="f2">(wyższa / niższa)</span> <span class="f3">zmienna 2</span> <span class="f4">u danej grupy</span>
+        </div>
+
+        <div class="builder">
+          <div class="slots">
+            <div class="slot active" id="slot-predictor">
+              <div class="slot-title step1">1. Zmienna 1</div>
+              <div class="slot-value" id="value-predictor">Wybierz element</div>
+            </div>
+            <div class="slot" id="slot-relation">
+              <div class="slot-title step2">2. Kierunek</div>
+              <div class="slot-value" id="value-relation">Wybierz element</div>
+            </div>
+            <div class="slot" id="slot-outcome">
+              <div class="slot-title step3">3. Zmienna 2</div>
+              <div class="slot-value" id="value-outcome">Wybierz element</div>
+            </div>
+            <div class="slot" id="slot-group">
+              <div class="slot-title step4">4. Grupa</div>
+              <div class="slot-value" id="value-group">Wybierz element</div>
+            </div>
+          </div>
+
+          <div class="preview" id="preview-relation">
+            <strong>Hipoteza:</strong> Im ________, tym ________ ________ ________.
+          </div>
+
+          <div class="explain" id="explainBox"></div>
+
+          <div class="controls">
+            <button class="secondary" id="resetBtn" type="button">Zacznij od nowa</button>
+          </div>
+        </div>
+
+        <div class="banks">
+          <div class="bank">
+            <h3>Zmienna 1</h3>
+            <div class="tile-list" id="bank-predictor"></div>
+          </div>
+          <div class="bank">
+            <h3>Kierunek</h3>
+            <div class="tile-list" id="bank-relation"></div>
+          </div>
+          <div class="bank">
+            <h3>Zmienna 2</h3>
+            <div class="tile-list" id="bank-outcome"></div>
+          </div>
+          <div class="bank">
+            <h3>Grupa</h3>
+            <div class="tile-list" id="bank-group"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Budowanie hipotezy — różnice między grupami</h2>
+        <p class="small">Drugi częsty typ hipotezy: porównanie średnich między grupami.</p>
+
+        <div class="formula">
+          Przykład struktury: <span class="f1">grupa A</span> ma <span class="f2">wyższy / niższy średni poziom</span> <span class="f3">zmiennej</span> niż <span class="f4">grupa B</span>
+        </div>
+
+        <div class="builder">
+          <div class="slots">
+            <div class="slot active" id="slot-group-a">
+              <div class="slot-title step1">1. Grupa A</div>
+              <div class="slot-value" id="value-group-a">Wybierz element</div>
+            </div>
+            <div class="slot" id="slot-difference">
+              <div class="slot-title step2">2. Kierunek różnicy</div>
+              <div class="slot-value" id="value-difference">Wybierz element</div>
+            </div>
+            <div class="slot" id="slot-variable-group">
+              <div class="slot-title step3">3. Zmienna</div>
+              <div class="slot-value" id="value-variable-group">Wybierz element</div>
+            </div>
+            <div class="slot" id="slot-group-b">
+              <div class="slot-title step4">4. Grupa B</div>
+              <div class="slot-value" id="value-group-b">Wybierz element</div>
+            </div>
+          </div>
+
+          <div class="preview" id="preview-group">
+            <strong>Hipoteza:</strong> ________ mają ________ ________ niż ________.
+          </div>
+
+          <div class="explain" id="groupExplainBox"></div>
+
+          <div class="controls">
+            <button class="secondary" id="resetGroupBtn" type="button">Zacznij od nowa</button>
+          </div>
+        </div>
+
+        <div class="banks">
+          <div class="bank">
+            <h3>Grupa A</h3>
+            <div class="tile-list" id="bank-group-a"></div>
+          </div>
+          <div class="bank">
+            <h3>Kierunek różnicy</h3>
+            <div class="tile-list" id="bank-difference"></div>
+          </div>
+          <div class="bank">
+            <h3>Zmienna</h3>
+            <div class="tile-list" id="bank-variable-group"></div>
+          </div>
+          <div class="bank">
+            <h3>Grupa B</h3>
+            <div class="tile-list" id="bank-group-b"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>H0 i H1 — jak to zapisać?</h2>
+        <div class="legend">
+          <div class="legend-box">
+            <strong>H0 — hipoteza zerowa</strong><br>
+            Zakłada brak efektu, brak różnicy albo brak związku.<br><br>
+            <span class="small">Np.:</span> Nie ma różnicy w średnim poziomie neurotyzmu między kobietami a mężczyznami.
+          </div>
+          <div class="legend-box">
+            <strong>H1 — hipoteza alternatywna</strong><br>
+            Zakłada, że efekt, różnica albo związek istnieje.<br><br>
+            <span class="small">Np.:</span> Kobiety mają średnio wyższy poziom neurotyzmu niż mężczyźni.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Hipotezy dla porównania grup</h2>
+        <div class="bad-good">
+          <div class="bad">
+            <h3>Zbyt ogólne</h3>
+            <p>Kobiety i mężczyźni różnią się neurotyzmem.</p>
+            <p class="small">To jest bliżej hipotezy, ale nadal mało precyzyjne — nie wiadomo, w którą stronę ma iść różnica.</p>
+          </div>
+          <div class="good">
+            <h3>Lepsze</h3>
+            <p>Kobiety mają średnio wyższy poziom neurotyzmu niż mężczyźni.</p>
+            <p class="small">Tu wiadomo, jakie grupy porównujemy, jaka jest zmienna i jaki kierunek różnicy przewidujemy.</p>
+          </div>
+        </div>
+
+        <div class="legend" style="margin-top:16px;">
+          <div class="legend-box">
+            <strong>Przykład H0</strong><br>
+            Kobiety i mężczyźni nie różnią się średnim poziomem neurotyzmu.
+          </div>
+          <div class="legend-box">
+            <strong>Przykład H1 kierunkowej</strong><br>
+            Kobiety mają średnio wyższy poziom neurotyzmu niż mężczyźni.
+          </div>
+          <div class="legend-box">
+            <strong>Przykład H1 niekierunkowej</strong><br>
+            Kobiety i mężczyźni różnią się średnim poziomem neurotyzmu.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const relationExample = {
+      predictor: ['wyższy poziom stresu', 'częstsze korzystanie z mediów społecznościowych', 'większa liczba godzin nauki'],
+      relation: ['tym gorsza', 'tym wyższa', 'tym niższa'],
+      outcome: ['jakość snu', 'samotność', 'satysfakcja z życia'],
+      group: ['u studentów', 'u adolescentów', 'u osób pracujących zdalnie']
+    };
+
+    const groupExample = {
+      groupA: ['kobiety', 'studenci pierwszego roku', 'osoby aktywne fizycznie'],
+      difference: ['średnio wyższy poziom', 'średnio niższy poziom'],
+      variable: ['neurotyzmu', 'stresu', 'dobrostanu psychicznego'],
+      groupB: ['mężczyźni', 'studenci ostatniego roku', 'osoby nieaktywne fizycznie']
+    };
+
+    let selectedRelation = { predictor: '', relation: '', outcome: '', group: '' };
+    let selectedGroup = { groupA: '', difference: '', variable: '', groupB: '' };
+
+    const explanations = {
+      predictor: 'To pierwszy element hipotezy: wskazujemy zmienną, od której zaczyna się przewidywanie.',
+      relation: 'Drugi krok: określamy kierunek relacji między zmiennymi (np. wyższa / niższa).',
+      outcome: 'Teraz wskazujemy drugą zmienną – efekt lub cechę, którą przewidujemy.',
+      group: 'Na końcu doprecyzowujemy, kogo dotyczy hipoteza.'
+    };
+
+    const groupExplanations = {
+      groupA: 'Pierwszy krok: wskazujemy pierwszą grupę, od której zaczyna się porównanie.',
+      difference: 'Drugi krok: określamy kierunek różnicy między grupami.',
+      variable: 'Teraz wskazujemy zmienną, którą porównujemy.',
+      groupB: 'Na końcu wskazujemy drugą grupę – punkt odniesienia.'
+    };
+
+    const relationOrder = ['predictor', 'relation', 'outcome', 'group'];
+    const groupOrder = ['groupA', 'difference', 'variable', 'groupB'];
+
+    const requiredIds = [
+      'bank-predictor', 'bank-relation', 'bank-outcome', 'bank-group',
+      'value-predictor', 'value-relation', 'value-outcome', 'value-group',
+      'slot-predictor', 'slot-relation', 'slot-outcome', 'slot-group',
+      'preview-relation', 'explainBox', 'resetBtn',
+      'bank-group-a', 'bank-difference', 'bank-variable-group', 'bank-group-b',
+      'value-group-a', 'value-difference', 'value-variable-group', 'value-group-b',
+      'slot-group-a', 'slot-difference', 'slot-variable-group', 'slot-group-b',
+      'preview-group', 'groupExplainBox', 'resetGroupBtn'
+    ];
+
+    function byId(id) {
+      return document.getElementById(id);
+    }
+
+    function ensureElementsExist(ids) {
+      ids.forEach(id => {
+        if (!byId(id)) {
+          throw new Error(`Brakuje elementu DOM o id: ${id}`);
+        }
+      });
+    }
+
+    function showExplainForRelation(step) {
+      const box = byId('explainBox');
+      box.textContent = explanations[step];
+      box.classList.add('show');
+    }
+
+    function showExplainForGroup(step) {
+      const box = byId('groupExplainBox');
+      box.textContent = groupExplanations[step];
+      box.classList.add('show');
+    }
+
+    function renderRelationBanks() {
+      relationOrder.forEach(key => {
+        const bank = byId(`bank-${key}`);
+        bank.innerHTML = '';
+        relationExample[key].forEach(value => {
+          const btn = document.createElement('button');
+          btn.className = 'tile';
+          btn.type = 'button';
+          if (selectedRelation[key] === value) btn.classList.add('selected');
+          btn.textContent = value;
+          btn.onclick = () => selectRelationValue(key, value);
+          bank.appendChild(btn);
+        });
+      });
+    }
+
+    function renderGroupBanks() {
+      const map = { groupA: 'group-a', difference: 'difference', variable: 'variable-group', groupB: 'group-b' };
+      Object.keys(map).forEach(key => {
+        const bank = byId(`bank-${map[key]}`);
+        bank.innerHTML = '';
+        groupExample[key].forEach(value => {
+          const btn = document.createElement('button');
+          btn.className = 'tile';
+          btn.type = 'button';
+          if (selectedGroup[key] === value) btn.classList.add('selected');
+          btn.textContent = value;
+          btn.onclick = () => selectGroupValue(key, value);
+          bank.appendChild(btn);
+        });
+      });
+    }
+
+    function selectRelationValue(key, value) {
+      selectedRelation[key] = value;
+      byId(`value-${key}`).textContent = value;
+
+      const index = relationOrder.indexOf(key);
+      const nextStep = relationOrder[index + 1];
+
+      document.querySelectorAll('#slot-predictor, #slot-relation, #slot-outcome, #slot-group').forEach(el => el.classList.remove('active'));
+
+      if (nextStep) {
+        byId(`slot-${nextStep}`).classList.add('active');
+        showExplainForRelation(nextStep);
+      }
+
+      renderRelationBanks();
+      updateRelationPreview();
+    }
+
+    function selectGroupValue(key, value) {
+      selectedGroup[key] = value;
+
+      const valueMap = { groupA: 'value-group-a', difference: 'value-difference', variable: 'value-variable-group', groupB: 'value-group-b' };
+      const slotMap = { groupA: 'slot-group-a', difference: 'slot-difference', variable: 'slot-variable-group', groupB: 'slot-group-b' };
+
+      byId(valueMap[key]).textContent = value;
+
+      const index = groupOrder.indexOf(key);
+      const nextStep = groupOrder[index + 1];
+
+      document.querySelectorAll('#slot-group-a, #slot-difference, #slot-variable-group, #slot-group-b').forEach(el => el.classList.remove('active'));
+
+      if (nextStep) {
+        byId(slotMap[nextStep]).classList.add('active');
+        showExplainForGroup(nextStep);
+      }
+
+      renderGroupBanks();
+      updateGroupPreview();
+    }
+
+    function updateRelationPreview() {
+      const p = selectedRelation.predictor ? `<span class="f1">${selectedRelation.predictor}</span>` : '________';
+      const r = selectedRelation.relation ? `<span class="f2">${selectedRelation.relation}</span>` : '________';
+      const o = selectedRelation.outcome ? `<span class="f3">${selectedRelation.outcome}</span>` : '________';
+      const g = selectedRelation.group ? `<span class="f4">${selectedRelation.group}</span>` : '________';
+      byId('preview-relation').innerHTML = `<strong>Hipoteza:</strong> Im ${p}, ${r} ${o} ${g}.`;
+    }
+
+    function updateGroupPreview() {
+      const a = selectedGroup.groupA ? `<span class="f1">${selectedGroup.groupA}</span>` : '________';
+      const d = selectedGroup.difference ? `<span class="f2">${selectedGroup.difference}</span>` : '________';
+      const v = selectedGroup.variable ? `<span class="f3">${selectedGroup.variable}</span>` : '________';
+      const b = selectedGroup.groupB ? `<span class="f4">${selectedGroup.groupB}</span>` : '________';
+      byId('preview-group').innerHTML = `<strong>Hipoteza:</strong> ${a} mają ${d} ${v} niż ${b}.`;
+    }
+
+    function resetRelation() {
+      selectedRelation = { predictor: '', relation: '', outcome: '', group: '' };
+      relationOrder.forEach(key => {
+        byId(`value-${key}`).textContent = 'Wybierz element';
+      });
+      document.querySelectorAll('#slot-predictor, #slot-relation, #slot-outcome, #slot-group').forEach(el => el.classList.remove('active'));
+      byId('slot-predictor').classList.add('active');
+      showExplainForRelation('predictor');
+      updateRelationPreview();
+      renderRelationBanks();
+    }
+
+    function resetGroup() {
+      selectedGroup = { groupA: '', difference: '', variable: '', groupB: '' };
+      ['value-group-a', 'value-difference', 'value-variable-group', 'value-group-b'].forEach(id => {
+        byId(id).textContent = 'Wybierz element';
+      });
+      document.querySelectorAll('#slot-group-a, #slot-difference, #slot-variable-group, #slot-group-b').forEach(el => el.classList.remove('active'));
+      byId('slot-group-a').classList.add('active');
+      showExplainForGroup('groupA');
+      updateGroupPreview();
+      renderGroupBanks();
+    }
+
+    function bindEvents() {
+      byId('resetBtn').onclick = resetRelation;
+      byId('resetGroupBtn').onclick = resetGroup;
+    }
+
+    function runSelfTests() {
+      console.assert(requiredIds.every(id => !!byId(id)), 'DOM: wszystkie wymagane elementy istnieją');
+
+      resetRelation();
+      console.assert(byId('preview-relation').textContent.includes('Hipoteza:'), 'Relacja: podgląd zawiera nagłówek');
+      console.assert(byId('preview-relation').textContent.includes('________'), 'Relacja: reset przywraca puste pola');
+      selectRelationValue('predictor', relationExample.predictor[0]);
+      selectRelationValue('relation', relationExample.relation[0]);
+      selectRelationValue('outcome', relationExample.outcome[0]);
+      selectRelationValue('group', relationExample.group[0]);
+      console.assert(byId('preview-relation').innerHTML.includes('class="f1"'), 'Relacja: zmienna 1 ma kolor');
+      console.assert(byId('preview-relation').innerHTML.includes('class="f2"'), 'Relacja: kierunek ma kolor');
+      console.assert(byId('preview-relation').innerHTML.includes('class="f3"'), 'Relacja: zmienna 2 ma kolor');
+      console.assert(byId('preview-relation').innerHTML.includes('class="f4"'), 'Relacja: grupa ma kolor');
+
+      resetGroup();
+      console.assert(byId('preview-group').textContent.includes('________'), 'Grupy: reset przywraca puste pola');
+      selectGroupValue('groupA', groupExample.groupA[0]);
+      selectGroupValue('difference', groupExample.difference[0]);
+      selectGroupValue('variable', groupExample.variable[0]);
+      selectGroupValue('groupB', groupExample.groupB[0]);
+      console.assert(byId('preview-group').innerHTML.includes('class="f1"'), 'Grupy: grupa A ma kolor');
+      console.assert(byId('preview-group').innerHTML.includes('class="f2"'), 'Grupy: kierunek różnicy ma kolor');
+      console.assert(byId('preview-group').innerHTML.includes('class="f3"'), 'Grupy: zmienna ma kolor');
+      console.assert(byId('preview-group').innerHTML.includes('class="f4"'), 'Grupy: grupa B ma kolor');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      ensureElementsExist(requiredIds);
+      bindEvents();
+      runSelfTests();
+      resetRelation();
+      resetGroup();
+    });
+  </script>
+</body>
+</html>

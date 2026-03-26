@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jak działa nauka?</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #4f46e5;
+      --accent-2: #0ea5e9;
+      --good: #16a34a;
+      --warn: #d97706;
+      --bad: #dc2626;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 260px);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 48px 0 28px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero-card, .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.65);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 32px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(79, 70, 229, 0.08);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.05;
+      margin: 0 0 14px;
+    }
+
+    .lead {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 62ch;
+      margin: 0 0 22px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button, .chip {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-secondary {
+      background: #eef2ff;
+      color: var(--accent);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      padding: 22px;
+    }
+
+    .mini {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff, #fafbff);
+    }
+
+    .mini strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    main {
+      padding-bottom: 48px;
+    }
+
+    section {
+      margin: 24px 0;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin: 0 0 10px;
+      display: inline-block;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-subtitle {
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .card {
+      padding: 24px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .tab {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .path-view {
+      display: none;
+      animation: fade .24s ease;
+    }
+
+    .path-view.active { display: block; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fcfcff;
+      min-height: 102px;
+    }
+
+    .step .emoji {
+      font-size: 26px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .example-box {
+      border-left: 4px solid var(--accent);
+      background: #f8faff;
+      border-radius: 14px;
+      padding: 16px 18px;
+      color: #334155;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .compare-col {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: #fff;
+    }
+
+    .compare-col h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .badge-gray { background: #f3f4f6; color: #4b5563; }
+    .badge-blue { background: #e0f2fe; color: #0369a1; }
+    .badge-green { background: #dcfce7; color: #166534; }
+
+    ul.clean {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    ul.clean li {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: #fafafa;
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .statement {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin: 0 0 18px;
+    }
+
+    .answer-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .answer-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 16px;
+      background: #f9fafb;
+      color: #111827;
+      border: 1px solid var(--line);
+      padding: 15px 16px;
+    }
+
+    .answer-btn.correct {
+      background: #ecfdf5;
+      border-color: #86efac;
+      color: #166534;
+    }
+
+    .answer-btn.wrong {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    .feedback {
+      border-radius: 18px;
+      padding: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      min-height: 180px;
+    }
+
+    .feedback h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .pyramid {
+      display: grid;
+      gap: 10px;
+      max-width: 700px;
+      margin: 8px auto 0;
+    }
+
+    .level {
+      margin: 0 auto;
+      border-radius: 14px;
+      padding: 14px 18px;
+      text-align: center;
+      font-weight: 700;
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .level-1 { width: 95%; background: #9ca3af; }
+    .level-2 { width: 82%; background: #6b7280; }
+    .level-3 { width: 69%; background: #0ea5e9; }
+    .level-4 { width: 56%; background: #2563eb; }
+    .level-5 { width: 43%; background: #16a34a; }
+    .level-6 { width: 30%; background: #15803d; }
+
+    .note {
+      margin-top: 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    
+
+    @media (max-width: 900px) {
+      .hero, .quiz-grid, .compare-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+
+    <main>
+      <section>
+        <h2 class="section-title">0. Subiektywne ↔ obiektywne</h2>
+        <p class="section-subtitle">Przesuń suwak i zobacz, jak różne sposoby poznawania świata przesuwają się od osobistego wrażenia do bardziej kontrolowanego sprawdzania.</p>
+        <div class="card">
+          <div style="max-width: 820px; margin: 0 auto;">
+            <input id="objectivitySlider" type="range" min="0" max="100" value="15" style="width: 100%; margin-bottom: 18px;" />
+            <div style="display:flex; justify-content:space-between; font-weight:700; color:#6b7280; margin-bottom:18px; gap:12px;">
+              <span>bardziej subiektywne</span>
+              <span>bardziej obiektywne</span>
+            </div>
+            <div id="objectivityCard" style="border:1px solid var(--line); border-radius:18px; padding:22px; background:#fafbff; min-height:180px; transition:all .2s ease;">
+              <div id="objectivityLabel" style="display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:800; margin-bottom:12px; background:#f3f4f6; color:#4b5563;">Poziom 1</div>
+              <h3 id="objectivityTitle" style="margin:0 0 10px; font-size:24px;">Własne wrażenie</h3>
+              <p id="objectivityDesc" style="margin:0 0 12px; color:#374151;">„Mam takie poczucie, że to działa”. To punkt wyjścia, ale bardzo podatny na błąd, pamięć wybiórczą i emocje.</p>
+              <div id="objectivityExample" class="example-box"><strong>Przykład:</strong> „Wydaje mi się, że ludzie po kawie są bardziej nerwowi”.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="jak-powstaje-wiedza">
+        <h2 class="section-title">1. Jak powstaje wiedza?</h2>
+        <p class="section-subtitle">Kliknij kategorię i zobacz, jak dochodzimy do różnych rodzajów „wiedzy”.</p>
+        <div class="card">
+          <div class="tabs">
+            <button class="tab active" data-target="potoczna">Wiedza potoczna</button>
+            <button class="tab" data-target="popularna">Wiedza popularnonaukowa</button>
+            <button class="tab" data-target="naukowa">Wiedza naukowa</button>
+          </div>
+
+          <div class="path-view active" id="potoczna">
+            <div class="steps">
+              <div class="step"><span class="emoji">👀</span><strong>Obserwacja</strong><br>„Widziałem to u kilku osób”</div>
+              <div class="step"><span class="emoji">💭</span><strong>Intuicja</strong><br>„To chyba działa właśnie tak”</div>
+              <div class="step"><span class="emoji">🗣️</span><strong>Anegdota</strong><br>Jedna historia staje się „dowodem”</div>
+              <div class="step"><span class="emoji">✔️</span><strong>Wniosek</strong><br>„Czyli to na pewno prawda”</div>
+            </div>
+            <div class="example-box"><strong>Przykład:</strong> „Moja koleżanka przestała pić kawę i od razu lepiej spała, więc kawa na pewno psuje sen każdemu”.</div>
+          </div>
+
+          <div class="path-view" id="popularna">
+            <div class="steps">
+              <div class="step"><span class="emoji">📰</span><strong>Artykuł / post</strong><br>Ktoś opisuje badanie prostym językiem</div>
+              <div class="step"><span class="emoji">✂️</span><strong>Uproszczenie</strong><br>Pomijane są ograniczenia i szczegóły</div>
+              <div class="step"><span class="emoji">📣</span><strong>Chwytliwy przekaz</strong><br>Powstaje mocny, prosty komunikat</div>
+              <div class="step"><span class="emoji">🤔</span><strong>Odbiór</strong><br>Ludzie myślą, że „nauka już to udowodniła”</div>
+            </div>
+            <div class="example-box"><strong>Przykład:</strong> „Naukowcy udowodnili, że social media niszczą psychikę młodych ludzi”. Brzmi mocno, ale zwykle nie mówi nic o metodzie, wielkości efektu czy ograniczeniach.</div>
+          </div>
+
+          <div class="path-view" id="naukowa">
+            <div class="steps">
+              <div class="step"><span class="emoji">❓</span><strong>Pytanie badawcze</strong><br>Co dokładnie chcemy sprawdzić?</div>
+              <div class="step"><span class="emoji">📐</span><strong>Metoda</strong><br>Jak to mierzymy i u kogo?</div>
+              <div class="step"><span class="emoji">📊</span><strong>Dane</strong><br>Zbieramy wyniki, a nie tylko opinie</div>
+              <div class="step"><span class="emoji">🧮</span><strong>Analiza</strong><br>Sprawdzamy, czy efekt nie jest przypadkowy</div>
+              <div class="step"><span class="emoji">📄</span><strong>Publikacja</strong><br>Opisujemy procedurę i wyniki</div>
+              <div class="step"><span class="emoji">🔁</span><strong>Replikacja</strong><br>Inni sprawdzają, czy wynik się powtarza</div>
+            </div>
+            <div class="example-box"><strong>Przykład:</strong> „Sprawdzono związek czasu spędzanego w social mediach z dobrostanem psychicznym, używając określonej próby, narzędzi pomiaru i analizy statystycznej”.</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">2. Czym one się różnią?</h2>
+        <p class="section-subtitle">To samo słowo „wiedza” może oznaczać zupełnie coś innego.</p>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <span class="badge badge-gray">najbardziej intuicyjna</span>
+            <h3>Wiedza potoczna</h3>
+            <ul class="clean">
+              <li>opiera się na doświadczeniu i obserwacji</li>
+              <li>często bazuje na pojedynczych przykładach</li>
+              <li>jest szybka i praktyczna</li>
+              <li>łatwo ulega błędom poznawczym</li>
+            </ul>
+          </div>
+          <div class="compare-col">
+            <span class="badge badge-blue">najbardziej medialna</span>
+            <h3>Popularnonaukowa</h3>
+            <ul class="clean">
+              <li>upraszcza wyniki badań dla szerszej publiczności</li>
+              <li>często używa chwytliwych nagłówków</li>
+              <li>może dobrze popularyzować wiedzę</li>
+              <li>ale bywa zbyt uproszczona albo przesadzona</li>
+            </ul>
+          </div>
+          <div class="compare-col">
+            <span class="badge badge-green">najbardziej kontrolowana</span>
+            <h3>Wiedza naukowa</h3>
+            <ul class="clean">
+              <li>opiera się na metodzie, danych i analizie</li>
+              <li>jest jawna i możliwa do sprawdzenia</li>
+              <li>uwzględnia ograniczenia</li>
+              <li>nie daje pewności absolutnej, ale daje najlepsze uzasadnienie</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">3. Co wyróżnia naukę?</h2>
+        <p class="section-subtitle">Nie chodzi o „mądre słowa”, tylko o sposób dochodzenia do wniosków.</p>
+        <div class="card">
+          <div class="compare-grid">
+            <div class="compare-col">
+              <h3>W nauce zwykle pytamy:</h3>
+              <ul class="clean">
+                <li>Skąd to wiemy?</li>
+                <li>Jak to zmierzono?</li>
+                <li>Na jakiej próbie?</li>
+                <li>Czy wynik można powtórzyć?</li>
+              </ul>
+            </div>
+            <div class="compare-col">
+              <h3>W nauce zwykle pokazujemy:</h3>
+              <ul class="clean">
+                <li>hipotezy</li>
+                <li>metodę</li>
+                <li>wyniki</li>
+                <li>ograniczenia</li>
+              </ul>
+            </div>
+            <div class="compare-col">
+              <h3>W nauce zwykle unikamy:</h3>
+              <ul class="clean">
+                <li>„bo wszyscy tak mówią”</li>
+                <li>„u mnie zadziałało”</li>
+                <li>jednego przykładu jako dowodu</li>
+                <li>wniosków mocniejszych niż dane</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">4. Piramida wiarygodności wiedzy</h2>
+        <p class="section-subtitle">Im wyżej, tym zwykle większa kontrola, przejrzystość i odporność na błąd.</p>
+        <div class="card">
+          <div class="pyramid">
+            <div class="level level-6">Metaanalizy</div>
+            <div class="level level-5">Przeglądy systematyczne</div>
+            <div class="level level-4">Pojedyncze badania naukowe</div>
+            <div class="level level-3">Artykuły popularnonaukowe</div>
+            <div class="level level-2">Media społecznościowe / opinie ekspertów bez danych</div>
+            <div class="level level-1">Anegdoty i „bo ktoś tak mówił”</div>
+          </div>
+          <p class="note">Uwaga: wysoko w piramidzie nie znaczy „nieomylne”, tylko zwykle lepiej uzasadnione.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">5. Quiz: rozpoznaj rodzaj wiedzy</h2>
+        <p class="section-subtitle">Kliknij odpowiedź i zobacz uzasadnienie.</p>
+        <div class="card quiz-grid">
+          <div>
+            <p class="statement" id="statement">„Naukowcy odkryli, że ludzie szczęśliwsi słuchają muzyki pop”.</p>
+            <div class="answer-list" id="answers"></div>
+          </div>
+          <div class="feedback" id="feedback">
+            <h3>Co tutaj sprawdzamy?</h3>
+            <p>
+              Czy umiesz odróżnić chwytliwy komunikat od pełnego opisu naukowego.
+              Samo odwołanie do „naukowców” jeszcze nie czyni zdania wiedzą naukową.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const objectivitySteps = [
+      {
+        max: 20,
+        label: 'Poziom 1',
+        title: 'Własne wrażenie',
+        desc: '„Mam takie poczucie, że to działa”. To punkt wyjścia, ale bardzo podatny na błąd, pamięć wybiórczą i emocje.',
+        example: '„Wydaje mi się, że ludzie po kawie są bardziej nerwowi”.',
+        colorBg: '#f3f4f6',
+        colorText: '#4b5563'
+      },
+      {
+        max: 40,
+        label: 'Poziom 2',
+        title: 'Anegdota i pojedynczy przykład',
+        desc: 'Jedna historia brzmi przekonująco, ale nadal nie wiemy, czy to reguła, wyjątek czy przypadek.',
+        example: '„Mój znajomy zaczął medytować i przestał się stresować, więc medytacja działa”.',
+        colorBg: '#ede9fe',
+        colorText: '#5b21b6'
+      },
+      {
+        max: 60,
+        label: 'Poziom 3',
+        title: 'Popularnonaukowe uproszczenie',
+        desc: 'Tu pojawia się odwołanie do badań, ale zwykle bez pełnej metody, ograniczeń i jakości dowodów.',
+        example: '„Naukowcy dowiedli, że social media obniżają samoocenę”.',
+        colorBg: '#e0f2fe',
+        colorText: '#0369a1'
+      },
+      {
+        max: 80,
+        label: 'Poziom 4',
+        title: 'Pojedyncze badanie naukowe',
+        desc: 'Jest metoda, próba, pomiar i analiza. To dużo bardziej obiektywne, ale nadal pojedynczy wynik może nie wystarczać.',
+        example: '„W badaniu na 300 osobach sprawdzono związek między snem a nastrojem”.',
+        colorBg: '#dcfce7',
+        colorText: '#166534'
+      },
+      {
+        max: 100,
+        label: 'Poziom 5',
+        title: 'Skumulowana wiedza naukowa',
+        desc: 'Najbliżej obiektywności jesteśmy wtedy, gdy wiele badań pokazuje podobny wzór, a wyniki są przejrzyste i możliwe do sprawdzenia.',
+        example: '„Wnioski opierają się na wielu badaniach, przeglądach systematycznych i metaanalizach”.',
+        colorBg: '#d1fae5',
+        colorText: '#065f46'
+      }
+    ];
+
+    const slider = document.getElementById('objectivitySlider');
+    const objectivityLabel = document.getElementById('objectivityLabel');
+    const objectivityTitle = document.getElementById('objectivityTitle');
+    const objectivityDesc = document.getElementById('objectivityDesc');
+    const objectivityExample = document.getElementById('objectivityExample');
+
+    function updateObjectivitySlider() {
+      const value = Number(slider.value);
+      const step = objectivitySteps.find(s => value <= s.max) || objectivitySteps[objectivitySteps.length - 1];
+      objectivityLabel.textContent = step.label;
+      objectivityLabel.style.background = step.colorBg;
+      objectivityLabel.style.color = step.colorText;
+      objectivityTitle.textContent = step.title;
+      objectivityDesc.textContent = step.desc;
+      objectivityExample.innerHTML = `<strong>Przykład:</strong> ${step.example}`;
+      objectivityExample.style.borderLeftColor = step.colorText;
+    }
+
+    if (slider) {
+      slider.addEventListener('input', updateObjectivitySlider);
+      updateObjectivitySlider();
+    }
+
+    const tabs = document.querySelectorAll('.tab');
+    const views = document.querySelectorAll('.path-view');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        views.forEach(v => v.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.target).classList.add('active');
+      });
+    });
+
+    const quizData = [
+      {
+        statement: '„Naukowcy odkryli, że ludzie szczęśliwsi słuchają muzyki pop”.',
+        options: ['Wiedza potoczna', 'Popularnonaukowa', 'Wiedza naukowa'],
+        correct: 1,
+        title: 'Najlepsza odpowiedź: popularnonaukowa',
+        explanation: 'To brzmi jak medialny skrót. Mamy odwołanie do naukowców, ale nie wiemy nic o metodzie, próbie, pomiarze ani ograniczeniach.'
+      },
+      {
+        statement: '„Moja znajoma medytuje codziennie i już się nie stresuje, więc medytacja działa na wszystkich”.',
+        options: ['Wiedza potoczna', 'Popularnonaukowa', 'Wiedza naukowa'],
+        correct: 0,
+        title: 'Najlepsza odpowiedź: wiedza potoczna',
+        explanation: 'To klasyczna anegdota: pojedynczy przypadek zostaje potraktowany jak ogólna prawda.'
+      },
+      {
+        statement: '„W badaniu na 420 osobach sprawdzono związek między snem a nastrojem, używając kwestionariuszy i analizy korelacji”.',
+        options: ['Wiedza potoczna', 'Popularnonaukowa', 'Wiedza naukowa'],
+        correct: 2,
+        title: 'Najlepsza odpowiedź: wiedza naukowa',
+        explanation: 'Pojawia się informacja o próbie, metodzie i analizie. To brzmi jak fragment opisu badania, a nie sam medialny nagłówek.'
+      },
+      {
+        statement: '„Eksperci alarmują: smartfony niszczą koncentrację młodych ludzi”.',
+        options: ['Wiedza potoczna', 'Popularnonaukowa', 'Wiedza naukowa'],
+        correct: 1,
+        title: 'Najlepsza odpowiedź: popularnonaukowa',
+        explanation: 'To mocny komunikat medialny. Może odnosić się do badań, ale sam w sobie nie pokazuje jeszcze naukowego uzasadnienia.'
+      }
+    ];
+
+    let currentQuestion = 0;
+    let answered = false;
+
+    const statementEl = document.getElementById('statement');
+    const answersEl = document.getElementById('answers');
+    const feedbackEl = document.getElementById('feedback');
+
+    function renderQuestion() {
+      const q = quizData[currentQuestion];
+      answered = false;
+      statementEl.textContent = q.statement;
+      answersEl.innerHTML = '';
+      q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = option;
+        btn.addEventListener('click', () => handleAnswer(index));
+        answersEl.appendChild(btn);
+      });
+      feedbackEl.innerHTML = `
+        <h3>Co tutaj sprawdzamy?</h3>
+        <p>Czy umiesz odróżnić chwytliwy komunikat od pełnego opisu naukowego. Samo odwołanie do „naukowców” jeszcze nie czyni zdania wiedzą naukową.</p>
+      `;
+    }
+
+    function handleAnswer(index) {
+      if (answered) return;
+      answered = true;
+      const q = quizData[currentQuestion];
+      const buttons = [...document.querySelectorAll('.answer-btn')];
+      buttons.forEach((btn, i) => {
+        if (i === q.correct) btn.classList.add('correct');
+        if (i === index && i !== q.correct) btn.classList.add('wrong');
+        btn.disabled = true;
+      });
+
+      feedbackEl.innerHTML = `
+        <h3>${q.title}</h3>
+        <p>${q.explanation}</p>
+        <button class="btn-primary" style="margin-top:10px;" onclick="nextQuestion()">${currentQuestion < quizData.length - 1 ? 'Następne pytanie' : 'Zacznij quiz od nowa'}</button>
+      `;
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < quizData.length - 1) {
+        currentQuestion += 1;
+      } else {
+        currentQuestion = 0;
+      }
+      renderQuestion();
+    }
+
+    function resetQuiz() {
+      currentQuestion = 0;
+      renderQuestion();
+    }
+
+    renderQuestion();
+    window.resetQuiz = resetQuiz;
+    window.nextQuestion = nextQuestion;
+  </script>
+</body>
+</html>
