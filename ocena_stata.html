@@ -318,14 +318,14 @@
         }
 
         // 3. Ostrzeżenie o poprawie (na samym końcu)
-        if (totalScore <= 7) {
+        if (totalScore <= 5) {
             rawText += "\n\nUWAGA: Ze względu na niski wynik, proszę o kontakt mailowy w sprawie poprawy.";
         }
 
         // Aktualizacja wyniku
         const scoreEl = document.getElementById('currentScore');
         scoreEl.innerText = totalScore;
-        scoreEl.style.color = totalScore < 7 ? '#dc2626' : (totalScore < 11 ? '#d97706' : '#2563eb');
+        scoreEl.style.color = totalScore < 5 ? '#dc2626' : (totalScore < 11 ? '#d97706' : '#2563eb');
 
         document.getElementById('feedbackText').value = rawText;
     }
