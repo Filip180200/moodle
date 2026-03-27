@@ -10,7 +10,7 @@
       --card: #ffffff;
       --text: #1f2937;
       --muted: #6b7280;
-      --accent: #2563eb;
+      --accent: #4f46e5;
       --border: #e5e7eb;
       --blue: #60a5fa;
       --blue-light: #93c5fd;
@@ -22,7 +22,7 @@
 
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Inter, Arial, Helvetica, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
@@ -142,6 +142,29 @@
       font-size: 14px;
       color: var(--muted);
     }
+
+    .course-intro {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ffffff, #f7f9ff);
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .course-intro h3 { margin: 0 0 8px; }
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .course-grid div {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+    .course-grid strong { color: #3730a3; }
+
   </style>
 </head>
 <body>
@@ -149,6 +172,16 @@
     <div class="card">
       <h1>Symulacja rzutu monetą</h1>
       <p class="muted">Możesz zrobić pojedynczy rzut albo wiele eksperymentów i zobaczyć, jak rozkład liczby orłów zaczyna przypominać rozkład normalny.</p>
+      <div class="course-intro">
+        <h3>Instrukcja dla studenta</h3>
+        <p class="muted" style="margin-top:0;">To ćwiczenie pokazuje, jak z losowych pojedynczych wyników powstaje stabilny rozkład przy dużej liczbie prób.</p>
+        <div class="course-grid">
+          <div><strong>Cel:</strong> zrozumieć związek między prawdopodobieństwem a częstością obserwowaną.</div>
+          <div><strong>Kroki:</strong> uruchom kilka symulacji i porównaj średnią empiryczną z teoretyczną.</div>
+          <div><strong>Refleksja:</strong> sprawdź, co dzieje się z wykresem, gdy zwiększasz liczbę rzutów i eksperymentów.</div>
+        </div>
+      </div>
+
 
       <div class="result">
         <button id="singleTossBtn">Rzuć monetą</button>

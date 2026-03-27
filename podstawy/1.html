@@ -349,7 +349,36 @@
       text-align: center;
     }
 
-    
+    .course-intro {
+      margin: 20px 0 24px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+      box-shadow: var(--shadow);
+    }
+
+    .course-intro h2 { margin: 0 0 8px; }
+
+    .intro-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .intro-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: #fff;
+    }
+
+    .intro-box strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
 
     @media (max-width: 900px) {
       .hero, .quiz-grid, .compare-grid {
@@ -367,6 +396,25 @@
     
 
     <main>
+    <section class="course-intro">
+      <span class="eyebrow">moduł moodle · podstawy metodologii</span>
+      <h2>Jak korzystać z tego materiału?</h2>
+      <p class="section-subtitle" style="margin:0;">Ta strona prowadzi Cię od codziennych intuicji do naukowego sposobu myślenia. Przechodź sekcje po kolei i sprawdzaj własne rozumowanie w mini-zadaniach.</p>
+      <div class="intro-grid">
+        <div class="intro-box">
+          <strong>Cel dla studenta</strong>
+          Rozpoznasz różnicę między wiedzą potoczną, popularnonaukową i naukową.
+        </div>
+        <div class="intro-box">
+          <strong>Jak pracować</strong>
+          Najpierw interaktywne przykłady, potem porównanie i quiz podsumowujący.
+        </div>
+        <div class="intro-box">
+          <strong>Po tej lekcji</strong>
+          Będziesz umieć krytycznie ocenić, czy dany wniosek ma solidne podstawy.
+        </div>
+      </div>
+    </section>
       <section>
         <h2 class="section-title">0. Subiektywne ↔ obiektywne</h2>
         <p class="section-subtitle">Przesuń suwak i zobacz, jak różne sposoby poznawania świata przesuwają się od osobistego wrażenia do bardziej kontrolowanego sprawdzania.</p>
