@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korelacja - Ekspert Statystyczny</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-color: 255, 255, 255;
+            --intensity: 0.5;
+        }
+
+        body {
+            background-color: #000000;
+            color: #e2e8f0;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+        
+        .main-container {
+            background: #05070a;
+            border: 1px solid rgba(var(--accent-color), 0.2);
+            box-shadow: 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(var(--accent-color), calc(var(--intensity) * 0.2));
+            border-radius: 20px;
+            width: 780px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            grid-template-rows: 1fr 60px;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .plot-area {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(var(--accent-color), 0.3);
+            border-radius: 12px;
+            height: 380px;
+            position: relative;
+            overflow: hidden;
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgb(var(--accent-color));
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgb(var(--accent-color));
+            transition: transform 0.3s ease-out, background 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .axis-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: rgba(var(--accent-color), 0.8);
+            text-transform: uppercase;
+            font-weight: 700;
+            display: flex;
+        }
+        
+        .label-x { 
+            grid-column: 2; 
+            grid-row: 2; 
+            flex-direction: column; 
+            align-items: center;
+            gap: 8px; 
+            padding-top: 10px; 
+        }
+        
+        .label-y { 
+            grid-column: 1; 
+            grid-row: 1; 
+            flex-direction: row; 
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            gap: 12px;
+        }
+
+        .vertical-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            white-space: nowrap;
+        }
+
+        .scale-numbers {
+            display: flex;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .scale-numbers-x { 
+            width: 100%; 
+            justify-content: space-between;
+            padding: 0 10px; 
+        }
+
+        .scale-numbers-y { 
+            height: 100%; 
+            flex-direction: column-reverse; /* 1 na dole, 10 na górze */
+            justify-content: space-between;
+            padding: 10px 0;
+            text-align: right;
+        }
+
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #1e293b; border-radius: 3px; border: 1px solid rgba(var(--accent-color), 0.2); }
+        input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: rgb(var(--accent-color)); cursor: pointer; -webkit-appearance: none; margin-top: -10px; box-shadow: 0 0 15px rgb(var(--accent-color)); border: 2px solid #fff; transition: background 0.5s ease; }
+
+        .status-box {
+            border-left: 4px solid rgb(var(--accent-color));
+            background: rgba(var(--accent-color), 0.05);
+            padding: 15px;
+            transition: all 0.5s ease;
+        }
+
+        .grid-line { position: absolute; background: rgba(var(--accent-color), 0.1); }
+
+        .sig-stars {
+            color: #fbbf24;
+            margin-left: 8px;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
+            font-size: 1.4rem;
+        }
+
+        .p-value-tag {
+            font-size: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            padding: 4px 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(var(--accent-color), 0.1);
+            color: #94a3b8;
+            min-width: 100px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container shadow-2xl" id="mainContainer">
+        <!-- Nagłówek -->
+        <div class="flex justify-between items-end mb-4 px-2">
+            <div>
+                <h2 class="orbitron text-[10px] tracking-[0.3em] uppercase mb-1" style="color: rgb(var(--accent-color))">Psychometrics Analysis</h2>
+                <div class="flex items-center gap-3">
+                    <div id="r-value-display" class="orbitron text-3xl font-bold text-white tracking-tighter">r = 0.00</div>
+                    <span id="stars" class="sig-stars orbitron"></span>
+                </div>
+            </div>
+            <div id="p-display" class="p-value-tag orbitron">p = 1.000</div>
+        </div>
+
+        <!-- Układ wykresu i osi ze skalami -->
+        <div class="layout-grid">
+            <div class="axis-label label-y">
+                <span class="vertical-text">Neurotyzm</span>
+                <div class="scale-numbers scale-numbers-y">
+                    <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                </div>
+            </div>
+            <div class="plot-area" id="plot">
+                <div class="grid-line w-full h-px top-1/2 left-0"></div>
+                <div class="grid-line h-full w-px left-1/2 top-0"></div>
+                <!-- Dodatkowe linie pomocnicze siatki -->
+                <div class="grid-line w-full h-px top-1/4 left-0 opacity-50"></div>
+                <div class="grid-line w-full h-px top-3/4 left-0 opacity-50"></div>
+                <div class="grid-line h-full w-px left-1/4 top-0 opacity-50"></div>
+                <div class="grid-line h-full w-px left-3/4 top-0 opacity-50"></div>
+            </div>
+            <div class="axis-label label-x">
+                <div class="scale-numbers scale-numbers-x">
+                    <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                </div>
+                <span>Ekstrawersja</span>
+            </div>
+        </div>
+
+        <!-- Sterowanie -->
+        <div class="space-y-4 pt-6">
+            <input type="range" id="corrSlider" min="-1" max="1" step="0.01" value="0">
+            <div class="flex justify-between text-[9px] orbitron text-slate-500 uppercase tracking-widest px-2">
+                <span>-1.0 Silna Ujemna</span>
+                <span>0.0 Brak związku</span>
+                <span>1.0 Silna Dodatnia</span>
+            </div>
+        </div>
+
+        <!-- Interpretacja i Istotność -->
+        <div class="grid grid-cols-2 gap-4 mt-8">
+            <div class="status-box rounded-r-lg">
+                <div class="orbitron text-[9px] mb-1 tracking-widest uppercase" style="color: rgb(var(--accent-color))">Wnioskowanie</div>
+                <div id="interpretation" class="text-lg font-light text-slate-200">Brak związku.</div>
+            </div>
+            
+            <div class="bg-black/40 border border-slate-800 p-3 rounded-lg flex flex-col justify-center">
+                <div class="orbitron text-[9px] text-slate-500 mb-2 tracking-widest uppercase text-center">Progi Istotności</div>
+                <div class="space-y-1">
+                    <div id="leg-1" class="flex justify-between text-[10px] uppercase opacity-40"><span class="text-amber-400">*</span> <span>Istotne (p < 0,05)</span></div>
+                    <div id="leg-2" class="flex justify-between text-[10px] uppercase opacity-40"><span class="text-amber-400">**</span> <span>Wysoce istotne (p < 0,01)</span></div>
+                    <div id="leg-3" class="flex justify-between text-[10px] uppercase opacity-40"><span class="text-amber-400">***</span> <span>Bardzo wysoce (p < 0,001)</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const plot = document.getElementById('plot');
+        const slider = document.getElementById('corrSlider');
+        const rDisplay = document.getElementById('r-value-display');
+        const starsDisplay = document.getElementById('stars');
+        const pDisplay = document.getElementById('p-display');
+        const interpretation = document.getElementById('interpretation');
+        const root = document.documentElement;
+        
+        const numPoints = 85;
+        const points = [];
+
+        // Generowanie punktów w przestrzeni -1 do 1
+        for (let i = 0; i < numPoints; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            plot.appendChild(dot);
+            points.push({ element: dot, baseX: Math.random() * 2 - 1, baseY: Math.random() * 2 - 1 });
+        }
+
+        function updateUI() {
+            const r = parseFloat(slider.value);
+            const absR = Math.abs(r);
+            rDisplay.innerText = `r = ${r.toFixed(2)}`;
+
+            let r_color = "255, 255, 255"; 
+            if (r > 0.02) r_color = `${Math.floor(255-(255-34)*absR)}, ${Math.floor(255-(255-197)*absR)}, ${Math.floor(255-(255-94)*absR)}`;
+            else if (r < -0.02) r_color = `${255}, ${Math.floor(255-(255-31)*absR)}, ${Math.floor(255-(255-31)*absR)}`;
+
+            root.style.setProperty('--accent-color', r_color);
+            root.style.setProperty('--intensity', absR);
+
+            let pVal = Math.exp(-20 * Math.pow(absR, 1.5));
+            if (pVal > 1) pVal = 1;
+            
+            let stars = "";
+            let pLabel = pVal < 0.001 ? "p < 0.001" : `p = ${pVal.toFixed(3)}`;
+            
+            if (pVal < 0.001) { stars = "***"; }
+            else if (pVal < 0.01) { stars = "**"; }
+            else if (pVal < 0.05) { stars = "*"; }
+
+            starsDisplay.innerText = stars;
+            pDisplay.innerText = pLabel;
+            
+            if (pVal < 0.05) {
+                pDisplay.style.borderColor = '#fbbf24';
+                pDisplay.style.color = '#fbbf24';
+                pDisplay.style.background = 'rgba(251, 191, 36, 0.1)';
+            } else {
+                pDisplay.style.borderColor = 'rgba(var(--accent-color), 0.1)';
+                pDisplay.style.color = '#94a3b8';
+                pDisplay.style.background = 'rgba(255,255,255,0.05)';
+            }
+
+            document.getElementById('leg-1').style.opacity = (pVal < 0.05) ? "1" : "0.2";
+            document.getElementById('leg-2').style.opacity = (pVal < 0.01) ? "1" : "0.2";
+            document.getElementById('leg-3').style.opacity = (pVal < 0.001) ? "1" : "0.2";
+
+            const width = plot.clientWidth;
+            const height = plot.clientHeight;
+            const scale = (Math.min(width, height) / 2) - 20;
+
+            points.forEach(p => {
+                const y = (r * p.baseX) + (Math.sqrt(Math.max(0, 1 - r*r)) * p.baseY);
+                p.element.style.left = `${(width/2) + (p.baseX * scale)}px`;
+                p.element.style.top = `${(height/2) - (y * scale)}px`;
+                p.element.style.boxShadow = `0 0 ${5 + absR*10}px rgb(${r_color})`;
+            });
+
+            interpret(r, pVal);
+        }
+
+        function interpret(r, pVal) {
+            const absR = Math.abs(r);
+            if (absR < 0.05) { interpretation.innerText = "Brak związku liniowego."; return; }
+            let dir = r > 0 ? "dodatnia" : "ujemna";
+            let strength = absR < 0.3 ? "słaba" : (absR < 0.6 ? "umiarkowana" : "silna");
+            let sigText = pVal < 0.05 ? "istotna" : "nieistotna";
+            interpretation.innerHTML = `Korelacja <span style="color:rgb(var(--accent-color))">${strength} ${dir}</span>, statystycznie <span style="color:${pVal < 0.05 ? '#fbbf24' : '#94a3b8'}">${sigText}</span>.`;
+        }
+
+        slider.addEventListener('input', updateUI);
+        window.addEventListener('resize', updateUI);
+        window.onload = updateUI;
+    </script>
+</body>
+</html>
