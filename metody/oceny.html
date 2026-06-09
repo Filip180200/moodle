@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Zaliczenia - Statystyka dla Psychologów</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ==========================================================================
+           1. ZASADY GŁÓWNE I PALETA KOLORÓW (CIEMNY MOTYW LABORATORYJNY)
+           ========================================================================== */
+        :root {
+            --bg-color: #0b0f19;
+            --container-bg: #0f172a;
+            --border-color: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            
+            /* Kolory płynów w probówkach */
+            --color-participation: #eab308; /* Żółty */
+            --color-exam: #ef4444;          /* Czerwony/Pomarańczowy */
+            --color-project: #0284c7;       /* Niebieski */
+            --color-attendance: #10b981;    /* Zielony */
+            
+            --danger-border: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Lato', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Główny kontener planszy - poszerzony, aby pomieścić dwie kolumny obok siebie */
+        .dashboard-container {
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 1050px; /* Szerokość dostosowana do dwóch kolumn */
+            padding: 35px 30px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            margin: 0 0 8px 0;
+            background: linear-gradient(to right, #38bdf8, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        /* Układ dwukolumnowy flex/grid */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Przełączenie na dwie kolumny obok siebie na większych ekranach */
+        @media (min-width: 850px) {
+            .main-layout {
+                grid-template-columns: 1.1fr 0.9fr; /* Lewa kolumna (probówki) jest lekko szersza */
+            }
+        }
+
+        /* ==========================================================================
+           2. WIZUALIZACJA PROBÓWEK (LEWA KOLUMNA)
+           ========================================================================== */
+        .vials-container {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            position: relative;
+            padding: 10px 0;
+        }
+
+        .vial-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Nagłówek probówki */
+        .vial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 4px;
+        }
+
+        .vial-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .vial-label span {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .vial-max {
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .vial-max strong {
+            color: var(--text-main);
+            font-size: 15px;
+        }
+
+        /* Konstrukcja szklanej probówki */
+        .glass-vial {
+            height: 44px;
+            background-color: rgba(30, 41, 59, 0.4);
+            border: 3px solid #334155;
+            border-radius: 22px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Płyn w środku */
+        .liquid {
+            height: 100%;
+            width: 0%; /* Kontrolowane przez JS */
+            border-radius: 18px 0 0 18px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            box-sizing: border-box;
+        }
+
+        /* Efekt bąbelków i połysku w płynie */
+        .liquid::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(255,255,255,0.15), transparent 60%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        /* Wartość liczbowa płynu podążająca za nim */
+        .liquid-value {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+            z-index: 3;
+            position: absolute;
+            right: 12px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Konkretne kolory płynów */
+        .vial-participation .liquid { background-color: var(--color-participation); box-shadow: 0 0 12px rgba(234, 179, 8, 0.35); }
+        .vial-exam .liquid { background-color: var(--color-exam); box-shadow: 0 0 12px rgba(239, 68, 68, 0.35); }
+        .vial-project .liquid { background-color: var(--color-project); box-shadow: 0 0 12px rgba(2, 132, 199, 0.35); }
+        .vial-attendance .liquid { background-color: var(--color-attendance); box-shadow: 0 0 12px rgba(16, 185, 129, 0.35); }
+
+        /* Linie minimalnych progów - IDEALNIE WYRÓWNANE PIONOWO NA 60% */
+        .min-marker {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #ffffff;
+            box-shadow: 0 0 8px #ffffff;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .min-marker-label {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            font-weight: 700;
+            color: #cbd5e1;
+            white-space: nowrap;
+            background: #1e293b;
+            padding: 1px 5px;
+            border-radius: 4px;
+            border: 1px solid #475569;
+            line-height: 1;
+        }
+
+        /* ==========================================================================
+           3. SPRYTNA NAKŁADKA: GLOBALNA STREFA ZAGROŻENIA (IDEALNIE DOPASOWANA)
+           ========================================================================== */
+        /* Pokrywa dokładnie lewe 60% szerokości całego panelu z probówkami */
+        .danger-overlay-box {
+            position: absolute;
+            top: -10px;
+            bottom: -10px;
+            left: -8px;
+            width: calc(60% + 8px); /* Dokładnie do linii 60% */
+            border: 2px dashed var(--danger-border);
+            background-color: var(--danger-bg);
+            border-radius: 12px;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transform: scaleX(0.98);
+            transition: all 0.4s ease;
+            box-sizing: border-box;
+        }
+
+        .danger-overlay-box.active {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        .danger-tag {
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background-color: #ef4444;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(239,68,68,0.3);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        /* ==========================================================================
+           4. PANEL INTERAKTYWNY DLA STUDENTA / WYKŁADOWCY (PRAWA KOLUMNA)
+           ========================================================================== */
+        .control-panel {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-panel h3 {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sliders-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .slider-header span.val {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+            transition: background 0.15s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #0ea5e9;
+        }
+
+        /* Tabela z ocenami - Legenda */
+        .grades-legend {
+            background-color: rgba(15, 23, 42, 0.4);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .grades-legend h4 {
+            margin: 0 0 8px 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #38bdf8;
+            text-align: center;
+        }
+
+        .grades-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .grade-item {
+            background-color: rgba(30, 41, 59, 0.3);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            padding: 4px;
+            border-radius: 6px;
+        }
+
+        .grade-item.highlight {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.08);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
+        }
+
+        .grade-item.highlight-fail {
+            border-color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.08);
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.15);
+        }
+
+        .grade-name {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .grade-range {
+            color: var(--text-muted);
+            font-size: 9px;
+            margin-top: 1px;
+        }
+
+        /* Podsumowanie punktów na dole */
+        .summary-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+            padding-top: 18px;
+            border-top: 1px solid #334155;
+            gap: 10px;
+        }
+
+        .total-score {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .total-score strong {
+            font-size: 22px;
+            color: #10b981;
+        }
+
+        .status-and-grade {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-width: 1px;
+            border-style: solid;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .status-badge.pass {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border-color: #10b981;
+        }
+
+        .status-badge.fail {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .grade-badge {
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            background-color: #334155;
+            padding: 2px 10px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            white-space: nowrap;
+        }
+
+        .grade-badge span {
+            color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <div class="header">
+        <h1><i class="fa-solid fa-flask-vial"></i> Kalkulator Ocney</h1>
+    </div>
+
+    <!-- Główny podział strony na dwie kolumny -->
+    <div class="main-layout">
+        
+        <!-- KOLUMNA LEWA: KOLOROWE PROBÓWKI -->
+        <div class="vials-container">
+            <!-- Dynamiczne czerwone pudełko "Strefa Zagrożenia" -->
+            <div class="danger-overlay-box" id="dangerBox">
+                <span class="danger-tag"><i class="fa-solid fa-triangle-exclamation"></i> Strefa zagrożenia</span>
+            </div>
+
+            <!-- RZĄD 1: UCZESTNICTWO -->
+            <div class="vial-row vial-participation">
+                <div class="vial-header">
+                    <div class="vial-label">
+                        Czynne uczestnictwo
+                        <span>Aktywność na ćwiczeniach</span>
+                    </div>
+                    <div class="vial-max">
+                        <strong id="valParticipationText">0</strong> / 5 pkt
+                    </div>
+                </div>
+                <div class="glass-vial">
+                    <div class="liquid" id="liqParticipation">
+                        <span class="liquid-value" id="valParticipationLiquid">0 pkt</span>
+                    </div>
+                    <!-- Marker minimalny (Zawsze na 60% szerokości) -->
+                    <div class="min-marker" style="left: 60%;">
+                        <span class="min-marker-label">min. 3 pkt</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RZĄD 2: EGZAMIN -->
+            <div class="vial-row vial-exam">
+                <div class="vial-header">
+                    <div class="vial-label">
+                        Egzamin pisemny
+                        <span>Wiedza teoretyczna</span>
+                    </div>
+                    <div class="vial-max">
+                        <strong id="valExamText">0</strong> / 20 pkt
+                    </div>
+                </div>
+                <div class="glass-vial">
+                    <div class="liquid" id="liqExam">
+                        <span class="liquid-value" id="valExamLiquid">0 pkt</span>
+                    </div>
+                    <!-- Marker minimalny (Zawsze na 60% szerokości) -->
+                    <div class="min-marker" style="left: 60%;">
+                        <span class="min-marker-label">min. 11 pkt</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RZĄD 3: PROJEKT -->
+            <div class="vial-row vial-project">
+                <div class="vial-header">
+                    <div class="vial-label">
+                        Projekt badawczy
+                        <span>Raport Jamovi/SPSS</span>
+                    </div>
+                    <div class="vial-max">
+                        <strong id="valProjectText">0</strong> / 5 pkt
+                    </div>
+                </div>
+                <div class="glass-vial">
+                    <div class="liquid" id="liqProject">
+                        <span class="liquid-value" id="valProjectLiquid">0 pkt</span>
+                    </div>
+                    <!-- Marker minimalny (Zawsze na 60% szerokości) -->
+                    <div class="min-marker" style="left: 60%;">
+                        <span class="min-marker-label">min. 3 pkt</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RZĄD 4: OBECNOŚĆ -->
+            <div class="vial-row vial-attendance">
+                <div class="vial-header">
+                    <div class="vial-label">
+                        Obecność na zajęciach
+                        <span>Limit: maks. 2 nieobecności</span>
+                    </div>
+                    <div class="vial-max">
+                        <strong id="valAttendanceText">0</strong> / 15
+                    </div>
+                </div>
+                <div class="glass-vial">
+                    <div class="liquid" id="liqAttendance">
+                        <span class="liquid-value" id="valAttendanceLiquid">0 / 15</span>
+                    </div>
+                    <!-- Marker minimalny (Zawsze na 60% szerokości) -->
+                    <div class="min-marker" style="left: 60%;">
+                        <span class="min-marker-label">min. 13</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KOLUMNA PRAWA: SYMULATOR WYNIKÓW I SUMMARY -->
+        <div class="control-panel">
+            <h3><i class="fa-solid fa-sliders"></i> Symulator Wyników</h3>
+            <div class="sliders-grid">
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span>Uczestnictwo (maks. 5 pkt):</span>
+                        <span class="val" id="slideValParticipation">0 pkt</span>
+                    </div>
+                    <input type="range" id="inputParticipation" min="0" max="5" step="0.5" value="2.5">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span>Egzamin (maks. 20 pkt):</span>
+                        <span class="val" id="slideValExam">0 pkt</span>
+                    </div>
+                    <input type="range" id="inputExam" min="0" max="20" step="1" value="10">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span>Projekt (maks. 5 pkt):</span>
+                        <span class="val" id="slideValProject">0 pkt</span>
+                    </div>
+                    <input type="range" id="inputProject" min="0" max="5" step="0.5" value="2">
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span>Obecności (zajęć z 15):</span>
+                        <span class="val" id="slideValAttendance">0</span>
+                    </div>
+                    <input type="range" id="inputAttendance" min="0" max="15" step="1" value="14">
+                </div>
+            </div>
+
+            <!-- PODSUMOWANIE -->
+            <div class="summary-box">
+                <div class="total-score">
+                    Suma: <strong id="totalScore">0</strong> / 30 pkt<br>
+                    <small style="font-size: 10px; color: var(--text-muted); font-weight: normal;">(Uczestnictwo + Egzamin + Projekt)</small>
+                </div>
+                <div class="status-and-grade">
+                    <div class="status-badge fail" id="statusBadge">
+                        Brak Zaliczenia
+                    </div>
+                    <div class="grade-badge">
+                        Ocena: <span id="gradeVal">2,0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Referencje do suwaków
+    const inputParticipation = document.getElementById('inputParticipation');
+    const inputExam = document.getElementById('inputExam');
+    const inputProject = document.getElementById('inputProject');
+    const inputAttendance = document.getElementById('inputAttendance');
+
+    // Referencje do płynów i tekstów w probówkach
+    const liqParticipation = document.getElementById('liqParticipation');
+    const valParticipationText = document.getElementById('valParticipationText');
+    const valParticipationLiquid = document.getElementById('valParticipationLiquid');
+    const slideValParticipation = document.getElementById('slideValParticipation');
+
+    const liqExam = document.getElementById('liqExam');
+    const valExamText = document.getElementById('valExamText');
+    const valExamLiquid = document.getElementById('valExamLiquid');
+    const slideValExam = document.getElementById('slideValExam');
+
+    const liqProject = document.getElementById('liqProject');
+    const valProjectText = document.getElementById('valProjectText');
+    const valProjectLiquid = document.getElementById('valProjectLiquid');
+    const slideValProject = document.getElementById('slideValProject');
+
+    const liqAttendance = document.getElementById('liqAttendance');
+    const valAttendanceText = document.getElementById('valAttendanceText');
+    const valAttendanceLiquid = document.getElementById('valAttendanceLiquid');
+    const slideValAttendance = document.getElementById('slideValAttendance');
+
+    // Reszta elementów sterujących
+    const dangerBox = document.getElementById('dangerBox');
+    const totalScoreEl = document.getElementById('totalScore');
+    const statusBadge = document.getElementById('statusBadge');
+    const gradeValEl = document.getElementById('gradeVal');
+
+    /**
+     * Mapowanie nieliniowe (dwuetapowe):
+     * Sprawia, że próg minimalny (min) zawsze ląduje dokładnie na 60% szerokości probówki.
+     * Zapobiega to nakładaniu się wskaźników i gwarantuje idealne wyrównanie pasków w pionie.
+     */
+    function calculateVisualPercentage(value, min, max) {
+        if (value <= min) {
+            // Skala 0% - 60% dla wartości od 0 do min
+            return min === 0 ? 0 : (value / min) * 60;
+        } else {
+            // Skala 60% - 100% dla wartości od min do max
+            return 60 + ((value - min) / (max - min)) * 40;
+        }
+    }
+
+    // Funkcja wyliczająca ocenę na podstawie punktów i spełnionego zaliczenia
+    function calculateGrade(points, hasDanger) {
+        if (hasDanger) {
+            return "2,0";
+        }
+        if (points >= 28) return "5,0";
+        if (points >= 25) return "4,5";
+        if (points >= 22) return "4,0";
+        if (points >= 19) return "3,5";
+        if (points >= 16) return "3,0";
+        return "2,0";
+    }
+
+    function updateDashboard() {
+        // Pobranie aktualnych wartości
+        const part = parseFloat(inputParticipation.value);
+        const exam = parseFloat(inputExam.value);
+        const proj = parseFloat(inputProject.value);
+        const att = parseInt(inputAttendance.value);
+
+        // Obliczenie inteligentnego procentu napełnienia (wszystkie progi min są na 60%)
+        const partVisualPercent = calculateVisualPercentage(part, 3, 5);
+        const examVisualPercent = calculateVisualPercentage(exam, 11, 20);
+        const projVisualPercent = calculateVisualPercentage(proj, 3, 5);
+        const attVisualPercent = calculateVisualPercentage(att, 13, 15);
+
+        // Aktualizacja wyglądu probówek i wartości
+        liqParticipation.style.width = partVisualPercent + '%';
+        valParticipationText.textContent = part;
+        valParticipationLiquid.textContent = part + ' pkt';
+        slideValParticipation.textContent = part + ' pkt';
+
+        liqExam.style.width = examVisualPercent + '%';
+        valExamText.textContent = exam;
+        valExamLiquid.textContent = exam + ' pkt';
+        slideValExam.textContent = exam + ' pkt';
+
+        liqProject.style.width = projVisualPercent + '%';
+        valProjectText.textContent = proj;
+        valProjectLiquid.textContent = proj + ' pkt';
+        slideValProject.textContent = proj + ' pkt';
+
+        liqAttendance.style.width = attVisualPercent + '%';
+        valAttendanceText.textContent = att;
+        valAttendanceLiquid.textContent = att + ' / 15';
+        slideValAttendance.textContent = att + ' obecności';
+
+        // Sprawdzanie warunków zaliczenia (minima)
+        const isParticipationPassed = part >= 3;
+        const isExamPassed = exam >= 11;
+        const isProjectPassed = proj >= 3;
+        const isAttendancePassed = att >= 13;
+
+        // Określenie, czy student ma jakiekolwiek zagrożenie
+        const hasDanger = !isParticipationPassed || !isExamPassed || !isProjectPassed || !isAttendancePassed;
+
+        if (hasDanger) {
+            dangerBox.classList.add('active');
+            statusBadge.textContent = "Brak Zaliczenia";
+            statusBadge.className = "status-badge fail";
+        } else {
+            dangerBox.classList.remove('active');
+            statusBadge.textContent = "Zaliczone!";
+            statusBadge.className = "status-badge pass";
+        }
+
+        // Sumowanie punktów (bez obecności, bo obecność to warunek wejściowy)
+        const totalPoints = part + exam + proj;
+        totalScoreEl.textContent = totalPoints;
+
+        // Wyznaczenie oceny końcowej
+        const grade = calculateGrade(totalPoints, hasDanger);
+        gradeValEl.textContent = grade;
+
+        // Aktualizacja podświetlenia w tabeli (legendzie) ocen
+        document.querySelectorAll('.grade-item').forEach(item => {
+            item.className = 'grade-item'; // reset stylów
+        });
+
+        const activeLegendItem = document.getElementById('legend-' + grade);
+        if (activeLegendItem) {
+            if (grade === "2,0") {
+                activeLegendItem.classList.add('highlight-fail');
+            } else {
+                activeLegendItem.classList.add('highlight');
+            }
+        }
+    }
+
+    // Dodanie event listenerów do suwaków
+    inputParticipation.addEventListener('input', updateDashboard);
+    inputExam.addEventListener('input', updateDashboard);
+    inputProject.addEventListener('input', updateDashboard);
+    inputAttendance.addEventListener('input', updateDashboard);
+
+    // Pierwsze uruchomienie, żeby narysować wartości domyślne
+    updateDashboard();
+</script>
+
+</body>
+</html>
