@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Symulacja rzutu monetą</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --border: #e5e7eb;
+      --blue: #60a5fa;
+      --blue-light: #93c5fd;
+      --red: #dc2626;
+      --orange: #f59e0b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+
+    h1, h2 { margin: 0 0 12px; }
+    p { margin: 6px 0; }
+    .muted { color: var(--muted); }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+    }
+
+    button.light {
+      background: #eef2ff;
+      color: #1e3a8a;
+      border: 1px solid #c7d2fe;
+    }
+
+    .result {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .coin {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 700;
+      border: 5px solid #fbbf24;
+      background: radial-gradient(circle at 30% 30%, #fde68a, #f59e0b);
+      color: #7c2d12;
+      box-shadow: inset 0 0 12px rgba(255,255,255,0.5), 0 8px 18px rgba(0,0,0,0.15);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .stat-box {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fafafa;
+    }
+
+    .stat-box strong {
+      display: block;
+      font-size: 24px;
+      margin-top: 4px;
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      margin-top: 14px;
+      display: block;
+    }
+
+    .footer-note {
+      font-size: 14px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Symulacja rzutu monetą</h1>
+      <p class="muted">Możesz zrobić pojedynczy rzut albo wiele eksperymentów i zobaczyć, jak rozkład liczby orłów zaczyna przypominać rozkład normalny.</p>
+
+      <div class="result">
+        <button id="singleTossBtn">Rzuć monetą</button>
+        <div class="coin" id="coinFace">?</div>
+        <div>
+          <p><strong>Wynik:</strong> <span id="singleResult">jeszcze brak</span></p>
+          <p class="muted">Pojedynczy rzut pokazuje tylko jeden wynik: orzeł albo reszka.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Wielokrotna symulacja</h2>
+      <p class="muted">Program wykonuje wiele eksperymentów. W każdym eksperymencie moneta jest rzucana tyle razy, ile ustawisz niżej. Potem rysowany jest histogram liczby orłów.</p>
+
+      <div class="controls">
+        <div>
+          <label for="flipsPerExperiment">Liczba rzutów w 1 eksperymencie</label>
+          <input id="flipsPerExperiment" type="number" min="1" max="1000" value="50" />
+        </div>
+        <div>
+          <label for="experiments">Liczba eksperymentów</label>
+          <input id="experiments" type="number" min="10" max="5000" value="500" />
+        </div>
+        <div>
+          <button id="runSimulationBtn">Uruchom symulację</button>
+        </div>
+        <div>
+          <button id="exampleBtn" class="light">Ustaw przykład: 100 rzutów × 1000 prób</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat-box">
+          Średnia liczba orłów
+          <strong id="meanValue">-</strong>
+        </div>
+        <div class="stat-box">
+          Odchylenie standardowe
+          <strong id="sdValue">-</strong>
+        </div>
+        <div class="stat-box">
+          Wartość oczekiwana teoretyczna
+          <strong id="expectedValue">-</strong>
+        </div>
+        <div class="stat-box">
+          Odch. stand. teoretyczne
+          <strong id="theoreticalSdValue">-</strong>
+        </div>
+      </div>
+
+      <canvas id="chart"></canvas>
+      <canvas id="chartAnnotated"></canvas>
+
+      <p class="footer-note">Drugi wykres pokazuje dodatkowo średnią oraz zakres ±1 odchylenia standardowego.</p>
+    </div>
+  </div>
+
+  <script>
+    const coinFace = document.getElementById('coinFace');
+    const singleResult = document.getElementById('singleResult');
+    const singleTossBtn = document.getElementById('singleTossBtn');
+    const runSimulationBtn = document.getElementById('runSimulationBtn');
+    const exampleBtn = document.getElementById('exampleBtn');
+    const flipsInput = document.getElementById('flipsPerExperiment');
+    const experimentsInput = document.getElementById('experiments');
+    const meanValue = document.getElementById('meanValue');
+    const sdValue = document.getElementById('sdValue');
+    const expectedValue = document.getElementById('expectedValue');
+    const theoreticalSdValue = document.getElementById('theoreticalSdValue');
+    const canvas = document.getElementById('chart');
+    const canvasAnnotated = document.getElementById('chartAnnotated');
+    const ctx = canvas.getContext('2d');
+    const ctxAnnotated = canvasAnnotated.getContext('2d');
+
+    function tossCoin() {
+      return Math.random() < 0.5 ? 'Orzeł' : 'Reszka';
+    }
+
+    function singleToss() {
+      const result = tossCoin();
+      coinFace.textContent = result === 'Orzeł' ? 'O' : 'R';
+      singleResult.textContent = result;
+    }
+
+    function runExperiment(flips) {
+      let heads = 0;
+      for (let i = 0; i < flips; i += 1) {
+        if (Math.random() < 0.5) heads += 1;
+      }
+      return heads;
+    }
+
+    function mean(arr) {
+      return arr.reduce((a, b) => a + b, 0) / arr.length;
+    }
+
+    function standardDeviation(arr, avg) {
+      const variance = arr.reduce((sum, x) => sum + (x - avg) ** 2, 0) / arr.length;
+      return Math.sqrt(variance);
+    }
+
+    function normalPdf(x, mu, sigma) {
+      if (sigma === 0) return 0;
+      const a = 1 / (sigma * Math.sqrt(2 * Math.PI));
+      const b = Math.exp(-0.5 * ((x - mu) / sigma) ** 2);
+      return a * b;
+    }
+
+    function buildFrequency(data, flips) {
+      const freq = Array(flips + 1).fill(0);
+      data.forEach((value) => {
+        freq[value] += 1;
+      });
+      return freq;
+    }
+
+    function setupCanvas(canvasEl, width, height) {
+      canvasEl.width = width;
+      canvasEl.height = height;
+      return canvasEl.getContext('2d');
+    }
+
+    function drawAxes(ctxLocal, w, h, padding, flips, chartW, chartH, maxFreq) {
+      ctxLocal.strokeStyle = '#111827';
+      ctxLocal.lineWidth = 1;
+      ctxLocal.beginPath();
+      ctxLocal.moveTo(padding, padding);
+      ctxLocal.lineTo(padding, h - padding);
+      ctxLocal.lineTo(w - padding, h - padding);
+      ctxLocal.stroke();
+
+      ctxLocal.fillStyle = '#374151';
+      ctxLocal.font = '12px Arial';
+      ctxLocal.fillText('Liczba orłów', w / 2 - 35, h - 12);
+      ctxLocal.save();
+      ctxLocal.translate(16, h / 2 + 20);
+      ctxLocal.rotate(-Math.PI / 2);
+      ctxLocal.fillText('Częstość', 0, 0);
+      ctxLocal.restore();
+
+      const step = Math.max(1, Math.floor(flips / 10));
+      for (let i = 0; i <= flips; i += step) {
+        const x = padding + (i / flips) * chartW;
+        ctxLocal.fillText(String(i), x - 6, h - padding + 18);
+      }
+
+      for (let i = 0; i <= 5; i += 1) {
+        const value = Math.round((maxFreq * i) / 5);
+        const y = h - padding - (chartH * i) / 5;
+        ctxLocal.fillText(String(value), padding - 34, y + 4);
+      }
+    }
+
+    function drawBars(ctxLocal, freq, w, h, padding, maxFreq) {
+      const chartW = w - padding * 2;
+      const chartH = h - padding * 2;
+      const barW = chartW / freq.length;
+
+      for (let i = 0; i < freq.length; i += 1) {
+        const barH = (freq[i] / maxFreq) * chartH * 0.9;
+        const x = padding + i * barW;
+        const y = h - padding - barH;
+        ctxLocal.fillRect(x + 1, y, Math.max(barW - 2, 1), barH);
+      }
+    }
+
+    function drawNormalCurve(ctxLocal, dataLength, flips, maxFreq, w, h, padding) {
+      const chartW = w - padding * 2;
+      const chartH = h - padding * 2;
+      const mu = flips * 0.5;
+      const sigma = Math.sqrt(flips * 0.25);
+
+      ctxLocal.strokeStyle = 'var(--red)';
+      ctxLocal.strokeStyle = '#dc2626';
+      ctxLocal.lineWidth = 3;
+      ctxLocal.beginPath();
+
+      for (let px = 0; px <= chartW; px += 1) {
+        const xValue = (px / chartW) * flips;
+        const density = normalPdf(xValue, mu, sigma);
+        const expectedFreq = density * dataLength;
+        const y = h - padding - (expectedFreq / maxFreq) * chartH * 0.9;
+        const x = padding + px;
+
+        if (px === 0) ctxLocal.moveTo(x, y);
+        else ctxLocal.lineTo(x, y);
+      }
+
+      ctxLocal.stroke();
+    }
+
+    function drawVerticalLine(ctxLocal, x, yTop, yBottom, color, label, align = 'right') {
+      ctxLocal.strokeStyle = color;
+      ctxLocal.lineWidth = 2;
+      ctxLocal.setLineDash([6, 4]);
+      ctxLocal.beginPath();
+      ctxLocal.moveTo(x, yTop);
+      ctxLocal.lineTo(x, yBottom);
+      ctxLocal.stroke();
+      ctxLocal.setLineDash([]);
+
+      ctxLocal.fillStyle = color;
+      ctxLocal.font = '12px Arial';
+      const labelX = align === 'left' ? x - 6 : x + 6;
+      ctxLocal.textAlign = align === 'left' ? 'right' : 'left';
+      ctxLocal.fillText(label, labelX, yTop + 14);
+      ctxLocal.textAlign = 'left';
+    }
+
+    function drawHistogram(data, flips) {
+      const w = 1000;
+      const h = 420;
+      const padding = 50;
+      const localCtx = setupCanvas(canvas, w, h);
+      localCtx.clearRect(0, 0, w, h);
+
+      const freq = buildFrequency(data, flips);
+      const maxFreq = Math.max(...freq, 1);
+      const chartW = w - padding * 2;
+      const chartH = h - padding * 2;
+
+      drawAxes(localCtx, w, h, padding, flips, chartW, chartH, maxFreq);
+      localCtx.fillStyle = '#60a5fa';
+      drawBars(localCtx, freq, w, h, padding, maxFreq);
+      drawNormalCurve(localCtx, data.length, flips, maxFreq, w, h, padding);
+    }
+
+    function drawAnnotatedHistogram(data, flips, avg, sd) {
+      const w = 1000;
+      const h = 420;
+      const padding = 50;
+      const localCtx = setupCanvas(canvasAnnotated, w, h);
+      localCtx.clearRect(0, 0, w, h);
+
+      const freq = buildFrequency(data, flips);
+      const maxFreq = Math.max(...freq, 1);
+      const chartW = w - padding * 2;
+      const chartH = h - padding * 2;
+      const xScale = (value) => padding + (value / flips) * chartW;
+
+      drawAxes(localCtx, w, h, padding, flips, chartW, chartH, maxFreq);
+      localCtx.fillStyle = '#93c5fd';
+      drawBars(localCtx, freq, w, h, padding, maxFreq);
+
+      drawVerticalLine(localCtx, xScale(avg), padding, h - padding, '#dc2626', `Średnia = ${avg.toFixed(2)}`, 'right');
+      drawVerticalLine(localCtx, xScale(avg - sd), padding + 20, h - padding, '#f59e0b', `-1 SD = ${(avg - sd).toFixed(2)}`, 'left');
+      drawVerticalLine(localCtx, xScale(avg + sd), padding + 40, h - padding, '#f59e0b', `+1 SD = ${(avg + sd).toFixed(2)}`, 'right');
+    }
+
+    function simulate() {
+      const flips = parseInt(flipsInput.value, 10);
+      const experiments = parseInt(experimentsInput.value, 10);
+
+      if (!Number.isInteger(flips) || !Number.isInteger(experiments) || flips < 1 || experiments < 10) {
+        alert('Podaj sensowne wartości: co najmniej 1 rzut i 10 eksperymentów.');
+        return;
+      }
+
+      const results = [];
+      for (let i = 0; i < experiments; i += 1) {
+        results.push(runExperiment(flips));
+      }
+
+      const avg = mean(results);
+      const sd = standardDeviation(results, avg);
+      const theoreticalMean = flips * 0.5;
+      const theoreticalSd = Math.sqrt(flips * 0.25);
+
+      meanValue.textContent = avg.toFixed(2);
+      sdValue.textContent = sd.toFixed(2);
+      expectedValue.textContent = theoreticalMean.toFixed(2);
+      theoreticalSdValue.textContent = theoreticalSd.toFixed(2);
+
+      drawHistogram(results, flips);
+      drawAnnotatedHistogram(results, flips, avg, sd);
+    }
+
+    (function runTests() {
+      console.assert(typeof ctxAnnotated !== 'undefined', 'ctxAnnotated powinno istnieć');
+      console.assert(typeof drawVerticalLine === 'function', 'drawVerticalLine powinno istnieć');
+      console.assert(mean([1, 2, 3, 4]) === 2.5, 'mean() powinno liczyć średnią');
+      console.assert(Math.abs(standardDeviation([2, 2, 2], 2)) < 1e-12, 'SD dla stałej tablicy powinno wynosić 0');
+      console.assert(runExperiment(10) >= 0 && runExperiment(10) <= 10, 'Wynik eksperymentu powinien mieścić się w zakresie 0..n');
+      console.assert(normalPdf(0, 0, 1) > 0, 'normalPdf() powinno zwracać dodatnią gęstość');
+      console.assert(buildFrequency([0, 1, 1, 2], 2).join(',') === '1,2,1', 'buildFrequency() powinno poprawnie zliczać częstości');
+      console.assert(typeof drawHistogram === 'function', 'drawHistogram powinno istnieć');
+      console.assert(typeof drawAnnotatedHistogram === 'function', 'drawAnnotatedHistogram powinno istnieć');
+    })();
+
+    singleTossBtn.addEventListener('click', singleToss);
+    runSimulationBtn.addEventListener('click', simulate);
+    exampleBtn.addEventListener('click', () => {
+      flipsInput.value = 100;
+      experimentsInput.value = 1000;
+      simulate();
+    });
+
+    simulate();
+  </script>
+</body>
+</html>

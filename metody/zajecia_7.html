@@ -1,24 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Techniki Skojarzeniowe</title>
+    <title>7. Kreatywne techniki</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Noto Sans', sans-serif; background-color: #faf5ff; color: #334155; overflow: hidden; }
-        
-        .step-content { display: none; height: 100%; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease-in-out; }
-        .step-content.active { display: block; opacity: 1; }
-        
-        .scroller::-webkit-scrollbar { width: 8px; height: 8px; }
-        .scroller::-webkit-scrollbar-thumb { background: #d8b4fe; border-radius: 4px; }
-        .scroller::-webkit-scrollbar-track { background: transparent; }
-
-        /* Animacje */
-        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; transform: translateY(10px); }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        :root {
+            --page-bg: #faf5ff;
+            --page-text: #334155;
+            --scrollbar-thumb: #d946ef;
+        }
 
         /* Polaroid Effect */
         .polaroid {
@@ -34,49 +27,39 @@
 <body class="h-screen flex flex-col relative">
 
     <!-- EKRAN LOBBY -->
-    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4 transition-transform duration-500">
-        <div class="max-w-6xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh]">
-            <!-- Lewy panel -->
-            <div class="md:w-1/3 bg-slate-800 p-8 text-white flex flex-col justify-center relative overflow-hidden">
+    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
+        <div class="w-full max-w-5xl">
+            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden relative">
+                <div class="h-2 bg-gradient-to-r from-purple-500 to-pink-600"></div>
                 <div class="absolute inset-0 opacity-10 pointer-events-none">
-                    <!-- Abstract shapes -->
                     <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <circle cx="20" cy="80" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                        <circle cx="80" cy="20" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+                        <path d="M0,70 L20,50 L40,70 L60,50 L80,70 L100,50" stroke="white" stroke-width="0.6" fill="none"/>
+                        <path d="M0,30 L20,10 L40,30 L60,10 L80,30 L100,10" stroke="white" stroke-width="0.4" fill="none"/>
                     </svg>
                 </div>
-                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 to-pink-600"></div>
-                
-                <h1 class="text-3xl font-bold mb-2 font-serif relative z-10">Techniki Skojarzeniowe</h1>
-                <p class="text-xs text-purple-300 font-mono mb-6 relative z-10 uppercase tracking-widest">Projekcja i Ekspresja</p>
+                <div class="p-5 md:p-8">
+                    <div class="text-xs text-slate-300/80 tracking-wide">
+                        Metodologia badań psychologicznych &bull; Filip Liebersbach
+                    </div>
+                    <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight font-serif">7. Kreatywne techniki</h1>
+                    <p class="mt-3 text-sm md:text-base text-slate-300/90 leading-relaxed">Metody pozwalające dotrzeć do ukrytych postaw, emocji i potrzeb poprzez pracę z obrazem oraz słowem.</p>
 
-                <p class="mb-8 opacity-80 text-sm leading-relaxed relative z-10">Metody pozwalające dotrzeć do ukrytych postaw, emocji i potrzeb poprzez pracę z obrazem oraz słowem.</p>
-                
-                <div class="space-y-4 text-sm relative z-10">
-                    <div class="flex items-center gap-3">
-                        <span class="bg-purple-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-purple-400">1</span> 
-                        <div><span class="font-bold block text-purple-100">PhotoVoice</span><span class="text-xs opacity-60">Skojarzenia wizualne</span></div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="bg-pink-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-pink-400">2</span> 
-                        <div><span class="font-bold block text-pink-100">Zdania Niedokończone</span><span class="text-xs opacity-60">Technika uzupełniania</span></div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="bg-slate-600 w-8 h-8 flex items-center justify-center rounded-full font-bold text-xs shadow-lg border border-slate-400">3</span> 
-                        <div><span class="font-bold block text-slate-200">Test Plam (Rorschach)</span><span class="text-xs opacity-60">Kontrowersje</span></div>
-                    </div>
+                    <ol class="mt-3 list-decimal ml-5 space-y-1 text-slate-200/85">
+                        <li>PhotoVoice - Skojarzenia wizualne</li>
+                        <li>Zdania niedokończone - Technika uzupełniania</li>
+                        <li>Test plam (Rorschach) - Kontrowersje</li>
+                    </ol>
                 </div>
-            </div>
+            </header>
 
-            <!-- Prawy panel (Lista) -->
-            <div class="md:w-2/3 p-8 bg-slate-50 overflow-y-auto scroller">
-                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2 border-slate-200">Wybierz Metodę:</h2>
-                <div class="grid grid-cols-1 gap-4" id="tech-list"></div>
+            <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-lg overflow-hidden">
+                <div class="p-5 md:p-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Wybierz technikę</h2>
+                    <div class="grid grid-cols-1 gap-4" id="tech-list"></div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- EKRAN APLIKACJI -->
     <div id="app-screen" class="flex-1 flex flex-col h-full transition-opacity duration-500 opacity-0 pointer-events-none">
         
         <!-- Header -->
@@ -203,7 +186,7 @@
                                 <circle cx="300" cy="50" r="30" fill="#facc15" opacity="0.8"/>
                                 <rect x="0" y="150" width="400" height="50" fill="#475569"/>
                             </svg>
-                            <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="absolute inset-0 flex items-center justify-start">
                                 <span class="bg-white/80 px-4 py-2 rounded text-slate-600 font-bold backdrop-blur-sm shadow">[Tu wklejono by Twoje zdjęcie]</span>
                             </div>
                         </div>
@@ -243,184 +226,20 @@
                     </div>
                 `
             },
-            {
-                id: 'zdania',
-                title: "Zdania Niedokończone",
-                subtitle: "Technika Uzupełniania",
-                icon: "✍️",
-                color: "pink",
-                theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Technika Uzupełniania</h2>
-                    </div>
-                    
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-200 mb-6 flex items-start gap-4">
-                        <span class="text-2xl">✅</span>
-                        <div>
-                            <strong class="block text-green-900 mb-1">Wartość: Wywiad i Relacja</strong>
-                            <p class="text-sm text-green-800">
-                                To doskonałe narzędzie do <strong>rozpoczęcia rozmowy (ice-breaker)</strong>.
-                                Pozwala badanemu w bezpieczny sposób wyrazić myśli, które trudno ująć wprost.
-                                Buduje "pomost" między pacjentem a diagnostą.
-                            </p>
-                        </div>
-                    </div>
-
-                    <p class="text-lg text-slate-700 mb-6">Metoda projekcyjna polegająca na kończeniu rozpoczętych zdań. Ujawnia postawy, lęki, pragnienia i konflikty.</p>
-                    
-                    <div class="bg-pink-50 p-6 rounded-xl border border-pink-100 flex flex-col md:flex-row gap-6 items-center">
-                        <div class="flex-1">
-                            <h3 class="font-bold text-pink-900 mb-2">Geneza</h3>
-                            <p class="text-sm text-pink-800">Technika ta jest wzorowana na klasycznym <strong>Teście Niedokończonych Zdań Rottera (RISB)</strong>. W wersji uproszczonej służy do wstępnej diagnozy.</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow-sm border border-pink-200 text-center w-full md:w-auto">
-                            <span class="text-4xl block mb-2">🧩</span>
-                            <span class="text-xs font-bold text-slate-500 uppercase">Mechanizm</span>
-                            <strong class="block text-slate-700">Projekcja</strong>
-                        </div>
-                    </div>
-                `,
-                method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Procedura Badania</h2>
-                    <p class="text-slate-600 mb-6">Badany otrzymuje arkusz z początkami zdań (stymulatorami). Instrukcja wymaga szybkiego i szczerego dokończenia myśli.</p>
-
-                    <div class="space-y-4">
-                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
-                            <strong class="block text-slate-700 mb-1">Zasada 1: Czas</strong>
-                            <p class="text-sm text-slate-500">Pierwsza myśl jest najlepsza. Nie należy się długo zastanawiać.</p>
-                        </div>
-                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
-                            <strong class="block text-slate-700 mb-1">Zasada 2: Pełne zdania</strong>
-                            <p class="text-sm text-slate-500">Zakończenie musi tworzyć gramatyczną całość z początkiem.</p>
-                        </div>
-                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
-                            <strong class="block text-slate-700 mb-1">Zasada 3: Szczerość</strong>
-                            <p class="text-sm text-slate-500">Wartość diagnostyczną mają tylko autentyczne odpowiedzi.</p>
-                        </div>
-                    </div>
-                `,
-                result: `
-                    <div class="max-w-2xl mx-auto">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Karta Pracy</h2>
-                        <p class="text-slate-500 mb-4">Dokończ poniższe zdania pierwszą myślą, która przyjdzie Ci do głowy.</p>
-                        <p class="text-xs text-slate-400 italic mb-8 border-l-2 border-pink-300 pl-2">
-                            Uwaga: To jedynie fragment (10 zdań). Pełny test, np. RISB, zawiera zazwyczaj 40 trzonów zdań, co pozwala na głębszą analizę profilu osobowości.
-                        </p>
-
-                        <div class="space-y-6 bg-white p-8 rounded-xl shadow-lg border border-pink-100 paper-texture">
-                            
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">1.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Lubię...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">2.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Najszczęśliwszy czas...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">3.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Chcę wiedzieć...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">4.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">W domu rodzinnym...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">5.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Żałuję...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">6.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Kiedy idę spać...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">7.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Chłopcy...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">8.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Najlepszy...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">9.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Drażni mnie...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-                            <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">10.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Ludzie...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
-                            </div>
-
-                        </div>
-                    </div>
-                `
-            },
-            {
-                id: 'plamy',
-                title: "Test Plam",
-                subtitle: "Test Rorschacha",
-                icon: "🦋",
-                color: "slate",
-                theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Test Plam Atramentowych</h2>
-                    </div>
-                    
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex items-start gap-4">
-                        <span class="text-2xl">⚠️</span>
-                        <div>
-                            <strong class="block text-red-900 mb-1">Niska Wartość Diagnostyczna</strong>
-                            <p class="text-sm text-red-800">
-                                Współczesna psychometria uznaje ten test za <strong>mało rzetelny i nietrafny</strong>. 
-                                Jest podatny na subiektywną interpretację badacza i nie spełnia standardów EBM (Evidence-Based Medicine).
-                                W popkulturze znany, w nauce - marginalizowany.
-                            </p>
-                        </div>
-                    </div>
-
-                    <p class="text-lg text-slate-700 mb-6">Klasyczna technika projekcyjna opracowana przez Hermanna Rorschacha. Badany interpretuje symetryczne plamy atramentowe.</p>
-                `,
-                method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Zasada Działania (Historycznie)</h2>
-                    <p class="text-slate-600 mb-6">Zakładano, że sposób postrzegania niejednoznacznych bodźców ujawnia strukturę osobowości.</p>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
-                            <strong class="block text-slate-800 mb-2">Analiza formalna</strong>
-                            <ul class="text-sm text-slate-600 list-disc ml-4">
-                                <li>Lokalizacja (cała plama czy szczegół?)</li>
-                                <li>Determinanty (kształt, kolor, ruch?)</li>
-                                <li>Treść (ludzie, zwierzęta, obiekty?)</li>
-                            </ul>
-                        </div>
-                        <div class="bg-white p-4 rounded flex items-center justify-center border border-slate-200 shadow-inner">
-                            <img src="zajecia_6/roschac/Normalized_Rorschach_blot_08.jpg" alt="Plama Rorschacha" class="w-40 h-auto opacity-80 mix-blend-multiply" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xs text-slate-400\'>[Błąd ładowania obrazu]</span>';">
-                        </div>
-                    </div>
-                `,
-                result: `
-                    <div class="max-w-2xl mx-auto text-center">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Zadanie: Test Rorschacha</h2>
-                        <p class="text-slate-600 mb-8">Zobacz, jak wygląda (lub wyglądała) próba interpretacji tych plam. Czy wyniki mają sens?</p>
-                        
-                        <a href="https://moodle.lieberfilip.pl/metody/zajecia_6.html" target="_blank" class="inline-flex items-center gap-2 bg-slate-600 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-slate-700 transition transform hover:-translate-y-1">
-                            <span>🦋</span> Sprawdź go
-                        </a>
-                        
-                        <p class="text-xs text-slate-400 mt-6">Link prowadzi do zewnętrznego materiału dydaktycznego.</p>
-                    </div>
-                `
-            }
         ];
+
+        const hoverClassMap = {
+            purple: 'group-hover:text-purple-600 group-hover:bg-purple-50',
+            pink: 'group-hover:text-pink-600 group-hover:bg-pink-50',
+            slate: 'group-hover:text-slate-600 group-hover:bg-slate-100',
+            blue: 'group-hover:text-blue-600 group-hover:bg-blue-50',
+            indigo: 'group-hover:text-indigo-600 group-hover:bg-indigo-50',
+            teal: 'group-hover:text-teal-600 group-hover:bg-teal-50'
+        };
+
+        function getHoverColorClass(color) {
+            return hoverClassMap[color] || 'group-hover:text-slate-600 group-hover:bg-slate-100';
+        }
 
         let currentTech = null;
 
@@ -429,13 +248,11 @@
             list.innerHTML = '';
             techniques.forEach(tech => {
                 const btn = document.createElement('button');
+                btn.type = 'button';
                 btn.className = `group p-6 bg-white border border-slate-200 rounded-xl hover:border-${tech.color}-500 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
                 btn.onclick = () => loadTech(tech);
-                
-                let hoverColorClass = '';
-                if (tech.color === 'purple') hoverColorClass = 'group-hover:text-purple-600 group-hover:bg-purple-50';
-                else if (tech.color === 'pink') hoverColorClass = 'group-hover:text-pink-600 group-hover:bg-pink-50';
-                else hoverColorClass = 'group-hover:text-slate-600 group-hover:bg-slate-50';
+
+                const hoverColorClass = getHoverColorClass(tech.color);
 
                 btn.innerHTML = `
                     <div class="text-4xl bg-slate-50 w-20 h-20 flex items-center justify-center rounded-2xl shadow-sm transition-colors ${hoverColorClass}">${tech.icon}</div>
@@ -464,12 +281,20 @@
             app.classList.add('opacity-100');
 
             setStep(1);
+
+            if (history.replaceState) {
+                history.replaceState(null, '', `${location.pathname}#tech=${tech.id}`);
+            }
         }
 
         function showLobby() {
             document.getElementById('lobby-screen').classList.remove('-translate-y-full');
             const app = document.getElementById('app-screen');
             app.classList.add('opacity-0', 'pointer-events-none');
+
+            if (history.replaceState) {
+                history.replaceState(null, '', location.pathname);
+            }
         }
 
         function setStep(stepId) {
@@ -485,7 +310,23 @@
             }
         }
         
+        function openFromHash() {
+            const params = new URLSearchParams(window.location.hash.slice(1));
+            const techId = params.get('tech');
+            if (!techId) return;
+            const tech = techniques.find(item => item.id === techId);
+            if (tech) {
+                loadTech(tech);
+            }
+        }
+
         initLobby();
+        openFromHash();
     </script>
 </body>
 </html>
+
+
+
+
+

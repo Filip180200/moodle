@@ -13,7 +13,8 @@ Katalog zawiera samodzielne, interaktywne zajecia z metodologii badan psychologi
 | [`zajecia_5.html`](zajecia_5.html) | Socjometria. Uczestnik analizuje odpowiedzi ankietowe, uzupelnia macierz socjometryczna i interpretuje role oraz uklady relacji w grupie. |
 | [`zajecia_6.html`](zajecia_6.html) | Eksperyment percepcji. Cwiczenie demonstruje efekt Forera i ocene wiarygodnosci algorytmu; zbiera oceny trafnosci, pewnosci oraz skojarzenia, a potem pokazuje wyniki grupy. |
 | [`zajecia_6_1.html`](zajecia_6_1.html) | Metody projekcyjne i narracyjne. Material obejmuje technike rysunkowa DAPR, zadanie apercepcyjne TAT oraz metode bajek Louisy Duss. |
-| [`zajecia_7.html`](zajecia_7.html) | Techniki skojarzeniowe. Uczestnik pracuje z PhotoVoice i pytaniami SHOWED, uzupelnianiem zdan oraz historycznym testem plam atramentowych Rorschacha. |
+| [`zajecia_6_2.html`](zajecia_6_2.html) | Techniki skojarzeniowe. Uczestnik pracuje z PhotoVoice i pytaniami SHOWED, uzupelnianiem zdan oraz historycznym testem plam atramentowych Rorschacha. |
+| [`zajecia_7.html`](zajecia_7.html) | Kreatywne techniki. Material w nowym ukladzie zajec prowadzi przez PhotoVoice i analize SHOWED. |
 | [`zajecia_8.html`](zajecia_8.html) | Laboratorium psychofizjologii. Cwiczenia dotycza czasu reakcji i prawa Hicka, a takze EEG, montazu 10-20 oraz odrozniania sygnalu od artefaktow. |
 
 ## Zasoby pomocnicze
