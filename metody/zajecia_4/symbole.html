@@ -9,8 +9,8 @@
     <style>
         body {
             font-family: 'Noto Sans', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            background-color: #0a0e17;
+            color: #cbd5e1;
         }
         h1, h2, h3, .serif {
             font-family: 'Noto Serif', serif;
@@ -21,16 +21,16 @@
             align-items: center;
             justify-content: space-between; /* Rozkłada treść góra-dół */
             padding: 1.5rem;
-            background: white;
-            border: 1px solid #e2e8f0;
+            background: #0f172a;
+            border: 1px solid #1e293b;
             border-radius: 8px;
             text-align: center;
             height: 100%; /* Rozciągnij do wysokości rzędu */
             transition: all 0.2s;
         }
         .symbol-card:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border-color: #cbd5e1;
+            box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.5);
+            border-color: #475569;
         }
         /* Kontener na ikonę o stałej wysokości, żeby wyrównać wszystko */
         .icon-container {
@@ -45,7 +45,7 @@
             font-size: 0.875rem;
             font-weight: 600;
             line-height: 1.25rem;
-            color: #334155;
+            color: #e2e8f0;
         }
         .sub-label {
             font-size: 0.75rem;
@@ -56,19 +56,22 @@
         svg {
             overflow: visible;
         }
+        svg [stroke="black"] { stroke: #cbd5e1; }
+        svg [fill="black"] { fill: #cbd5e1; }
+        svg text { fill: #cbd5e1; }
     </style>
 </head>
 <body class="p-4 md:p-8 max-w-7xl mx-auto">
 
     <!-- Header -->
     <header class="text-center mb-12">
-        <h1 class="text-3xl md:text-4xl font-bold mb-2 text-slate-800">Symbole stosowane przy tworzeniu genogramu</h1>
-        <p class="text-slate-500 italic">Cyfrowa adaptacja wzorców graficznych</p>
+        <h1 class="text-3xl md:text-4xl font-bold mb-2 text-slate-100">Symbole stosowane przy tworzeniu genogramu</h1>
+        <p class="text-slate-400 italic">Cyfrowa adaptacja wzorców graficznych</p>
     </header>
 
     <!-- Sekcja 1: Podstawowe -->
     <section class="mb-12">
-        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Podstawowe oznaczenia osób</h2>
+        <h2 class="text-xl font-bold mb-6 border-b border-slate-800 pb-2 text-slate-200">Podstawowe oznaczenia osób</h2>
         <!-- Grid z auto-rows-fr zapewnia równe wysokości -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 auto-rows-fr">
             
@@ -167,7 +170,7 @@
 
     <!-- Sekcja 2: Związki -->
     <section class="mb-12">
-        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Relacje partnerskie</h2>
+        <h2 class="text-xl font-bold mb-6 border-b border-slate-800 pb-2 text-slate-200">Relacje partnerskie</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-fr">
             
             <!-- Małżeństwo -->
@@ -263,7 +266,7 @@
 
     <!-- Sekcja 3: Rozstania -->
     <section class="mb-12">
-        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Separacje i Rozwody</h2>
+        <h2 class="text-xl font-bold mb-6 border-b border-slate-800 pb-2 text-slate-200">Separacje i Rozwody</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-fr">
             
             <!-- Separacja -->
@@ -333,7 +336,7 @@
 
     <!-- Sekcja 4: Dzieci -->
     <section class="mb-12">
-        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Dzieci (od najstarszego z lewej)</h2>
+        <h2 class="text-xl font-bold mb-6 border-b border-slate-800 pb-2 text-slate-200">Dzieci (od najstarszego z lewej)</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 auto-rows-fr">
             
             <!-- Biologiczne -->
@@ -480,7 +483,7 @@
 
     <!-- Sekcja 5: Problemy zdrowotne/społeczne -->
     <section class="mb-12">
-        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Zdrowie i nałogi</h2>
+        <h2 class="text-xl font-bold mb-6 border-b border-slate-800 pb-2 text-slate-200">Zdrowie i nałogi</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 auto-rows-fr">
             
             <div class="symbol-card">
@@ -551,7 +554,7 @@
 
     <!-- Sekcja 6: Interakcje -->
     <section class="mb-12">
-        <h2 class="text-xl font-bold mb-6 border-b pb-2 text-slate-700">Wzorce interakcji</h2>
+        <h2 class="text-xl font-bold mb-6 border-b border-slate-800 pb-2 text-slate-200">Wzorce interakcji</h2>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-fr">
 
             <div class="symbol-card">
@@ -712,7 +715,7 @@
         </div>
     </section>
 
-    <footer class="mt-16 text-center text-sm text-slate-400 pb-8 border-t pt-8">
+    <footer class="mt-16 text-center text-sm text-slate-500 pb-8 border-t border-slate-800 pt-8">
         <p>Na podstawie materiałów: M.McGoldrick, R. Garson, S. Shellenberger "Genogramy, rozpoznanie i interwencja"</p>
         <p>www.twojpsychologzoliborz.pl</p>
     </footer>

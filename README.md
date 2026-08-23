@@ -10,6 +10,7 @@ Repozytorium zawiera interaktywne materialy do zajec z metodologii badan, psycho
 | [`spoleczna/`](spoleczna/README.md) | Symulatory i materialy do zajec z psychologii spolecznej. |
 | [`statystyka/`](statystyka/README.md) | Narzedzia wspierajace wybor i interpretacje testow statystycznych. |
 | [`oceny/`](oceny/README.md) | Formularze pomocnicze do oceny zadan. |
+| [`podstawy/`](podstawy/README.md) | Interaktywne wprowadzenia do podstawowych pojec metodologicznych i statystycznych. |
 
 ## Struktura
 
@@ -19,6 +20,7 @@ Repozytorium zawiera interaktywne materialy do zajec z metodologii badan, psycho
 |- spoleczna/    symulatory i obrazy do zajec spolecznych
 |- statystyka/   narzedzia do testow i korelacji
 |- oceny/        formularze oceniania
+|- podstawy/     wprowadzenia do pojec metodologicznych i statystycznych
 `- CNAME         domena publikacji GitHub Pages
 ```
 

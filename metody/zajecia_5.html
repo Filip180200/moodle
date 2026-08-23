@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>5. Socjogram</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
 
         :root {
-            --scrollbar-thumb: #f43f5e;
-            --scrollbar-track: #f1f5f9;
+            --page-bg: #0a0e17;
+            --page-text: #cbd5e1;
+            --scrollbar-thumb: #fb7185;
+            --scrollbar-track: transparent;
             --page-overflow: auto;
         }
 
@@ -19,210 +22,197 @@
         .step-content { display: none; }
         .step-content.active { display: block; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
+
         .node { transition: all 0.3s ease; cursor: pointer; }
         .node:hover circle { stroke-width: 4px; }
         .node text { pointer-events: none; }
-        
+
         .matrix-cell { transition: all 0.1s; cursor: pointer; }
-        .matrix-cell:hover { background-color: #f1f5f9; }
-        .matrix-cell.selected { background-color: #dbeafe; color: #1d4ed8; font-weight: bold; }
-        .matrix-cell.correct { background-color: #dcfce7 !important; color: #15803d !important; border: 1px solid #15803d; }
-        .matrix-cell.missed { background-color: #fee2e2 !important; color: #b91c1c !important; border: 1px dashed #b91c1c; }
-        .matrix-cell.wrong { background-color: #fef2f2 !important; color: #991b1b !important; text-decoration: line-through; }
-        
-        .scroller::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .matrix-cell:hover { background-color: rgba(148, 163, 184, 0.12); }
+        .matrix-cell.selected { background-color: rgba(99, 102, 241, 0.2); color: #a5b4fc; font-weight: bold; }
+        .matrix-cell.correct { background-color: rgba(34, 197, 94, 0.18) !important; color: #4ade80 !important; border: 1px solid #22c55e; }
+        .matrix-cell.missed { background-color: rgba(239, 68, 68, 0.18) !important; color: #f87171 !important; border: 1px dashed #ef4444; }
+        .matrix-cell.wrong { background-color: rgba(239, 68, 68, 0.1) !important; color: #fca5a5 !important; text-decoration: line-through; }
+
+        .scroller::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 h-screen p-2 md:p-6 overflow-hidden">
+<body class="bg-slate-950 text-slate-300 h-screen p-2 md:p-6 overflow-hidden">
 
-    <div id="lobby-screen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
+    <div id="lobby-screen" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
         <div class="w-full max-w-5xl">
-            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden relative">
-                <div class="h-2 bg-gradient-to-r from-rose-500 to-orange-500"></div>
-                <div class="absolute inset-0 opacity-10 pointer-events-none">
-                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <g stroke="white" stroke-width="0.5" fill="none">
-                            <circle cx="50" cy="52" r="26"/>
-                            <circle cx="50" cy="52" r="10"/>
-                            <line x1="50" y1="26" x2="50" y2="42"/>
-                            <line x1="50" y1="62" x2="50" y2="78"/>
-                            <line x1="24" y1="52" x2="40" y2="52"/>
-                            <line x1="60" y1="52" x2="76" y2="52"/>
-                            <line x1="32" y1="34" x2="42" y2="44"/>
-                            <line x1="68" y1="34" x2="58" y2="44"/>
-                            <line x1="32" y1="70" x2="42" y2="60"/>
-                            <line x1="68" y1="70" x2="58" y2="60"/>
-                        </g>
-                        <g fill="white">
-                            <circle cx="50" cy="26" r="2"/>
-                            <circle cx="50" cy="78" r="2"/>
-                            <circle cx="24" cy="52" r="2"/>
-                            <circle cx="76" cy="52" r="2"/>
-                            <circle cx="32" cy="34" r="2"/>
-                            <circle cx="68" cy="34" r="2"/>
-                            <circle cx="32" cy="70" r="2"/>
-                            <circle cx="68" cy="70" r="2"/>
-                        </g>
-                    </svg>
-                </div>
-                <div class="p-5 md:p-8">
+            <header class="rounded-2xl bg-slate-900 border border-slate-800 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)] overflow-hidden relative">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(244,63,94,0.3),transparent_55%),radial-gradient(circle_at_85%_100%,rgba(249,115,22,0.22),transparent_55%)] pointer-events-none"></div>
+                <div class="h-[3px] bg-gradient-to-r from-rose-500 to-orange-500 relative"></div>
+                <div class="p-5 md:p-8 relative">
                     <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight font-serif">5. Socjogram</h1>
                 </div>
             </header>
 
-            <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-lg overflow-hidden">
+            <div class="mt-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.3)] overflow-hidden">
                 <div class="p-5 md:p-6">
-                    <h2 class="text-xl font-bold text-slate-800 mb-4">Dostępne scenariusze</h2>
+                    <h2 class="text-xl font-bold text-slate-100 mb-4">Dostępne scenariusze</h2>
                     <div class="scenario-list-compact grid grid-cols-1 gap-3" id="scenario-list"></div>
                 </div>
             </div>
-            <footer class="lesson-footer">Filip Liebersbach</footer>
+            <footer class="lesson-footer">
+                <div class="footer-content">
+                    <div class="social-icons">
+                        <a href="https://www.youtube.com/@lieberfilip" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://www.linkedin.com/in/liebersbach-filip/" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="https://www.researchgate.net/profile/Filip-Liebersbach-2?ev=hdr_xprf" target="_blank" rel="noopener"><i class="fa-brands fa-researchgate"></i></a>
+                    </div>
+                    <div class="contact-info">
+                        <a href="mailto:kontakt@lieberfilip.pl">kontakt@lieberfilip.pl</a>
+                    </div>
+                    <div class="copyright">© 2025–2026 Filip Liebersbach. Wszelkie prawa zastrzeżone.</div>
+                </div>
+            </footer>
         </div>
     </div>
-    <div class="max-w-7xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden flex flex-col min-h-0 h-[calc(100vh-1rem)] md:h-[calc(100vh-3rem)]">
-        <div class="bg-white border-b border-slate-200 p-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
+    <div class="max-w-7xl mx-auto bg-slate-900 border border-slate-800 shadow-xl rounded-xl overflow-hidden flex flex-col min-h-0 h-[calc(100vh-1rem)] md:h-[calc(100vh-3rem)]">
+        <div class="bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center sticky top-0 z-20">
             <div class="flex items-center gap-3">
-                <div id="header-icon" class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl">?</div>
+                <div id="header-icon" class="w-10 h-10 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center text-xl">?</div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-800" id="header-title">...</h1>
-                    <button onclick="showLobby()" class="text-xs text-indigo-600 hover:underline">← Zmień grupę</button>
+                    <h1 class="text-lg font-bold text-slate-100" id="header-title">...</h1>
+                    <button onclick="showLobby()" class="text-xs text-indigo-400 hover:underline">← Zmień grupę</button>
                 </div>
             </div>
-            <div class="bg-slate-100 p-1 rounded-lg flex">
+            <div class="bg-slate-800/70 p-1 rounded-lg flex">
                 <button onclick="switchCriterion('task')" id="btn-crit-task" class="px-4 py-2 rounded text-sm font-bold transition-all">💼 Utylitarne</button>
                 <button onclick="switchCriterion('emotion')" id="btn-crit-emotion" class="px-4 py-2 rounded text-sm font-bold transition-all">🎉 Afektywne</button>
             </div>
         </div>
 
-        <div class="bg-indigo-50 border-b border-indigo-100 p-3 text-center">
-            <p class="text-indigo-900 font-serif italic text-lg" id="question-text">...</p>
+        <div class="bg-indigo-500/10 border-b border-indigo-500/20 p-3 text-center">
+            <p class="text-indigo-300 font-serif italic text-lg" id="question-text">...</p>
         </div>
 
-        <div class="flex border-b border-slate-200 bg-white overflow-x-auto">
-            <button onclick="setStep(0)" id="tab-0" class="flex-1 py-3 font-bold text-sm text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50 min-w-[100px]">0. Definicje</button>
-            <button onclick="setStep(1)" id="tab-1" class="flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-600 min-w-[100px]">1. Ankiety</button>
-            <button onclick="setStep(2)" id="tab-2" class="flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-600 flex justify-center items-center gap-2 min-w-[120px]">2. Macierz <span id="lock-2">🔒</span><span id="check-2" class="hidden text-green-600">✓</span></button>
-            <button onclick="setStep(3)" id="tab-3" class="flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-600 flex justify-center items-center gap-2 min-w-[120px]">3. Socjogram <span id="lock-3">🔒</span></button>
+        <div class="flex border-b border-slate-800 bg-slate-900 overflow-x-auto">
+            <button onclick="setStep(0)" id="tab-0" class="flex-1 py-3 font-bold text-sm text-indigo-400 border-b-2 border-indigo-500 bg-indigo-500/10 min-w-[100px]">0. Definicje</button>
+            <button onclick="setStep(1)" id="tab-1" class="flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-400 min-w-[100px]">1. Ankiety</button>
+            <button onclick="setStep(2)" id="tab-2" class="flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-400 flex justify-center items-center gap-2 min-w-[120px]">2. Macierz <span id="lock-2">🔒</span><span id="check-2" class="hidden text-green-400">✓</span></button>
+            <button onclick="setStep(3)" id="tab-3" class="flex-1 py-3 font-bold text-sm text-slate-500 hover:text-indigo-400 flex justify-center items-center gap-2 min-w-[120px]">3. Socjogram <span id="lock-3">🔒</span></button>
         </div>
 
-        <div class="flex-1 min-h-0 bg-slate-50 p-4 relative overflow-hidden">
+        <div class="flex-1 min-h-0 bg-slate-950 p-4 relative overflow-hidden">
             
             <div id="step-0" class="step-content active h-full overflow-auto scroller">
                 <div class="max-w-6xl mx-auto space-y-8 pb-8">
                     
                     <div>
-                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded shadow-sm mb-4">
-                            <h3 class="font-bold text-blue-800 text-lg mb-1">🎭 Role Grupowe (Jednostki)</h3>
-                            <p class="text-blue-700 text-sm">Klasyfikacja członków grupy na podstawie liczby i rodzaju otrzymanych wyborów.</p>
+                        <div class="bg-blue-500/10 border-l-4 border-blue-500 p-4 rounded mb-4">
+                            <h3 class="font-bold text-blue-300 text-lg mb-1">🎭 Role Grupowe (Jednostki)</h3>
+                            <p class="text-blue-400 text-sm">Klasyfikacja członków grupy na podstawie liczby i rodzaju otrzymanych wyborów.</p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-xl">⭐</div>
-                                    <h4 class="font-bold text-slate-800">Gwiazda Socjometryczna</h4>
+                                    <div class="w-10 h-10 rounded-full bg-yellow-500/15 flex items-center justify-center text-xl">⭐</div>
+                                    <h4 class="font-bold text-slate-100">Gwiazda Socjometryczna</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     Osoba z największą liczbą wyborów. Lider opinii, osoba najbardziej lubiana lub szanowana.
                                 </p>
                             </div>
 
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">👑</div>
-                                    <h4 class="font-bold text-slate-800">Szara Eminencja</h4>
+                                    <div class="w-10 h-10 rounded-full bg-purple-500/15 flex items-center justify-center text-xl">👑</div>
+                                    <h4 class="font-bold text-slate-100">Szara Eminencja</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     Osoba, która nie jest Gwiazdą (ma mało wyborów), ale jest wybrana przez Gwiazdę. Ma realny wpływ na lidera.
                                 </p>
                             </div>
 
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-xl">🌉</div>
-                                    <h4 class="font-bold text-slate-800">Most (Łącznik)</h4>
+                                    <div class="w-10 h-10 rounded-full bg-teal-500/15 flex items-center justify-center text-xl">🌉</div>
+                                    <h4 class="font-bold text-slate-100">Most (Łącznik)</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     Osoba, która łączy dwie odrębne podgrupy. Jej odejście grozi rozpadem grupy na dwa obce obozy.
                                 </p>
                             </div>
 
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl">👥</div>
-                                    <h4 class="font-bold text-slate-800">Przeciętny</h4>
+                                    <div class="w-10 h-10 rounded-full bg-slate-700/40 flex items-center justify-center text-xl">👥</div>
+                                    <h4 class="font-bold text-slate-100">Przeciętny</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     Większość członków grupy – mają kilka wyborów, są akceptowani.
                                 </p>
                             </div>
 
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-xl">👻</div>
-                                    <h4 class="font-bold text-slate-800">Izolant (Samotnik)</h4>
+                                    <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center text-xl">👻</div>
+                                    <h4 class="font-bold text-slate-100">Izolant (Samotnik)</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     Osoba bez wyborów, która sama też nikogo nie wybiera (lub wybiera rzadko). Jest na marginesie, "niewidzialna".
                                 </p>
                             </div>
 
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-xl">👎</div>
-                                    <h4 class="font-bold text-slate-800">Odrzucony</h4>
+                                    <div class="w-10 h-10 rounded-full bg-red-500/15 flex items-center justify-center text-xl">👎</div>
+                                    <h4 class="font-bold text-slate-100">Odrzucony</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     Osoba, która otrzymała najwięcej wyborów negatywnych (jeśli takie były badane).
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="pt-4 border-t-2 border-slate-200">
-                        <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded shadow-sm mb-4">
-                            <h3 class="font-bold text-indigo-900 text-lg mb-1">📐 Układy relacji (Geometria grupy)</h3>
-                            <p class="text-indigo-800 text-sm">Typowe struktury tworzone przez powiązania między członkami grupy.</p>
+                    <div class="pt-4 border-t-2 border-slate-800">
+                        <div class="bg-indigo-500/10 border-l-4 border-indigo-500 p-4 rounded mb-4">
+                            <h3 class="font-bold text-indigo-300 text-lg mb-1">📐 Układy relacji (Geometria grupy)</h3>
+                            <p class="text-indigo-400 text-sm">Typowe struktury tworzone przez powiązania między członkami grupy.</p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-xl text-green-600 font-bold">↔️</div>
-                                    <h4 class="font-bold text-slate-800">Para</h4>
+                                    <div class="w-10 h-10 rounded-full bg-green-500/15 flex items-center justify-center text-xl text-green-400 font-bold">↔️</div>
+                                    <h4 class="font-bold text-slate-100">Para</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     Wzajemny wybór dwóch osób (A wybiera B, B wybiera A). Najmniejsza komórka społeczna.
                                 </p>
                             </div>
 
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-xl text-orange-600 font-bold">🔺</div>
-                                    <h4 class="font-bold text-slate-800">Trójkąt</h4>
+                                    <div class="w-10 h-10 rounded-full bg-orange-500/15 flex items-center justify-center text-xl text-orange-400 font-bold">🔺</div>
+                                    <h4 class="font-bold text-slate-100">Trójkąt</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     Zamknięty układ trzech osób (A->B->C->A). Bardzo stabilny, trudny do rozbicia.
                                 </p>
                             </div>
 
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-xl text-slate-600 font-bold">🔗</div>
-                                    <h4 class="font-bold text-slate-800">Łańcuch</h4>
+                                    <div class="w-10 h-10 rounded-full bg-slate-700/50 flex items-center justify-center text-xl text-slate-300 font-bold">🔗</div>
+                                    <h4 class="font-bold text-slate-100">Łańcuch</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     A wybiera B, B wybiera C, C wybiera D. Informacja/plotka płynie tylko w jedną stronę.
                                 </p>
                             </div>
 
-                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-slate-900 p-5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-xl text-rose-600 font-bold">🏰</div>
-                                    <h4 class="font-bold text-slate-800">Klika</h4>
+                                    <div class="w-10 h-10 rounded-full bg-rose-500/15 flex items-center justify-center text-xl text-rose-400 font-bold">🏰</div>
+                                    <h4 class="font-bold text-slate-100">Klika</h4>
                                 </div>
-                                <p class="text-sm text-slate-600 leading-relaxed">
+                                <p class="text-sm text-slate-400 leading-relaxed">
                                     Zamknięta podgrupa, której członkowie wybierają się nawzajem, ignorując resztę grupy.
                                 </p>
                             </div>
@@ -237,44 +227,44 @@
             </div>
 
             <div id="step-2" class="step-content h-full overflow-auto scroller">
-                <div class="max-w-4xl mx-auto bg-white rounded-lg shadow border border-slate-200 p-4">
+                <div class="max-w-4xl mx-auto bg-slate-900 rounded-lg border border-slate-800 p-4">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-slate-700">Wypełnij Macierz</h3>
+                        <h3 class="font-bold text-slate-200">Wypełnij Macierz</h3>
                         <button onclick="verifyMatrixAttempt()" id="btn-verify" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow text-sm font-bold">Sprawdź</button>
                     </div>
                     <div class="overflow-x-auto pb-2">
-                        <table class="w-full text-center border-collapse text-xs select-none"><thead class="bg-slate-100 text-slate-600"><tr><th class="p-2 border">Kto \ Kogo</th><th class="p-2 border w-8">A</th><th class="p-2 border w-8">B</th><th class="p-2 border w-8">C</th><th class="p-2 border w-8">D</th><th class="p-2 border w-8">E</th><th class="p-2 border w-8">F</th><th class="p-2 border w-8">G</th><th class="p-2 border w-8">H</th><th class="p-2 border w-8">I</th><th class="p-2 border w-8">J</th></tr></thead><tbody id="interactive-matrix-body"></tbody></table>
+                        <table class="w-full text-center border-collapse text-xs select-none"><thead class="bg-slate-800/70 text-slate-300"><tr><th class="p-2 border border-slate-700">Kto \ Kogo</th><th class="p-2 border border-slate-700 w-8">A</th><th class="p-2 border border-slate-700 w-8">B</th><th class="p-2 border border-slate-700 w-8">C</th><th class="p-2 border border-slate-700 w-8">D</th><th class="p-2 border border-slate-700 w-8">E</th><th class="p-2 border border-slate-700 w-8">F</th><th class="p-2 border border-slate-700 w-8">G</th><th class="p-2 border border-slate-700 w-8">H</th><th class="p-2 border border-slate-700 w-8">I</th><th class="p-2 border border-slate-700 w-8">J</th></tr></thead><tbody id="interactive-matrix-body"></tbody></table>
                     </div>
-                    <div id="matrix-legend" class="hidden mt-4 pt-3 border-t flex gap-4 justify-center text-xs">
-                        <div class="flex items-center text-green-700 font-bold">✓ Dobrze</div>
-                        <div class="flex items-center text-red-600 font-bold dashed border border-red-600 px-1">! Brakowało</div>
-                        <div class="flex items-center text-red-800 line-through">x Niepotrzebne</div>
+                    <div id="matrix-legend" class="hidden mt-4 pt-3 border-t border-slate-800 flex gap-4 justify-center text-xs">
+                        <div class="flex items-center text-green-400 font-bold">✓ Dobrze</div>
+                        <div class="flex items-center text-red-400 font-bold dashed border border-red-500 px-1">! Brakowało</div>
+                        <div class="flex items-center text-red-400 line-through">x Niepotrzebne</div>
                     </div>
                 </div>
             </div>
 
             <div id="step-3" class="step-content h-full">
-                <div id="graph-lock-overlay" class="absolute inset-0 bg-slate-50 z-10 flex flex-col items-center justify-start p-6">
+                <div id="graph-lock-overlay" class="absolute inset-0 bg-slate-950/95 z-10 flex flex-col items-center justify-start p-6">
                     <div class="text-5xl mb-4">🔒</div>
                     <button onclick="unlockGraphAttempt()" class="bg-indigo-600 text-white px-6 py-2 rounded font-bold hover:bg-indigo-700">Odblokuj Analizę</button>
                 </div>
                 <div class="flex flex-col lg:flex-row gap-4 h-full relative z-0">
-                    <div class="flex-1 bg-white rounded-lg shadow border border-slate-200 relative overflow-hidden flex items-center justify-start min-h-[400px]" id="graph-container">
+                    <div class="flex-1 bg-slate-900 rounded-lg border border-slate-800 relative overflow-hidden flex items-center justify-start min-h-[400px]" id="graph-container">
                         <svg id="socjogram" width="600" height="600" viewBox="-320 -320 640 640" class="w-full h-full max-h-[600px]">
                             <defs><marker id="arrow-main" markerWidth="10" markerHeight="7" refX="26" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" /></marker></defs>
                             <g id="edges-group"></g><g id="nodes-group"></g>
                         </svg>
-                        <div class="absolute bottom-2 left-2 text-[10px] text-slate-400 pointer-events-none">Kliknij w osobę, aby podświetlić relacje.<br>Kliknij w tło, aby zresetować.</div>
-                        <div class="absolute bottom-2 right-2 bg-white/95 p-2 rounded border shadow text-[10px] space-y-1">
-                            <div class="font-bold border-b pb-1">Legenda:</div>
+                        <div class="absolute bottom-2 left-2 text-[10px] text-slate-500 pointer-events-none">Kliknij w osobę, aby podświetlić relacje.<br>Kliknij w tło, aby zresetować.</div>
+                        <div class="absolute bottom-2 right-2 bg-slate-900/90 p-2 rounded border border-slate-700 text-[10px] space-y-1 text-slate-300">
+                            <div class="font-bold border-b border-slate-700 pb-1">Legenda:</div>
                             <div class="flex items-center"><span class="w-2 h-2 rounded-full bg-yellow-400 border border-yellow-600 mr-1"></span> Gwiazda</div>
                             <div class="flex items-center"><span class="w-2 h-2 rounded-full bg-purple-500 border border-purple-700 mr-1"></span> Szara Em.</div>
                             <div class="flex items-center"><span class="w-2 h-2 rounded-full bg-teal-400 border border-teal-600 mr-1"></span> Most</div>
                             <div class="flex items-center"><span class="w-2 h-2 rounded-full bg-red-100 border border-red-500 mr-1"></span> Izolant</div>
                         </div>
                     </div>
-                    <div class="lg:w-64 bg-white p-3 rounded-lg shadow border border-slate-200 h-full overflow-y-auto scroller">
-                        <h3 class="font-bold text-slate-800 text-sm mb-2 border-b pb-2">Analiza Ról</h3>
+                    <div class="lg:w-64 bg-slate-900 p-3 rounded-lg border border-slate-800 h-full overflow-y-auto scroller">
+                        <h3 class="font-bold text-slate-100 text-sm mb-2 border-b border-slate-800 pb-2">Analiza Ról</h3>
                         <div class="space-y-3" id="roles-list"></div>
                     </div>
                 </div>
@@ -282,13 +272,13 @@
         </div>
     </div>
 
-    <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full text-center">
-            <h3 class="text-xl font-bold text-slate-800 mb-2">Podaj Hasło</h3>
-            <input type="password" id="password-input" class="w-full px-4 py-2 rounded border border-slate-300 mb-3 text-center text-lg tracking-widest outline-none focus:border-indigo-500">
+    <div id="password-modal" class="hidden fixed inset-0 bg-slate-950/85 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6 max-w-sm w-full text-center">
+            <h3 class="text-xl font-bold text-slate-100 mb-2">Podaj Hasło</h3>
+            <input type="password" id="password-input" class="w-full px-4 py-2 rounded border border-slate-700 bg-slate-800/60 text-slate-100 mb-3 text-center text-lg tracking-widest outline-none focus:border-indigo-500">
             <button onclick="submitPassword()" class="w-full bg-indigo-600 text-white font-bold py-2 rounded hover:bg-indigo-700">Zatwierdź</button>
-            <p id="password-error" class="text-red-500 text-xs mt-2 hidden">Błędne hasło!</p>
-            <button onclick="closeModal()" class="mt-3 text-slate-400 text-xs hover:text-slate-600">Anuluj</button>
+            <p id="password-error" class="text-red-400 text-xs mt-2 hidden">Błędne hasło!</p>
+            <button onclick="closeModal()" class="mt-3 text-slate-500 text-xs hover:text-slate-300">Anuluj</button>
         </div>
     </div>
 
@@ -618,9 +608,9 @@
             list.innerHTML = '';
             for (const [key, data] of Object.entries(scenarios)) {
                 const btn = document.createElement('button');
-                btn.className = "group p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md transition text-left flex items-center gap-3";
+                btn.className = "group p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-blue-500/50 hover:shadow-[0_10px_28px_-14px_rgba(0,0,0,0.6)] transition text-left flex items-center gap-3";
                 btn.onclick = () => selectScenario(key);
-                btn.innerHTML = `<div class="text-2xl bg-slate-100 w-10 h-10 flex items-center justify-center rounded-lg">${data.icon}</div><div><div class="font-bold text-slate-700">${data.name}</div></div>`;
+                btn.innerHTML = `<div class="text-2xl bg-slate-800 w-10 h-10 flex items-center justify-center rounded-lg">${data.icon}</div><div><div class="font-bold text-slate-200">${data.name}</div></div>`;
                 list.appendChild(btn);
             }
         }
@@ -652,10 +642,10 @@
         function switchCriterion(type) {
             currentCriterion = type;
             const isTask = type === 'task';
-            document.getElementById('btn-crit-task').className = isTask ? "px-4 py-2 rounded text-sm font-bold transition-all bg-indigo-600 shadow text-white" : "px-4 py-2 rounded text-sm font-bold transition-all text-slate-500 hover:bg-white/50";
-            document.getElementById('btn-crit-emotion').className = !isTask ? "px-4 py-2 rounded text-sm font-bold transition-all bg-pink-600 shadow text-white" : "px-4 py-2 rounded text-sm font-bold transition-all text-slate-500 hover:bg-white/50";
+            document.getElementById('btn-crit-task').className = isTask ? "px-4 py-2 rounded text-sm font-bold transition-all bg-indigo-600 shadow text-white" : "px-4 py-2 rounded text-sm font-bold transition-all text-slate-500 hover:bg-slate-700/40";
+            document.getElementById('btn-crit-emotion').className = !isTask ? "px-4 py-2 rounded text-sm font-bold transition-all bg-pink-600 shadow text-white" : "px-4 py-2 rounded text-sm font-bold transition-all text-slate-500 hover:bg-slate-700/40";
             document.getElementById('question-text').innerText = `"${currentScenario[type].q}"`;
-            document.getElementById('question-text').className = isTask ? "text-indigo-900 font-serif italic text-lg" : "text-pink-900 font-serif italic text-lg";
+            document.getElementById('question-text').className = isTask ? "text-indigo-300 font-serif italic text-lg" : "text-pink-300 font-serif italic text-lg";
             resetState();
             renderStep1(); renderStep2();
         }
@@ -664,12 +654,12 @@
             const container = document.getElementById('cards-container');
             container.innerHTML = '';
             const choices = currentScenario[currentCriterion].choices;
-            const color = currentCriterion === 'task' ? 'text-indigo-600' : 'text-pink-600';
+            const color = currentCriterion === 'task' ? 'text-indigo-400' : 'text-pink-400';
             people.forEach((p, idx) => {
                 const myChoices = choices.filter(c => c[0] === idx).map(c => people[c[1]].name);
                 const card = document.createElement('div');
-                card.className = "bg-white border p-3 rounded shadow-sm relative overflow-hidden";
-                card.innerHTML = `<div class="text-[10px] text-slate-400 font-bold uppercase">Ankieta #${p.id + 1}</div><div class="font-bold text-slate-800 border-b pb-1 mb-1 text-sm">${p.name}</div><div class="handwritten ${color} text-sm leading-tight">${myChoices.length ? myChoices.join(', ') : '<span class="text-slate-300">Brak</span>'}</div>`;
+                card.className = "bg-slate-900 border border-slate-800 p-3 rounded relative overflow-hidden";
+                card.innerHTML = `<div class="text-[10px] text-slate-500 font-bold uppercase">Ankieta #${p.id + 1}</div><div class="font-bold text-slate-100 border-b border-slate-800 pb-1 mb-1 text-sm">${p.name}</div><div class="handwritten ${color} text-sm leading-tight">${myChoices.length ? myChoices.join(', ') : '<span class="text-slate-600">Brak</span>'}</div>`;
                 container.appendChild(card);
             });
         }
@@ -679,13 +669,13 @@
             tbody.innerHTML = '';
             people.forEach((p, r) => {
                 const tr = document.createElement('tr'); tr.className = "border-b";
-                tr.innerHTML = `<td class="p-2 font-bold text-left bg-white text-xs sticky left-0 z-10 border-r">${p.name}</td>`;
+                tr.innerHTML = `<td class="p-2 font-bold text-left bg-slate-900 text-slate-200 text-xs sticky left-0 z-10 border-r border-slate-700">${p.name}</td>`;
                 people.forEach((_, c) => {
                     const td = document.createElement('td');
-                    td.className = "border-l p-1 matrix-cell";
-                    if (r === c) { td.className += " bg-slate-100 text-slate-300 cursor-default"; td.innerText = "x"; }
+                    td.className = "border-l border-slate-700 p-1 matrix-cell";
+                    if (r === c) { td.className += " bg-slate-800/60 text-slate-600 cursor-default"; td.innerText = "x"; }
                     else {
-                        if (userMatrix[r][c] === 1) { td.classList.add('selected'); td.innerText = "1"; } else { td.innerText = "0"; td.classList.add('text-slate-300'); }
+                        if (userMatrix[r][c] === 1) { td.classList.add('selected'); td.innerText = "1"; } else { td.innerText = "0"; td.classList.add('text-slate-600'); }
                         td.onclick = () => { if (matrixLocked) return; userMatrix[r][c] = userMatrix[r][c] === 0 ? 1 : 0; renderStep2(); };
                     }
                     tr.appendChild(td);
@@ -712,12 +702,12 @@
                         if (r === c) continue;
                         const cell = cells[c + 1];
                         const u = userMatrix[r][c], corr = correctGrid[r][c];
-                        cell.className = "border-l p-1 matrix-cell cursor-default";
+                        cell.className = "border-l border-slate-700 p-1 matrix-cell cursor-default";
                         cell.innerText = corr === 1 ? "1" : "0";
                         if (u === 1 && corr === 1) cell.classList.add('correct');
                         else if (u === 0 && corr === 1) cell.classList.add('missed');
                         else if (u === 1 && corr === 0) cell.classList.add('wrong');
-                        else cell.classList.add('text-slate-300');
+                        else cell.classList.add('text-slate-600');
                         cell.onclick = null;
                     }
                 }

@@ -6,6 +6,7 @@
     <title>Eksperyment Percepcji</title>
     <!-- Biblioteki zewnętrzne -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -13,8 +14,9 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         :root {
-            --page-bg: #f8fafc;
-            --page-text: #334155;
+            --page-bg: #0a0e17;
+            --page-text: #cbd5e1;
+            --scrollbar-thumb: #8b5cf6;
         }
 
         .inkblot { filter: contrast(120%) brightness(95%); transition: opacity 0.5s; }
@@ -68,9 +70,26 @@
 
         // --- IKONA ADMINA ---
         const AdminGear = ({ onAdminLogin }) => (
-            <button onClick={onAdminLogin} className="fixed bottom-4 left-4 text-slate-300 hover:text-slate-500 transition-colors p-2 z-50 opacity-50 hover:opacity-100" title="Panel Administratora">
+            <button onClick={onAdminLogin} className="fixed bottom-4 left-4 text-slate-600 hover:text-slate-400 transition-colors p-2 z-50 opacity-50 hover:opacity-100" title="Panel Administratora">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             </button>
+        );
+
+        // --- STOPKA ---
+        const Footer = () => (
+            <footer className="lesson-footer">
+                <div className="footer-content">
+                    <div className="social-icons">
+                        <a href="https://www.youtube.com/@lieberfilip" target="_blank" rel="noopener"><i className="fa-brands fa-youtube"></i></a>
+                        <a href="https://www.linkedin.com/in/liebersbach-filip/" target="_blank" rel="noopener"><i className="fa-brands fa-linkedin"></i></a>
+                        <a href="https://www.researchgate.net/profile/Filip-Liebersbach-2?ev=hdr_xprf" target="_blank" rel="noopener"><i className="fa-brands fa-researchgate"></i></a>
+                    </div>
+                    <div className="contact-info">
+                        <a href="mailto:kontakt@lieberfilip.pl">kontakt@lieberfilip.pl</a>
+                    </div>
+                    <div className="copyright">© 2025–2026 Filip Liebersbach. Wszelkie prawa zastrzeżone.</div>
+                </div>
+            </footer>
         );
 
         // --- HELPER: CHMURA SŁÓW ---
@@ -88,7 +107,7 @@
             });
             return { words: Object.entries(counts).sort((a, b) => b[1] - a[1]), maxCount };
         };
-        const CLOUD_COLORS = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#059669', '#0891b2', '#4b5563'];
+        const CLOUD_COLORS = ['#60a5fa', '#a78bfa', '#f472b6', '#fb923c', '#34d399', '#22d3ee', '#94a3b8'];
         const getColorForWord = (word) => {
             let hash = 0;
             for (let i = 0; i < word.length; i++) hash = word.charCodeAt(i) + ((hash << 5) - hash);
@@ -141,7 +160,7 @@
                                 borderRadius: 4
                             }]
                         },
-                        options: { responsive: true, plugins: { legend: { display: false }, title: {display: true, text: 'Czy opis do Ciebie pasuje?'} }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+                        options: { responsive: true, plugins: { legend: { display: false }, title: {display: true, text: 'Czy opis do Ciebie pasuje?', color: '#cbd5e1'} }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.12)' } }, x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.12)' } } } }
                     });
                 }
 
@@ -155,11 +174,11 @@
                             datasets: [{
                                 label: 'Pewność źródła',
                                 data: confCounts,
-                                backgroundColor: '#8b5cf6', // Fioletowy
+                                backgroundColor: '#a78bfa', // Fioletowy
                                 borderRadius: 4
                             }]
                         },
-                        options: { responsive: true, plugins: { legend: { display: false }, title: {display: true, text: 'Czy to analiza Twoich słów?'} }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+                        options: { responsive: true, plugins: { legend: { display: false }, title: {display: true, text: 'Czy to analiza Twoich słów?', color: '#cbd5e1'} }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.12)' } }, x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.12)' } } } }
                     });
                 }
 
@@ -198,58 +217,59 @@
 
             return (
                 <div className="max-w-7xl mx-auto p-4 fade-in pb-20">
-                    <div className="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-xl shadow border border-slate-200">
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-8 bg-slate-900 p-6 rounded-xl border border-slate-800">
                         <div>
-                            <h2 className="text-2xl font-bold text-slate-800">Wyniki Grupy</h2>
-                            <p className="text-slate-500">Liczba odpowiedzi: <strong>{data.length}</strong></p>
+                            <h2 className="text-2xl font-bold text-slate-100">Wyniki Grupy</h2>
+                            <p className="text-slate-400">Liczba odpowiedzi: <strong>{data.length}</strong></p>
                         </div>
                         <div className="flex gap-2 mt-4 md:mt-0">
                             <button onClick={downloadCSV} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium">📥 CSV</button>
-                            <button onClick={clearDB} className="bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded hover:bg-red-100 font-medium">🗑️ Wyczyść</button>
+                            <button onClick={clearDB} className="bg-red-500/10 text-red-400 border border-red-500/30 px-4 py-2 rounded hover:bg-red-500/20 font-medium">🗑️ Wyczyść</button>
                         </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-6 mb-6">
                         {/* Wykres 1: Trafność */}
-                        <div className="bg-white p-6 rounded-xl shadow border border-slate-200">
-                            <h3 className="text-lg font-bold mb-2 text-slate-700">1. Efekt Forera (Trafność)</h3>
+                        <div className="bg-slate-900 p-6 rounded-xl border border-slate-800">
+                            <h3 className="text-lg font-bold mb-2 text-slate-200">1. Efekt Forera (Trafność)</h3>
                             <div className="h-64"><canvas ref={accuracyCanvas}></canvas></div>
                         </div>
                         {/* Wykres 2: Pewność */}
-                        <div className="bg-white p-6 rounded-xl shadow border border-slate-200">
-                            <h3 className="text-lg font-bold mb-2 text-slate-700">2. Wiara w Algorytm (Pewność)</h3>
+                        <div className="bg-slate-900 p-6 rounded-xl border border-slate-800">
+                            <h3 className="text-lg font-bold mb-2 text-slate-200">2. Wiara w Algorytm (Pewność)</h3>
                             <div className="h-64"><canvas ref={confidenceCanvas}></canvas></div>
                         </div>
                     </div>
 
                     {/* Chmura słów */}
-                    <div className="bg-white p-6 rounded-xl shadow border border-slate-200 h-[600px] flex flex-col">
-                        <h3 className="text-lg font-bold mb-4 text-slate-700">Chmura Projekcji (Skojarzenia)</h3>
+                    <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 h-[600px] flex flex-col">
+                        <h3 className="text-lg font-bold mb-4 text-slate-200">Chmura Projekcji (Skojarzenia)</h3>
                         <div className="flex-1 overflow-y-auto pr-2">
                             {Array.from({length: 10}).map((_, i) => {
                                 const { words, maxCount } = getWordFrequencies(data, i);
                                 return (
-                                    <div key={i} className="mb-6 border-b border-slate-100 pb-4 last:border-0">
+                                    <div key={i} className="mb-6 border-b border-slate-800 pb-4 last:border-0">
                                         <div className="flex justify-between items-center mb-3">
-                                            <span className="text-xs font-bold text-blue-600 uppercase bg-blue-50 px-2 py-1 rounded">Tablica {i+1}</span>
+                                            <span className="text-xs font-bold text-blue-300 uppercase bg-blue-500/15 px-2 py-1 rounded">Tablica {i+1}</span>
                                         </div>
                                         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 min-h-[40px]">
                                             {words.length > 0 ? words.map(([word, count], idx) => (
-                                                <span key={idx} style={{ 
-                                                    fontSize: `${Math.min(12 + (count / maxCount) * 20, 32)}px`, 
+                                                <span key={idx} style={{
+                                                    fontSize: `${Math.min(12 + (count / maxCount) * 20, 32)}px`,
                                                     color: getColorForWord(word),
                                                     fontWeight: count > 1 ? 'bold' : 'normal',
                                                     opacity: 0.8 + (count/maxCount * 0.2)
                                                 }} className="transition hover:scale-110 cursor-default" title={`${count} głosów`}>
                                                     {word}
                                                 </span>
-                                            )) : <span className="text-xs text-gray-300 italic">Brak danych</span>}
+                                            )) : <span className="text-xs text-slate-600 italic">Brak danych</span>}
                                         </div>
                                     </div>
                                 );
                             })}
                         </div>
                     </div>
+                    <Footer />
                 </div>
             );
         }
@@ -343,32 +363,38 @@
 
             // WIDOKI
             if (step === 'intro') return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
-                    <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full relative">
-                        <div className="text-4xl mb-4">👁️</div>
-                        <h1 className="text-2xl font-bold mb-4 text-slate-800">Eksperyment Percepcji</h1>
-                        <p className="mb-8 text-slate-600">Zobaczysz 10 tablic testu projekcyjnego. Przy każdej wpisz <strong>jedno słowo</strong>, które pierwsze przychodzi Ci na myśl.</p>
-                        <button onClick={() => setStep('test')} className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition transform hover:-translate-y-1">Rozpocznij</button>
+                <div className="min-h-screen flex flex-col p-4">
+                    <div className="flex-1 flex flex-col items-center justify-center text-center">
+                        <div className="bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-xl max-w-md w-full relative">
+                            <div className="text-4xl mb-4">👁️</div>
+                            <h1 className="text-2xl font-bold mb-4 text-slate-100">Eksperyment Percepcji</h1>
+                            <p className="mb-8 text-slate-400">Zobaczysz 10 tablic testu projekcyjnego. Przy każdej wpisz <strong>jedno słowo</strong>, które pierwsze przychodzi Ci na myśl.</p>
+                            <button onClick={() => setStep('test')} className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition transform hover:-translate-y-1">Rozpocznij</button>
+                        </div>
                     </div>
+                    <Footer />
                     <AdminGear onAdminLogin={handleAdminLogin} />
                 </div>
             );
 
             if (step === 'test') return (
-                <div className="min-h-screen flex items-center justify-center p-4">
-                    <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg max-w-2xl w-full">
-                        <div className="flex justify-between items-center mb-4 border-b pb-2">
-                            <span className="text-sm font-bold text-slate-500">TABLICA {imgIndex + 1} / {IMAGES.length}</span>
-                            <div className="flex gap-1">{IMAGES.map((_, i) => <div key={i} className={`h-1.5 w-4 rounded-full ${i <= imgIndex ? 'bg-blue-500' : 'bg-slate-200'}`}></div>)}</div>
-                        </div>
-                        <div className="bg-white mb-6 flex items-center justify-center border border-slate-100 rounded-lg p-4" style={{minHeight: '350px'}}>
-                            <img src={IMAGES[imgIndex].src} className="max-w-full max-h-[400px] object-contain inkblot" alt="Inkblot" />
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <input autoFocus type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && nextImage()} placeholder="Co widzisz? (jedno słowo)" className="border-2 border-slate-200 p-3 w-full rounded-lg outline-none focus:border-blue-500 transition" />
-                            <button onClick={nextImage} disabled={!input.trim()} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold disabled:opacity-50 hover:bg-blue-700 transition">Dalej</button>
+                <div className="min-h-screen flex flex-col p-4">
+                    <div className="flex-1 flex items-center justify-center">
+                        <div className="bg-slate-900 border border-slate-800 p-4 md:p-6 rounded-xl shadow-lg max-w-2xl w-full">
+                            <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
+                                <span className="text-sm font-bold text-slate-400">TABLICA {imgIndex + 1} / {IMAGES.length}</span>
+                                <div className="flex gap-1">{IMAGES.map((_, i) => <div key={i} className={`h-1.5 w-4 rounded-full ${i <= imgIndex ? 'bg-blue-500' : 'bg-slate-700'}`}></div>)}</div>
+                            </div>
+                            <div className="bg-white mb-6 flex items-center justify-center border border-slate-200 rounded-lg p-4" style={{minHeight: '350px'}}>
+                                <img src={IMAGES[imgIndex].src} className="max-w-full max-h-[400px] object-contain inkblot" alt="Inkblot" />
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <input autoFocus type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && nextImage()} placeholder="Co widzisz? (jedno słowo)" className="bg-slate-800/60 text-slate-200 placeholder-slate-500 border-2 border-slate-700 p-3 w-full rounded-lg outline-none focus:border-blue-500 transition" />
+                                <button onClick={nextImage} disabled={!input.trim()} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold disabled:opacity-50 hover:bg-blue-700 transition">Dalej</button>
+                            </div>
                         </div>
                     </div>
+                    <Footer />
                     <AdminGear onAdminLogin={handleAdminLogin} />
                 </div>
             );
@@ -385,60 +411,69 @@
             );
 
             if (step === 'result') return (
-                <div className="min-h-screen flex items-center justify-center p-4">
-                    <div className="bg-white p-8 rounded-xl shadow-lg max-w-2xl w-full fade-in">
-                        <h2 className="text-xl font-bold mb-4 text-slate-800">Twój Profil Projekcyjny</h2>
-                        <div className="bg-blue-50 p-6 border-l-4 border-blue-500 text-slate-700 italic mb-8 leading-relaxed text-lg rounded-r-lg">
-                            {BARNUM_TEXT}
-                        </div>
-                        <div className="text-center">
-                            <p className="mb-4 text-sm font-bold text-slate-500 uppercase tracking-wide">Jak bardzo ten opis do Ciebie pasuje?</p>
-                            <div className="flex justify-center gap-3">
-                                {[1,2,3,4,5].map(r => (
-                                    <button key={r} onClick={() => handleAccuracyRating(r)} className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-blue-100 text-blue-600 font-bold text-xl hover:bg-blue-600 hover:text-white hover:border-blue-600 transition shadow-sm">{r}</button>
-                                ))}
+                <div className="min-h-screen flex flex-col p-4">
+                    <div className="flex-1 flex items-center justify-center">
+                        <div className="bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-lg max-w-2xl w-full fade-in">
+                            <h2 className="text-xl font-bold mb-4 text-slate-100">Twój Profil Projekcyjny</h2>
+                            <div className="bg-blue-500/10 p-6 border-l-4 border-blue-500 text-blue-100 italic mb-8 leading-relaxed text-lg rounded-r-lg">
+                                {BARNUM_TEXT}
                             </div>
-                            <div className="flex justify-between w-64 mx-auto mt-2 text-xs text-slate-400 font-medium"><span>1 - W ogóle</span><span>5 - Bardzo</span></div>
+                            <div className="text-center">
+                                <p className="mb-4 text-sm font-bold text-slate-500 uppercase tracking-wide">Jak bardzo ten opis do Ciebie pasuje?</p>
+                                <div className="flex justify-center gap-3">
+                                    {[1,2,3,4,5].map(r => (
+                                        <button key={r} onClick={() => handleAccuracyRating(r)} className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-blue-500/30 text-blue-400 font-bold text-xl hover:bg-blue-600 hover:text-white hover:border-blue-600 transition shadow-sm">{r}</button>
+                                    ))}
+                                </div>
+                                <div className="flex justify-between w-64 mx-auto mt-2 text-xs text-slate-500 font-medium"><span>1 - W ogóle</span><span>5 - Bardzo</span></div>
+                            </div>
                         </div>
                     </div>
+                    <Footer />
                 </div>
             );
 
             // NOWY KROK: Pytanie o pewność
             if (step === 'confidence_check') return (
-                <div className="min-h-screen flex items-center justify-center p-4">
-                    <div className="bg-white p-8 rounded-xl shadow-lg max-w-xl w-full fade-in text-center">
-                        <div className="text-4xl mb-4">🤔</div>
-                        <h2 className="text-xl font-bold mb-6 text-slate-800">Jedno ostatnie pytanie...</h2>
-                        <p className="mb-8 text-slate-600 text-lg">
-                            Jak bardzo jesteś pewien/pewna, że ten opis powstał <strong>na podstawie Twoich słów</strong>, a nie został wygenerowany losowo?
-                        </p>
-                        
-                        {isSaving ? (
-                            <div className="text-blue-600 font-bold animate-pulse">Zapisywanie odpowiedzi...</div>
-                        ) : (
-                            <div className="flex justify-center gap-3 mb-2">
-                                {[1,2,3,4,5].map(r => (
-                                    <button key={r} onClick={() => handleConfidenceAndSubmit(r)} className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-purple-100 text-purple-600 font-bold text-xl hover:bg-purple-600 hover:text-white hover:border-purple-600 transition shadow-sm">{r}</button>
-                                ))}
+                <div className="min-h-screen flex flex-col p-4">
+                    <div className="flex-1 flex items-center justify-center">
+                        <div className="bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-lg max-w-xl w-full fade-in text-center">
+                            <div className="text-4xl mb-4">🤔</div>
+                            <h2 className="text-xl font-bold mb-6 text-slate-100">Jedno ostatnie pytanie...</h2>
+                            <p className="mb-8 text-slate-400 text-lg">
+                                Jak bardzo jesteś pewien/pewna, że ten opis powstał <strong>na podstawie Twoich słów</strong>, a nie został wygenerowany losowo?
+                            </p>
+
+                            {isSaving ? (
+                                <div className="text-blue-400 font-bold animate-pulse">Zapisywanie odpowiedzi...</div>
+                            ) : (
+                                <div className="flex justify-center gap-3 mb-2">
+                                    {[1,2,3,4,5].map(r => (
+                                        <button key={r} onClick={() => handleConfidenceAndSubmit(r)} className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-purple-500/30 text-purple-400 font-bold text-xl hover:bg-purple-600 hover:text-white hover:border-purple-600 transition shadow-sm">{r}</button>
+                                    ))}
+                                </div>
+                            )}
+                            <div className="flex justify-between w-full max-w-xs mx-auto mt-2 text-xs text-slate-500 font-medium">
+                                <span>1 - To przypadek</span>
+                                <span>5 - To na pewno analiza</span>
                             </div>
-                        )}
-                        <div className="flex justify-between w-full max-w-xs mx-auto mt-2 text-xs text-slate-400 font-medium">
-                            <span>1 - To przypadek</span>
-                            <span>5 - To na pewno analiza</span>
                         </div>
                     </div>
+                    <Footer />
                 </div>
             );
 
             if (step === 'thankyou') return (
-                <div className="min-h-screen flex flex-col items-center justify-center text-center p-4 fade-in">
-                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-4xl mb-6 text-green-600 shadow-sm">✓</div>
-                    <h2 className="text-3xl font-bold text-slate-800 mb-2">Dziękuję!</h2>
-                    <p className="text-slate-600 mb-8">Twój wynik został pomyślnie zapisany.</p>
-                    <button onClick={() => setStep('dashboard')} className="bg-slate-800 text-white px-8 py-3 rounded-lg font-bold hover:bg-slate-700 transition shadow-lg flex items-center gap-2 transform hover:-translate-y-1">
-                        📊 Zobacz wyniki grupy
-                    </button>
+                <div className="min-h-screen flex flex-col p-4">
+                    <div className="flex-1 flex flex-col items-center justify-center text-center fade-in">
+                        <div className="w-20 h-20 bg-green-500/15 rounded-full flex items-center justify-center text-4xl mb-6 text-green-400 shadow-sm">✓</div>
+                        <h2 className="text-3xl font-bold text-slate-100 mb-2">Dziękuję!</h2>
+                        <p className="text-slate-400 mb-8">Twój wynik został pomyślnie zapisany.</p>
+                        <button onClick={() => setStep('dashboard')} className="bg-slate-700 text-white px-8 py-3 rounded-lg font-bold hover:bg-slate-600 transition shadow-lg flex items-center gap-2 transform hover:-translate-y-1">
+                            📊 Zobacz wyniki grupy
+                        </button>
+                    </div>
+                    <Footer />
                 </div>
             );
 

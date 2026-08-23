@@ -1,18 +1,19 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>6 Metody Projekcyjne</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
         :root {
-            --page-bg: #f0fdfa;
-            --page-text: #334155;
-            --scrollbar-thumb: #0ea5e9;
+            --page-bg: #0a0e17;
+            --page-text: #cbd5e1;
+            --scrollbar-thumb: #38bdf8;
         }
-        
+
         /* Animacja rysowania */
         .animate-draw {
             stroke-dasharray: 1000;
@@ -43,59 +44,63 @@
 <body class="h-screen flex flex-col relative">
 
     <!-- EKRAN LOBBY -->
-    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
+    <div id="lobby-screen" class="absolute inset-0 bg-slate-950 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
         <div class="w-full max-w-5xl">
-            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden relative">
-                <div class="h-2 bg-gradient-to-r from-sky-500 to-cyan-500"></div>
-                <div class="absolute inset-0 opacity-10 pointer-events-none">
-                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <line x1="10" y1="10" x2="10" y2="90" stroke="white" stroke-width="0.5"/>
-                        <line x1="30" y1="0" x2="30" y2="100" stroke="white" stroke-width="0.5"/>
-                        <line x1="50" y1="10" x2="50" y2="90" stroke="white" stroke-width="0.5"/>
-                        <line x1="70" y1="0" x2="70" y2="100" stroke="white" stroke-width="0.5"/>
-                        <line x1="90" y1="10" x2="90" y2="90" stroke="white" stroke-width="0.5"/>
-                    </svg>
-                </div>
-                <div class="p-5 md:p-8">
-                    <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight font-serif">6. Metody Projekcyjne</h1>
+            <header class="rounded-[28px] bg-slate-900 border border-slate-800 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)] overflow-hidden relative">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(56,189,248,0.35),transparent_55%),radial-gradient(circle_at_85%_100%,rgba(45,212,191,0.25),transparent_55%)] pointer-events-none"></div>
+                <div class="h-[3px] bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-400 relative"></div>
+                <div class="p-6 md:p-10 relative">
+                    <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight tracking-tight text-white font-serif">6. Metody Projekcyjne</h1>
                 </div>
             </header>
 
-            <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-lg overflow-hidden">
-                <div class="p-5 md:p-6">
-                    <h2 class="text-xl font-bold text-slate-800 mb-4">Wybierz typ techniki</h2>
-                    <div class="grid grid-cols-1 gap-4" id="tech-list"></div>
+            <div class="mt-4 rounded-[28px] bg-slate-900 border border-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.3)] overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-5">Wybierz typ techniki</h2>
+                    <div class="grid grid-cols-1 gap-3" id="tech-list"></div>
                 </div>
             </div>
-            <footer class="lesson-footer">Filip Liebersbach</footer>
+            <footer class="lesson-footer">
+                <div class="footer-content">
+                    <div class="social-icons">
+                        <a href="https://www.youtube.com/@lieberfilip" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://www.linkedin.com/in/liebersbach-filip/" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="https://www.researchgate.net/profile/Filip-Liebersbach-2?ev=hdr_xprf" target="_blank" rel="noopener"><i class="fa-brands fa-researchgate"></i></a>
+                    </div>
+                    <div class="contact-info">
+                        <a href="mailto:kontakt@lieberfilip.pl">kontakt@lieberfilip.pl</a>
+                    </div>
+                    <div class="copyright">© 2025–2026 Filip Liebersbach. Wszelkie prawa zastrzeżone.</div>
+                </div>
+            </footer>
         </div>
     </div>
     <div id="app-screen" class="flex-1 flex flex-col h-full transition-opacity duration-500 opacity-0 pointer-events-none">
-        
+
         <!-- Header -->
-        <div class="bg-white border-b border-slate-200 p-4 shadow-sm z-20 flex flex-col sm:flex-row justify-between items-center px-6 shrink-0 h-auto sm:h-20 gap-4">
+        <div class="bg-slate-900/95 backdrop-blur border-b border-slate-800 p-4 z-20 flex flex-col sm:flex-row justify-between items-center px-6 shrink-0 h-auto sm:h-20 gap-4">
             <div class="flex items-center gap-4 w-full sm:w-auto">
-                <div class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center text-2xl shadow-sm border border-indigo-100" id="header-icon">🎨</div>
+                <div class="w-11 h-11 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center text-xl border border-indigo-500/20" id="header-icon">🎨</div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-800 leading-tight" id="header-title">...</h1>
-                    <button onclick="showLobby()" class="text-xs text-indigo-600 hover:text-indigo-800 hover:underline font-bold uppercase tracking-wide mt-1 block flex items-center gap-1">
+                    <h1 class="text-base font-bold text-slate-100 leading-tight" id="header-title">...</h1>
+                    <button onclick="showLobby()" class="text-xs text-slate-500 hover:text-indigo-400 font-semibold uppercase tracking-wide mt-1 inline-flex items-center gap-1 transition-colors">
                         ← Powrót do menu
                     </button>
                 </div>
             </div>
-            
-            <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 w-full sm:w-auto justify-center">
-                <button onclick="setStep(1)" id="tab-1" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all bg-white text-indigo-700 shadow-sm">1. Teoria</button>
-                <button onclick="setStep(2)" id="tab-2" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">2. Zadanie</button>
-                <button onclick="setStep(3)" id="tab-3" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">3. Analiza</button>
+
+            <div class="flex bg-slate-800/70 p-1 rounded-xl border border-slate-700 w-full sm:w-auto justify-center">
+                <button onclick="setStep(1)" id="tab-1" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all bg-slate-950 text-indigo-400 shadow-sm border border-slate-700/60">1. Teoria</button>
+                <button onclick="setStep(2)" id="tab-2" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:bg-slate-700/40">2. Zadanie</button>
+                <button onclick="setStep(3)" id="tab-3" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:bg-slate-700/40">3. Analiza</button>
             </div>
         </div>
 
         <!-- Content Area -->
-        <div class="flex-1 relative overflow-hidden bg-white flex flex-col">
-            <div id="step-1" class="step-content active p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-theory"></div></div>
-            <div id="step-2" class="step-content p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-method"></div></div>
-            <div id="step-3" class="step-content p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-result"></div></div>
+        <div class="flex-1 relative overflow-hidden bg-slate-950 flex flex-col">
+            <div id="step-1" class="step-content active p-5 sm:p-10 scroller"><div class="max-w-5xl mx-auto" id="content-theory"></div></div>
+            <div id="step-2" class="step-content p-5 sm:p-10 scroller"><div class="max-w-5xl mx-auto" id="content-method"></div></div>
+            <div id="step-3" class="step-content p-5 sm:p-10 scroller"><div class="max-w-5xl mx-auto" id="content-result"></div></div>
         </div>
     </div>
 
@@ -108,93 +113,93 @@
                 icon: "🌧️",
                 color: "blue",
                 theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Technika Rysunkowa DAPR</h2>
-                        <span class="text-sm font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded">Autorzy: A. Abrams, A. Amchin</span>
+                    <div class="mb-6 border-b pb-4 border-slate-800">
+                        <h2 class="text-3xl font-serif font-bold text-slate-100">Technika Rysunkowa DAPR</h2>
+                        <span class="text-sm font-mono text-slate-500 bg-slate-800/60 px-2 py-1 rounded">Autorzy: A. Abrams, A. Amchin</span>
                     </div>
                     <div class="grid md:grid-cols-2 gap-8">
                         <div>
-                            <p class="text-lg text-slate-700 mb-4">Metoda ta jest modyfikacją klasycznego testu rysunku postaci. Wprowadzenie elementu deszczu symbolizuje <strong>stres środowiskowy</strong>.</p>
-                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                                <h3 class="font-bold text-blue-800 mb-2">Cel badania:</h3>
-                                <p class="text-sm text-blue-900">Ocena zasobów radzenia sobie (<em>coping resources</em>). Sprawdzamy, jak jednostka reaguje na trudne warunki zewnętrzne i czy posiada mechanizmy obronne.</p>
+                            <p class="text-lg text-slate-400 mb-4">Metoda ta jest modyfikacją klasycznego testu rysunku postaci. Wprowadzenie elementu deszczu symbolizuje <strong>stres środowiskowy</strong>.</p>
+                            <div class="bg-blue-500/10 p-4 rounded-lg border-l-4 border-blue-500">
+                                <h3 class="font-bold text-blue-300 mb-2">Cel badania:</h3>
+                                <p class="text-sm text-blue-200">Ocena zasobów radzenia sobie (<em>coping resources</em>). Sprawdzamy, jak jednostka reaguje na trudne warunki zewnętrzne i czy posiada mechanizmy obronne.</p>
                             </div>
                         </div>
-                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 flex items-center justify-start">
+                        <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700 flex items-center justify-start">
                             <div class="text-center">
                                 <div class="text-4xl mb-2">☔</div>
-                                <p class="font-bold text-slate-600">Deszcz = Stres</p>
-                                <p class="text-xs text-slate-400">Postać = Ego/Ja</p>
-                                <p class="text-xs text-slate-400">Parasol = Ochrona</p>
+                                <p class="font-bold text-slate-300">Deszcz = Stres</p>
+                                <p class="text-xs text-slate-500">Postać = Ego/Ja</p>
+                                <p class="text-xs text-slate-500">Parasol = Ochrona</p>
                             </div>
                         </div>
                     </div>
                 `,
                 method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Procedura Badania</h2>
-                    <div class="bg-white border-2 border-dashed border-slate-300 rounded-xl p-8 mb-8 text-center relative overflow-hidden group hover:border-blue-400 transition-colors">
-                        <span class="absolute top-2 left-2 text-xs font-bold text-slate-400 uppercase">Instrukcja ścisła</span>
-                        <h3 class="text-2xl font-serif text-slate-800 italic mb-2">"Narysuj postać w deszczu."</h3>
-                        <p class="text-slate-600 font-bold">"Staraj się narysować całą postać, nie ludzika z kresek."</p>
-                        
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Procedura Badania</h2>
+                    <div class="bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl p-8 mb-8 text-center relative overflow-hidden group hover:border-blue-500/50 transition-colors">
+                        <span class="absolute top-2 left-2 text-xs font-bold text-slate-500 uppercase">Instrukcja ścisła</span>
+                        <h3 class="text-2xl font-serif text-slate-100 italic mb-2">"Narysuj postać w deszczu."</h3>
+                        <p class="text-slate-400 font-bold">"Staraj się narysować całą postać, nie ludzika z kresek."</p>
+
                         <!-- Visual representation of "Stickman" vs "Person" -->
                         <div class="mt-8 flex justify-center gap-12 opacity-50 group-hover:opacity-100 transition-opacity">
                             <div class="text-center">
                                 <svg width="60" height="100" viewBox="0 0 60 100" class="mx-auto">
-                                    <circle cx="30" cy="20" r="15" fill="none" stroke="#ef4444" stroke-width="2"/>
-                                    <line x1="30" y1="35" x2="30" y2="70" stroke="#ef4444" stroke-width="2"/>
-                                    <line x1="30" y1="50" x2="10" y2="40" stroke="#ef4444" stroke-width="2"/>
-                                    <line x1="30" y1="50" x2="50" y2="40" stroke="#ef4444" stroke-width="2"/>
-                                    <line x1="30" y1="70" x2="15" y2="90" stroke="#ef4444" stroke-width="2"/>
-                                    <line x1="30" y1="70" x2="45" y2="90" stroke="#ef4444" stroke-width="2"/>
+                                    <circle cx="30" cy="20" r="15" fill="none" stroke="#f87171" stroke-width="2"/>
+                                    <line x1="30" y1="35" x2="30" y2="70" stroke="#f87171" stroke-width="2"/>
+                                    <line x1="30" y1="50" x2="10" y2="40" stroke="#f87171" stroke-width="2"/>
+                                    <line x1="30" y1="50" x2="50" y2="40" stroke="#f87171" stroke-width="2"/>
+                                    <line x1="30" y1="70" x2="15" y2="90" stroke="#f87171" stroke-width="2"/>
+                                    <line x1="30" y1="70" x2="45" y2="90" stroke="#f87171" stroke-width="2"/>
                                 </svg>
-                                <span class="text-xs text-red-500 font-bold">ŹLE (Ludzik)</span>
+                                <span class="text-xs text-red-400 font-bold">ŹLE (Ludzik)</span>
                             </div>
                             <div class="text-center">
                                 <svg width="60" height="100" viewBox="0 0 60 100" class="mx-auto">
-                                    <circle cx="30" cy="20" r="15" fill="#bfdbfe" stroke="#3b82f6" stroke-width="2"/>
-                                    <rect x="20" y="35" width="20" height="35" rx="5" fill="#bfdbfe" stroke="#3b82f6" stroke-width="2"/>
-                                    <rect x="15" y="38" width="5" height="20" rx="2" fill="#bfdbfe" stroke="#3b82f6" stroke-width="2"/>
-                                    <rect x="40" y="38" width="5" height="20" rx="2" fill="#bfdbfe" stroke="#3b82f6" stroke-width="2"/>
-                                    <rect x="22" y="70" width="6" height="25" rx="2" fill="#bfdbfe" stroke="#3b82f6" stroke-width="2"/>
-                                    <rect x="32" y="70" width="6" height="25" rx="2" fill="#bfdbfe" stroke="#3b82f6" stroke-width="2"/>
+                                    <circle cx="30" cy="20" r="15" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
+                                    <rect x="20" y="35" width="20" height="35" rx="5" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
+                                    <rect x="15" y="38" width="5" height="20" rx="2" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
+                                    <rect x="40" y="38" width="5" height="20" rx="2" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
+                                    <rect x="22" y="70" width="6" height="25" rx="2" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
+                                    <rect x="32" y="70" width="6" height="25" rx="2" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
                                 </svg>
-                                <span class="text-xs text-blue-600 font-bold">DOBRZE (Pełna postać)</span>
+                                <span class="text-xs text-blue-400 font-bold">DOBRZE (Pełna postać)</span>
                             </div>
                         </div>
                     </div>
                 `,
                 result: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Wskaźniki Diagnostyczne</h2>
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Wskaźniki Diagnostyczne</h2>
                     <p class="mb-4 text-slate-500 text-sm">Nie oceniamy "ładności" rysunku, lecz jego cechy strukturalne i symboliczne.</p>
-                    
+
                     <div class="grid md:grid-cols-2 gap-6">
                         <!-- Card 1: Protection -->
-                        <div class="bg-white p-6 rounded-xl shadow-md border border-slate-100 hover:shadow-lg transition-shadow">
+                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
                             <div class="flex items-center gap-4 mb-4">
-                                <div class="bg-green-100 p-3 rounded-full text-2xl">☂️</div>
+                                <div class="bg-emerald-500/15 p-3 rounded-full text-2xl">☂️</div>
                                 <div>
-                                    <h3 class="font-bold text-slate-800">Ochrona</h3>
-                                    <p class="text-xs text-slate-400">Parasol, płaszcz, daszek, drzewo</p>
+                                    <h3 class="font-bold text-slate-100">Ochrona</h3>
+                                    <p class="text-xs text-slate-500">Parasol, płaszcz, daszek, drzewo</p>
                                 </div>
                             </div>
-                            <p class="text-sm text-slate-600">Obecność ochrony to wskaźnik <strong>adekwatnych mechanizmów obronnych</strong>. Brak ochrony przy silnym deszczu może sugerować bezradność.</p>
+                            <p class="text-sm text-slate-400">Obecność ochrony to wskaźnik <strong>adekwatnych mechanizmów obronnych</strong>. Brak ochrony przy silnym deszczu może sugerować bezradność.</p>
                         </div>
 
                         <!-- Card 2: Rain Intensity -->
-                        <div class="bg-white p-6 rounded-xl shadow-md border border-slate-100 hover:shadow-lg transition-shadow">
+                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
                             <div class="flex items-center gap-4 mb-4">
-                                <div class="bg-blue-100 p-3 rounded-full text-2xl">🌧️</div>
+                                <div class="bg-blue-500/15 p-3 rounded-full text-2xl">🌧️</div>
                                 <div>
-                                    <h3 class="font-bold text-slate-800">Intensywność Deszczu</h3>
-                                    <p class="text-xs text-slate-400">Ilość i wielkość kropel</p>
+                                    <h3 class="font-bold text-slate-100">Intensywność Deszczu</h3>
+                                    <p class="text-xs text-slate-500">Ilość i wielkość kropel</p>
                                 </div>
                             </div>
-                            <p class="text-sm text-slate-600">Symbolizuje subiektywne <strong>odczuwanie stresu</strong>. Czy deszcz przytłacza postać (jest wielki), czy jest tłem?</p>
+                            <p class="text-sm text-slate-400">Symbolizuje subiektywne <strong>odczuwanie stresu</strong>. Czy deszcz przytłacza postać (jest wielki), czy jest tłem?</p>
                         </div>
 
                         <!-- Visualization -->
-                        <div class="md:col-span-2 bg-slate-800 rounded-xl p-8 relative overflow-hidden min-h-[200px] flex items-end justify-center">
+                        <div class="md:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-8 relative overflow-hidden min-h-[200px] flex items-end justify-center">
                             <!-- Rain Animation -->
                             <div class="absolute inset-0 pointer-events-none">
                                 <div class="absolute top-[-10px] left-[10%] w-[2px] h-[10px] bg-blue-400 opacity-50 rain-drop" style="animation-duration: 1s;"></div>
@@ -215,8 +220,8 @@
                                 <line x1="50" y1="70" x2="65" y2="85" stroke="#e2e8f0" stroke-width="3" /> <!-- Leg R -->
                                 <path d="M35,65 Q50,75 60,60" fill="none" stroke="#e2e8f0" stroke-width="3" /> <!-- Arm holding umbrella -->
                             </svg>
-                            <div class="absolute bottom-4 right-4 text-xs text-slate-400 text-right">
-                                <span class="block text-green-400 font-bold">STABILNOŚĆ</span>
+                            <div class="absolute bottom-4 right-4 text-xs text-slate-500 text-right">
+                                <span class="block text-emerald-400 font-bold">STABILNOŚĆ</span>
                                 Postać posiada linie graniczne<br>i nie jest zalewana.
                             </div>
                         </div>
@@ -230,93 +235,93 @@
                 icon: "🖼️",
                 color: "indigo",
                 theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Technika Apercepcyjna</h2>
-                        <span class="text-sm font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded">Thematic Apperception Test</span>
+                    <div class="mb-6 border-b pb-4 border-slate-800">
+                        <h2 class="text-3xl font-serif font-bold text-slate-100">Technika Apercepcyjna</h2>
+                        <span class="text-sm font-mono text-slate-500 bg-slate-800/60 px-2 py-1 rounded">Thematic Apperception Test</span>
                     </div>
-                    <p class="text-lg text-slate-700 mb-6">Badany tworzy opowieść na podstawie niejednoznacznego obrazka. Projekcja ujawnia strukturę osobowości.</p>
-                    
-                    <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100 mb-6">
-                        <h3 class="font-bold text-indigo-900 mb-3 text-xl">Klucz analizy: Potrzeba vs Presja</h3>
+                    <p class="text-lg text-slate-400 mb-6">Badany tworzy opowieść na podstawie niejednoznacznego obrazka. Projekcja ujawnia strukturę osobowości.</p>
+
+                    <div class="bg-indigo-500/10 p-6 rounded-xl border border-indigo-500/30 mb-6">
+                        <h3 class="font-bold text-indigo-300 mb-3 text-xl">Klucz analizy: Potrzeba vs Presja</h3>
                         <div class="flex items-center justify-between gap-4 text-center">
-                            <div class="bg-white p-4 rounded shadow-sm flex-1">
-                                <strong class="block text-indigo-600 mb-1">Potrzeba (Needs)</strong>
+                            <div class="bg-slate-900 p-4 rounded shadow-sm flex-1 border border-slate-800">
+                                <strong class="block text-indigo-400 mb-1">Potrzeba (Needs)</strong>
                                 <span class="text-xs text-slate-500">To, co motywuje bohatera (np. osiągnięcia, afiliacja).</span>
                             </div>
-                            <div class="text-2xl text-indigo-300 font-bold">VS</div>
-                            <div class="bg-white p-4 rounded shadow-sm flex-1">
-                                <strong class="block text-indigo-600 mb-1">Presja (Press)</strong>
+                            <div class="text-2xl text-indigo-500 font-bold">VS</div>
+                            <div class="bg-slate-900 p-4 rounded shadow-sm flex-1 border border-slate-800">
+                                <strong class="block text-indigo-400 mb-1">Presja (Press)</strong>
                                 <span class="text-xs text-slate-500">To, jak świat oddziałuje na bohatera (np. odrzucenie, dominacja).</span>
                             </div>
                         </div>
                     </div>
                 `,
                 method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Zadanie Apercepcyjne (Tablica 4)</h2>
-                    
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Zadanie Apercepcyjne (Tablica 4)</h2>
+
                     <div class="flex flex-col md:flex-row gap-8 mb-8">
                         <!-- Image Card -->
                         <div class="w-full md:w-1/3">
-                            <div class="bg-white p-2 rounded-lg shadow-md border border-slate-200 rotate-1 hover:rotate-0 transition-transform duration-300">
-                                <div class="aspect-[3/4] relative overflow-hidden rounded bg-slate-100">
-                                    <img src="/metody/zajecia_6/TAT_1.jpg" alt="Karta TAT 1" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'flex items-center justify-start h-full text-slate-400 text-xs\'>[Obraz TAT]</div>';">
+                            <div class="bg-slate-900 p-2 rounded-lg shadow-md border border-slate-800 rotate-1 hover:rotate-0 transition-transform duration-300">
+                                <div class="aspect-[3/4] relative overflow-hidden rounded bg-slate-800">
+                                    <img src="/metody/zajecia_6/TAT_1.jpg" alt="Karta TAT 1" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'flex items-center justify-start h-full text-slate-500 text-xs\'>[Obraz TAT]</div>';">
                                 </div>
-                                <p class="text-center text-xs text-slate-400 mt-2 font-mono">Tablica 4</p>
+                                <p class="text-center text-xs text-slate-500 mt-2 font-mono">Tablica 4</p>
                             </div>
                         </div>
 
                         <!-- Instructions -->
                         <div class="w-full md:w-2/3">
-                            <p class="mb-6 text-slate-600">Przyjrzyj się obrazkowi obok. Twoim zadaniem jest ułożenie dramatycznej historii na jego podstawie. Instrukcja ścisła wg Murraya wymaga odpowiedzi na 4 pytania:</p>
-                            
+                            <p class="mb-6 text-slate-400">Przyjrzyj się obrazkowi obok. Twoim zadaniem jest ułożenie dramatycznej historii na jego podstawie. Instrukcja ścisła wg Murraya wymaga odpowiedzi na 4 pytania:</p>
+
                             <div class="space-y-4">
-                                <div class="flex items-center gap-4 bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
-                                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">1</div>
-                                    <p class="text-sm font-bold text-slate-700">Co doprowadziło do tej sytuacji? <span class="font-normal text-slate-500">(Przeszłość)</span></p>
+                                <div class="flex items-center gap-4 bg-slate-900 p-3 rounded-lg border border-indigo-500/20 shadow-sm">
+                                    <div class="w-8 h-8 rounded-full bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-bold text-sm">1</div>
+                                    <p class="text-sm font-bold text-slate-300">Co doprowadziło do tej sytuacji? <span class="font-normal text-slate-500">(Przeszłość)</span></p>
                                 </div>
-                                <div class="flex items-center gap-4 bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
-                                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">2</div>
-                                    <p class="text-sm font-bold text-slate-700">Co dzieje się teraz? <span class="font-normal text-slate-500">(Teraźniejszość)</span></p>
+                                <div class="flex items-center gap-4 bg-slate-900 p-3 rounded-lg border border-indigo-500/20 shadow-sm">
+                                    <div class="w-8 h-8 rounded-full bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-bold text-sm">2</div>
+                                    <p class="text-sm font-bold text-slate-300">Co dzieje się teraz? <span class="font-normal text-slate-500">(Teraźniejszość)</span></p>
                                 </div>
-                                <div class="flex items-center gap-4 bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
-                                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">3</div>
-                                    <p class="text-sm font-bold text-slate-700">Co czują i myślą bohaterowie? <span class="font-normal text-slate-500">(Wgląd)</span></p>
+                                <div class="flex items-center gap-4 bg-slate-900 p-3 rounded-lg border border-indigo-500/20 shadow-sm">
+                                    <div class="w-8 h-8 rounded-full bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-bold text-sm">3</div>
+                                    <p class="text-sm font-bold text-slate-300">Co czują i myślą bohaterowie? <span class="font-normal text-slate-500">(Wgląd)</span></p>
                                 </div>
-                                <div class="flex items-center gap-4 bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
-                                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">4</div>
-                                    <p class="text-sm font-bold text-slate-700">Jak to się skończy? <span class="font-normal text-slate-500">(Wynik)</span></p>
+                                <div class="flex items-center gap-4 bg-slate-900 p-3 rounded-lg border border-indigo-500/20 shadow-sm">
+                                    <div class="w-8 h-8 rounded-full bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-bold text-sm">4</div>
+                                    <p class="text-sm font-bold text-slate-300">Jak to się skończy? <span class="font-normal text-slate-500">(Wynik)</span></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 `,
                 result: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Przykład Analizy (Karta "Kobieta i Mężczyzna")</h2>
-                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Przykład Analizy (Karta "Kobieta i Mężczyzna")</h2>
+                    <div class="bg-slate-900 p-6 rounded-xl border border-slate-800">
                         <div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start mb-6">
                             <!-- Visual Placeholder for Card 4 -->
-                            <div class="w-32 h-40 bg-white border border-slate-300 rounded flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative">
+                            <div class="w-32 h-40 bg-slate-800 border border-slate-700 rounded flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative">
                                 <img src="/metody/zajecia_6/TAT_1.jpg">
                             </div>
                             <div class="flex-1">
-                                <h3 class="font-bold text-slate-800 border-b pb-2 mb-2">Opowieść Badanego:</h3>
-                                <p class="text-sm italic text-slate-600 leading-relaxed">"Oni są w toksycznym związku (Przeszłość). Mężczyzna chce odejść, bo ma już dość jej zaborczości. Ona go trzyma za ramiona i błaga, żeby został (Teraźniejszość). On czuje złość i chęć ucieczki, ale też poczucie winy. Ona jest przerażona samotnością (Uczucia). Ostatecznie on się wyrywa i wychodzi, a ona zostaje sama płacząc (Wynik)."</p>
+                                <h3 class="font-bold text-slate-100 border-b border-slate-800 pb-2 mb-2">Opowieść Badanego:</h3>
+                                <p class="text-sm italic text-slate-400 leading-relaxed">"Oni są w toksycznym związku (Przeszłość). Mężczyzna chce odejść, bo ma już dość jej zaborczości. Ona go trzyma za ramiona i błaga, żeby został (Teraźniejszość). On czuje złość i chęć ucieczki, ale też poczucie winy. Ona jest przerażona samotnością (Uczucia). Ostatecznie on się wyrywa i wychodzi, a ona zostaje sama płacząc (Wynik)."</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-white p-4 rounded border border-red-100 shadow-sm">
+                            <div class="bg-slate-800/60 p-4 rounded border border-rose-500/20 shadow-sm">
                                 <div class="flex items-center gap-2 mb-2">
-                                    <div class="w-2 h-8 bg-red-500 rounded"></div>
-                                    <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Presja (Press)</span>
+                                    <div class="w-2 h-8 bg-rose-500 rounded"></div>
+                                    <span class="text-xs font-bold text-rose-400 uppercase tracking-widest">Presja (Press)</span>
                                 </div>
-                                <p class="text-sm font-bold text-slate-700">Dominacja partnera, przymus fizyczny, szantaż emocjonalny.</p>
+                                <p class="text-sm font-bold text-slate-300">Dominacja partnera, przymus fizyczny, szantaż emocjonalny.</p>
                             </div>
-                            <div class="bg-white p-4 rounded border border-blue-100 shadow-sm">
+                            <div class="bg-slate-800/60 p-4 rounded border border-blue-500/20 shadow-sm">
                                 <div class="flex items-center gap-2 mb-2">
                                     <div class="w-2 h-8 bg-blue-500 rounded"></div>
-                                    <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Potrzeba (Need)</span>
+                                    <span class="text-xs font-bold text-blue-400 uppercase tracking-widest">Potrzeba (Need)</span>
                                 </div>
-                                <p class="text-sm font-bold text-slate-700">Autonomia (odejście), Agresja (konflikt), Unikanie urazu.</p>
+                                <p class="text-sm font-bold text-slate-300">Autonomia (odejście), Agresja (konflikt), Unikanie urazu.</p>
                             </div>
                         </div>
                     </div>
@@ -329,14 +334,14 @@
                 icon: "🐦",
                 color: "teal",
                 theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Metoda Bajek Louisy Düss</h2>
-                        <span class="text-sm font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded">Diagnoza Dziecięca</span>
+                    <div class="mb-6 border-b pb-4 border-slate-800">
+                        <h2 class="text-3xl font-serif font-bold text-slate-100">Metoda Bajek Louisy Düss</h2>
+                        <span class="text-sm font-mono text-slate-500 bg-slate-800/60 px-2 py-1 rounded">Diagnoza Dziecięca</span>
                     </div>
-                    <p class="text-lg text-slate-700 mb-6">Technika służy do wykrywania <strong>nieświadomych kompleksów i lęków</strong> u dzieci. Dziecko, kończąc bajkę, identyfikuje się z bohaterem i projektuje na niego swoje emocje.</p>
-                    <div class="bg-teal-50 border-l-4 border-teal-500 p-4">
-                        <strong class="text-teal-900">Analizowane wymiary:</strong>
-                        <ul class="list-disc list-inside mt-2 text-sm text-teal-800">
+                    <p class="text-lg text-slate-400 mb-6">Technika służy do wykrywania <strong>nieświadomych kompleksów i lęków</strong> u dzieci. Dziecko, kończąc bajkę, identyfikuje się z bohaterem i projektuje na niego swoje emocje.</p>
+                    <div class="bg-teal-500/10 border-l-4 border-teal-500 p-4 rounded-r-lg">
+                        <strong class="text-teal-300">Analizowane wymiary:</strong>
+                        <ul class="list-disc list-inside mt-2 text-sm text-teal-200">
                             <li>Styl przywiązania (bezpieczny vs lękowy).</li>
                             <li>Poczucie sprawstwa i samodzielności.</li>
                             <li>Lęk separacyjny.</li>
@@ -344,16 +349,16 @@
                     </div>
                 `,
                 method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Treść Bajki (Bodziec)</h2>
-                    
-                    <div class="bg-white p-8 rounded-xl shadow-lg border border-teal-100 relative overflow-hidden">
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Treść Bajki (Bodziec)</h2>
+
+                    <div class="bg-slate-900 p-8 rounded-xl shadow-lg border border-teal-500/20 relative overflow-hidden">
                         <div class="absolute -right-10 -top-10 text-9xl opacity-5">🌳</div>
-                        
-                        <h3 class="font-serif italic text-xl text-slate-700 leading-loose text-center mb-8">
+
+                        <h3 class="font-serif italic text-xl text-slate-300 leading-loose text-center mb-8">
                             "Rodzina ptaszków śpi w gnieździe na gałęzi. <br>
                             Nagle zrywa się wiatr, łamie gałąź i gniazdo spada. <br>
                             Wszyscy się budzą. <br>
-                            <span class="text-teal-600 font-bold">Tata frunie na jedno drzewo, mama na drugie.</span>"
+                            <span class="text-teal-400 font-bold">Tata frunie na jedno drzewo, mama na drugie.</span>"
                         </h3>
 
                         <div class="text-center">
@@ -367,56 +372,56 @@
                     <div class="mt-8 flex justify-center">
                         <svg width="300" height="150" viewBox="0 0 300 150">
                             <!-- Trees -->
-                            <path d="M20,150 L20,100 L0,50 L40,50 Z" fill="#cbd5e1"/>
-                            <path d="M280,150 L280,100 L260,50 L300,50 Z" fill="#cbd5e1"/>
+                            <path d="M20,150 L20,100 L0,50 L40,50 Z" fill="#475569"/>
+                            <path d="M280,150 L280,100 L260,50 L300,50 Z" fill="#475569"/>
                             <!-- Broken Branch -->
-                            <path d="M100,20 L150,50 L200,20" stroke="#94a3b8" stroke-width="4" fill="none"/>
+                            <path d="M100,20 L150,50 L200,20" stroke="#64748b" stroke-width="4" fill="none"/>
                             <!-- Falling Nest -->
-                            <path d="M130,80 Q150,100 170,80" stroke="#b45309" stroke-width="3" fill="none"/> 
+                            <path d="M130,80 Q150,100 170,80" stroke="#b45309" stroke-width="3" fill="none"/>
                             <circle cx="150" cy="80" r="5" fill="#facc15" /> <!-- Baby bird -->
                             <!-- Parents flying away -->
-                            <path d="M130,50 L50,80" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4"/>
-                            <path d="M170,50 L250,80" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4"/>
+                            <path d="M130,50 L50,80" stroke="#64748b" stroke-width="1" stroke-dasharray="4"/>
+                            <path d="M170,50 L250,80" stroke="#64748b" stroke-width="1" stroke-dasharray="4"/>
                         </svg>
                     </div>
                 `,
                 result: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Interpretacja Zakończeń</h2>
-                    <p class="mb-6 text-slate-600">Odpowiedź dziecka wskazuje na jego dominujący mechanizm radzenia sobie z separacją.</p>
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Interpretacja Zakończeń</h2>
+                    <p class="mb-6 text-slate-400">Odpowiedź dziecka wskazuje na jego dominujący mechanizm radzenia sobie z separacją.</p>
 
                     <div class="grid md:grid-cols-2 gap-4">
                         <!-- Positive -->
-                        <div class="p-5 rounded-xl border border-green-200 bg-green-50 hover:bg-green-100 transition-colors cursor-pointer group">
-                            <h3 class="font-bold text-green-800 mb-2 flex items-center gap-2">
-                                <span class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center text-xs">A</span>
+                        <div class="p-5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/15 transition-colors cursor-pointer group">
+                            <h3 class="font-bold text-emerald-300 mb-2 flex items-center gap-2">
+                                <span class="bg-emerald-500/25 text-emerald-100 w-6 h-6 rounded-full flex items-center justify-center text-xs">A</span>
                                 Samodzielność / Bezpieczeństwo
                             </h3>
-                            <p class="text-sm text-green-900 italic">"Poleci na inne drzewo", "Zbuduje sobie nowe gniazdo", "Poczeka aż wiatr ucichnie".</p>
-                            <div class="mt-3 text-xs text-green-700 font-bold border-t border-green-200 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p class="text-sm text-emerald-200 italic">"Poleci na inne drzewo", "Zbuduje sobie nowe gniazdo", "Poczeka aż wiatr ucichnie".</p>
+                            <div class="mt-3 text-xs text-emerald-400 font-bold border-t border-emerald-500/20 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 Wniosek: Poczucie sprawstwa, styl bezpieczny.
                             </div>
                         </div>
 
                         <!-- Negative/Passive -->
-                        <div class="p-5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 transition-colors cursor-pointer group">
-                            <h3 class="font-bold text-red-800 mb-2 flex items-center gap-2">
-                                <span class="bg-red-200 w-6 h-6 rounded-full flex items-center justify-center text-xs">B</span>
+                        <div class="p-5 rounded-xl border border-rose-500/20 bg-rose-500/10 hover:bg-rose-500/15 transition-colors cursor-pointer group">
+                            <h3 class="font-bold text-rose-300 mb-2 flex items-center gap-2">
+                                <span class="bg-rose-500/25 text-rose-100 w-6 h-6 rounded-full flex items-center justify-center text-xs">B</span>
                                 Bierność / Lęk
                             </h3>
-                            <p class="text-sm text-red-900 italic">"Spadnie i umrze", "Będzie płakał", "Zje go kot".</p>
-                            <div class="mt-3 text-xs text-red-700 font-bold border-t border-red-200 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p class="text-sm text-rose-200 italic">"Spadnie i umrze", "Będzie płakał", "Zje go kot".</p>
+                            <div class="mt-3 text-xs text-rose-400 font-bold border-t border-rose-500/20 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 Wniosek: Lęk separacyjny, brak zasobów, styl lękowy.
                             </div>
                         </div>
-                        
+
                         <!-- Dependency -->
-                         <div class="md:col-span-2 p-5 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 transition-colors cursor-pointer group">
-                            <h3 class="font-bold text-orange-800 mb-2 flex items-center gap-2">
-                                <span class="bg-orange-200 w-6 h-6 rounded-full flex items-center justify-center text-xs">C</span>
+                         <div class="md:col-span-2 p-5 rounded-xl border border-orange-500/20 bg-orange-500/10 hover:bg-orange-500/15 transition-colors cursor-pointer group">
+                            <h3 class="font-bold text-orange-300 mb-2 flex items-center gap-2">
+                                <span class="bg-orange-500/25 text-orange-100 w-6 h-6 rounded-full flex items-center justify-center text-xs">C</span>
                                 Poszukiwanie Wsparcia
                             </h3>
-                            <p class="text-sm text-orange-900 italic">"Poleci za mamą", "Będzie wołał rodziców".</p>
-                            <div class="mt-3 text-xs text-orange-700 font-bold border-t border-orange-200 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p class="text-sm text-orange-200 italic">"Poleci za mamą", "Będzie wołał rodziców".</p>
+                            <div class="mt-3 text-xs text-orange-400 font-bold border-t border-orange-500/20 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 Wniosek: Styl przywiązaniowy, potrzeba bliskości (norma rozwojowa u młodszych dzieci).
                             </div>
                         </div>
@@ -430,15 +435,15 @@
                 icon: "✍️",
                 color: "pink",
                 theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Technika Uzupełniania</h2>
+                    <div class="mb-6 border-b pb-4 border-slate-800">
+                        <h2 class="text-3xl font-serif font-bold text-slate-100">Technika Uzupełniania</h2>
                     </div>
-                    
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-200 mb-6 flex items-start gap-4">
+
+                    <div class="bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/20 mb-6 flex items-start gap-4">
                         <span class="text-2xl">✅</span>
                         <div>
-                            <strong class="block text-green-900 mb-1">Wartość: Wywiad i Relacja</strong>
-                            <p class="text-sm text-green-800">
+                            <strong class="block text-emerald-300 mb-1">Wartość: Wywiad i Relacja</strong>
+                            <p class="text-sm text-emerald-200">
                                 To doskonałe narzędzie do <strong>rozpoczęcia rozmowy (ice-breaker)</strong>.
                                 Pozwala badanemu w bezpieczny sposób wyrazić myśli, które trudno ująć wprost.
                                 Buduje "pomost" między pacjentem a diagnostą.
@@ -446,98 +451,98 @@
                         </div>
                     </div>
 
-                    <p class="text-lg text-slate-700 mb-6">Metoda projekcyjna polegająca na kończeniu rozpoczętych zdań. Ujawnia postawy, lęki, pragnienia i konflikty.</p>
-                    
-                    <div class="bg-pink-50 p-6 rounded-xl border border-pink-100 flex flex-col md:flex-row gap-6 items-center">
+                    <p class="text-lg text-slate-400 mb-6">Metoda projekcyjna polegająca na kończeniu rozpoczętych zdań. Ujawnia postawy, lęki, pragnienia i konflikty.</p>
+
+                    <div class="bg-pink-500/10 p-6 rounded-xl border border-pink-500/20 flex flex-col md:flex-row gap-6 items-center">
                         <div class="flex-1">
-                            <h3 class="font-bold text-pink-900 mb-2">Geneza</h3>
-                            <p class="text-sm text-pink-800">Technika ta jest wzorowana na klasycznym <strong>Teście Niedokończonych Zdań Rottera (RISB)</strong>. W wersji uproszczonej służy do wstępnej diagnozy.</p>
+                            <h3 class="font-bold text-pink-300 mb-2">Geneza</h3>
+                            <p class="text-sm text-pink-200">Technika ta jest wzorowana na klasycznym <strong>Teście Niedokończonych Zdań Rottera (RISB)</strong>. W wersji uproszczonej służy do wstępnej diagnozy.</p>
                         </div>
-                        <div class="bg-white p-4 rounded-lg shadow-sm border border-pink-200 text-center w-full md:w-auto">
+                        <div class="bg-slate-900 p-4 rounded-lg shadow-sm border border-pink-500/20 text-center w-full md:w-auto">
                             <span class="text-4xl block mb-2">🧩</span>
                             <span class="text-xs font-bold text-slate-500 uppercase">Mechanizm</span>
-                            <strong class="block text-slate-700">Projekcja</strong>
+                            <strong class="block text-slate-300">Projekcja</strong>
                         </div>
                     </div>
                 `,
                 method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Procedura Badania</h2>
-                    <p class="text-slate-600 mb-6">Badany otrzymuje arkusz z początkami zdań (stymulatorami). Instrukcja wymaga szybkiego i szczerego dokończenia myśli.</p>
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Procedura Badania</h2>
+                    <p class="text-slate-400 mb-6">Badany otrzymuje arkusz z początkami zdań (stymulatorami). Instrukcja wymaga szybkiego i szczerego dokończenia myśli.</p>
 
                     <div class="space-y-4">
-                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
-                            <strong class="block text-slate-700 mb-1">Zasada 1: Czas</strong>
+                        <div class="bg-slate-900 border-l-4 border-pink-400 p-4 rounded shadow-sm">
+                            <strong class="block text-slate-200 mb-1">Zasada 1: Czas</strong>
                             <p class="text-sm text-slate-500">Pierwsza myśl jest najlepsza. Nie należy się długo zastanawiać.</p>
                         </div>
-                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
-                            <strong class="block text-slate-700 mb-1">Zasada 2: Pełne zdania</strong>
+                        <div class="bg-slate-900 border-l-4 border-pink-400 p-4 rounded shadow-sm">
+                            <strong class="block text-slate-200 mb-1">Zasada 2: Pełne zdania</strong>
                             <p class="text-sm text-slate-500">Zakończenie musi tworzyć gramatyczną całość z początkiem.</p>
                         </div>
-                        <div class="bg-white border-l-4 border-pink-400 p-4 rounded shadow-sm">
-                            <strong class="block text-slate-700 mb-1">Zasada 3: Szczerość</strong>
+                        <div class="bg-slate-900 border-l-4 border-pink-400 p-4 rounded shadow-sm">
+                            <strong class="block text-slate-200 mb-1">Zasada 3: Szczerość</strong>
                             <p class="text-sm text-slate-500">Wartość diagnostyczną mają tylko autentyczne odpowiedzi.</p>
                         </div>
                     </div>
                 `,
                 result: `
                     <div class="max-w-2xl mx-auto">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Karta Pracy</h2>
+                        <h2 class="text-2xl font-bold text-slate-100 mb-2">Karta Pracy</h2>
                         <p class="text-slate-500 mb-4">Dokończ poniższe zdania pierwszą myślą, która przyjdzie Ci do głowy.</p>
-                        <p class="text-xs text-slate-400 italic mb-8 border-l-2 border-pink-300 pl-2">
+                        <p class="text-xs text-slate-500 italic mb-8 border-l-2 border-pink-500/40 pl-2">
                             Uwaga: To jedynie fragment (10 zdań). Pełny test, np. RISB, zawiera zazwyczaj 40 trzonów zdań, co pozwala na głębszą analizę profilu osobowości.
                         </p>
 
-                        <div class="space-y-6 bg-white p-8 rounded-xl shadow-lg border border-pink-100 paper-texture">
-                            
+                        <div class="space-y-6 bg-slate-900 p-8 rounded-xl shadow-lg border border-pink-500/20 paper-texture">
+
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">1.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Lubię...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">1.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">Lubię...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">2.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Najszczęśliwszy czas...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">2.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">Najszczęśliwszy czas...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">3.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Chcę wiedzieć...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">3.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">Chcę wiedzieć...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">4.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">W domu rodzinnym...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">4.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">W domu rodzinnym...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">5.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Żałuję...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">5.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">Żałuję...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">6.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Kiedy idę spać...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">6.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">Kiedy idę spać...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">7.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Chłopcy...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">7.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">Chłopcy...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">8.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Najlepszy...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">8.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">Najlepszy...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">9.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Drażni mnie...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">9.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">Drażni mnie...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
                             <div class="relative group">
-                                <span class="absolute -left-6 top-1 text-pink-300 font-bold text-xs">10.</span>
-                                <label class="block font-serif text-lg text-slate-800 mb-2 group-focus-within:text-pink-600 transition-colors">Ludzie...</label>
-                                <input type="text" class="w-full border-b-2 border-slate-200 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-300 font-handwriting text-slate-600" placeholder="...">
+                                <span class="absolute -left-6 top-1 text-pink-400 font-bold text-xs">10.</span>
+                                <label class="block font-serif text-lg text-slate-200 mb-2 group-focus-within:text-pink-400 transition-colors">Ludzie...</label>
+                                <input type="text" class="w-full border-b-2 border-slate-700 bg-transparent py-2 px-1 outline-none focus:border-pink-500 transition-colors placeholder-slate-600 font-handwriting text-slate-300" placeholder="...">
                             </div>
 
                         </div>
@@ -551,52 +556,52 @@
                 icon: "🦋",
                 color: "slate",
                 theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Test Plam Atramentowych</h2>
+                    <div class="mb-6 border-b pb-4 border-slate-800">
+                        <h2 class="text-3xl font-serif font-bold text-slate-100">Test Plam Atramentowych</h2>
                     </div>
-                    
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 mb-6 flex items-start gap-4">
+
+                    <div class="bg-rose-500/10 p-4 rounded-xl border border-rose-500/20 mb-6 flex items-start gap-4">
                         <span class="text-2xl">⚠️</span>
                         <div>
-                            <strong class="block text-red-900 mb-1">Niska Wartość Diagnostyczna</strong>
-                            <p class="text-sm text-red-800">
-                                Współczesna psychometria uznaje ten test za <strong>mało rzetelny i nietrafny</strong>. 
+                            <strong class="block text-rose-300 mb-1">Niska Wartość Diagnostyczna</strong>
+                            <p class="text-sm text-rose-200">
+                                Współczesna psychometria uznaje ten test za <strong>mało rzetelny i nietrafny</strong>.
                                 Jest podatny na subiektywną interpretację badacza i nie spełnia standardów EBM (Evidence-Based Medicine).
                                 W popkulturze znany, w nauce - marginalizowany.
                             </p>
                         </div>
                     </div>
 
-                    <p class="text-lg text-slate-700 mb-6">Klasyczna technika projekcyjna opracowana przez Hermanna Rorschacha. Badany interpretuje symetryczne plamy atramentowe.</p>
+                    <p class="text-lg text-slate-400 mb-6">Klasyczna technika projekcyjna opracowana przez Hermanna Rorschacha. Badany interpretuje symetryczne plamy atramentowe.</p>
                 `,
                 method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Zasada Działania (Historycznie)</h2>
-                    <p class="text-slate-600 mb-6">Zakładano, że sposób postrzegania niejednoznacznych bodźców ujawnia strukturę osobowości.</p>
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Zasada Działania (Historycznie)</h2>
+                    <p class="text-slate-400 mb-6">Zakładano, że sposób postrzegania niejednoznacznych bodźców ujawnia strukturę osobowości.</p>
 
                     <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
-                            <strong class="block text-slate-800 mb-2">Analiza formalna</strong>
-                            <ul class="text-sm text-slate-600 list-disc ml-4">
+                        <div class="bg-slate-900 p-4 rounded shadow-sm border border-slate-800">
+                            <strong class="block text-slate-100 mb-2">Analiza formalna</strong>
+                            <ul class="text-sm text-slate-400 list-disc ml-4">
                                 <li>Lokalizacja (cała plama czy szczegół?)</li>
                                 <li>Determinanty (kształt, kolor, ruch?)</li>
                                 <li>Treść (ludzie, zwierzęta, obiekty?)</li>
                             </ul>
                         </div>
-                        <div class="bg-white p-4 rounded flex items-center justify-start border border-slate-200 shadow-inner">
-                            <img src="zajecia_6/roschac/Normalized_Rorschach_blot_08.jpg" alt="Plama Rorschacha" class="w-40 h-auto opacity-80 mix-blend-multiply" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xs text-slate-400\'>[Błąd ładowania obrazu]</span>';">
+                        <div class="bg-slate-800/60 p-4 rounded flex items-center justify-start border border-slate-700 shadow-inner">
+                            <img src="zajecia_6/roschac/Normalized_Rorschach_blot_08.jpg" alt="Plama Rorschacha" class="w-40 h-auto opacity-90" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xs text-slate-500\'>[Błąd ładowania obrazu]</span>';">
                         </div>
                     </div>
                 `,
                 result: `
                     <div class="max-w-2xl mx-auto text-center">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Zadanie: Test Rorschacha</h2>
-                        <p class="text-slate-600 mb-8">Zobacz, jak wygląda (lub wyglądała) próba interpretacji tych plam. Czy wyniki mają sens?</p>
-                        
-                        <a href="https://moodle.lieberfilip.pl/metody/zajecia_6.html" target="_blank" class="inline-flex items-center gap-2 bg-slate-600 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-slate-700 transition transform hover:-translate-y-1">
+                        <h2 class="text-2xl font-bold text-slate-100 mb-4">Zadanie: Test Rorschacha</h2>
+                        <p class="text-slate-400 mb-8">Zobacz, jak wygląda (lub wyglądała) próba interpretacji tych plam. Czy wyniki mają sens?</p>
+
+                        <a href="https://moodle.lieberfilip.pl/metody/zajecia_6.html" target="_blank" class="inline-flex items-center gap-2 bg-slate-700 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-slate-600 transition transform hover:-translate-y-1">
                             <span>🦋</span> Sprawdź go
                         </a>
-                        
-                        <p class="text-xs text-slate-400 mt-6">Link prowadzi do zewnętrznego materiału dydaktycznego.</p>
+
+                        <p class="text-xs text-slate-500 mt-6">Link prowadzi do zewnętrznego materiału dydaktycznego.</p>
                     </div>
                 `
             }
@@ -604,16 +609,16 @@
         ];
 
         const hoverClassMap = {
-            blue: 'group-hover:text-blue-600 group-hover:bg-blue-50',
-            indigo: 'group-hover:text-indigo-600 group-hover:bg-indigo-50',
-            teal: 'group-hover:text-teal-600 group-hover:bg-teal-50',
-            purple: 'group-hover:text-purple-600 group-hover:bg-purple-50',
-            pink: 'group-hover:text-pink-600 group-hover:bg-pink-50',
-            slate: 'group-hover:text-slate-600 group-hover:bg-slate-100'
+            blue: 'bg-blue-500/15 text-blue-400',
+            indigo: 'bg-indigo-500/15 text-indigo-400',
+            teal: 'bg-teal-500/15 text-teal-400',
+            purple: 'bg-purple-500/15 text-purple-400',
+            pink: 'bg-pink-500/15 text-pink-400',
+            slate: 'bg-slate-700/40 text-slate-300'
         };
 
         function getHoverColorClass(color) {
-            return hoverClassMap[color] || 'group-hover:text-slate-600 group-hover:bg-slate-100';
+            return hoverClassMap[color] || 'bg-slate-700/40 text-slate-300';
         }
 
         let currentTech = null;
@@ -624,17 +629,17 @@
             techniques.forEach(tech => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = `group p-6 bg-white border border-slate-200 rounded-xl hover:border-${tech.color}-500 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
+                btn.className = `group p-6 bg-slate-900 border border-slate-800 rounded-2xl hover:border-${tech.color}-500/50 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
                 btn.onclick = () => loadTech(tech);
 
                 const hoverColorClass = getHoverColorClass(tech.color);
 
                 btn.innerHTML = `
-                    <div class="text-4xl bg-slate-50 w-20 h-20 flex items-center justify-center rounded-2xl shadow-sm transition-colors ${hoverColorClass}">${tech.icon}</div>
+                    <div class="text-4xl w-20 h-20 flex items-center justify-center rounded-2xl shadow-sm transition-colors ${hoverColorClass}">${tech.icon}</div>
                     <div>
-                        <div class="font-bold text-slate-800 text-xl mb-1">${tech.title}</div>
+                        <div class="font-bold text-slate-100 text-xl mb-1">${tech.title}</div>
                         <div class="text-sm text-slate-500 font-medium">${tech.subtitle}</div>
-                        <div class="mt-2 text-xs font-bold uppercase tracking-wider text-slate-300 group-hover:text-${tech.color}-500 transition-colors">Rozpocznij analizę →</div>
+                        <div class="mt-2 text-xs font-bold uppercase tracking-wider text-slate-600 group-hover:text-${tech.color}-400 transition-colors">Rozpocznij analizę →</div>
                     </div>
                 `;
                 list.appendChild(btn);
@@ -643,7 +648,7 @@
 
         function loadTech(tech) {
             currentTech = tech;
-            document.getElementById('header-title').innerHTML = `<span class="block text-xs text-slate-400 uppercase tracking-wider">${tech.subtitle}</span>${tech.title}`;
+            document.getElementById('header-title').innerHTML = `<span class="block text-xs text-slate-500 uppercase tracking-wider">${tech.subtitle}</span>${tech.title}`;
             document.getElementById('header-icon').innerText = tech.icon;
 
             document.getElementById('content-theory').innerHTML = tech.theory;
@@ -675,16 +680,16 @@
         function setStep(stepId) {
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`step-${stepId}`).classList.add('active');
-            
-            const btnDefault = "flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-slate-50";
-            const btnActive = `flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all shadow-md bg-white text-${currentTech ? currentTech.color : 'indigo'}-600 border border-slate-100 transform scale-105`;
-            
-            for(let i=1; i<=3; i++) { 
+
+            const btnDefault = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:bg-slate-700/40";
+            const btnActive = `flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-slate-950 text-${currentTech ? currentTech.color : 'indigo'}-400 border border-slate-700/60`;
+
+            for(let i=1; i<=3; i++) {
                 const btn = document.getElementById(`tab-${i}`);
                 btn.className = (i === stepId) ? btnActive : btnDefault;
             }
         }
-        
+
         function openFromHash() {
             const params = new URLSearchParams(window.location.hash.slice(1));
             const techId = params.get('tech');
@@ -700,9 +705,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-

@@ -1,89 +1,97 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1. Wstęp do Metodologii</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
         :root {
-            --page-bg: #f8fafc;
-            --page-text: #334155;
-            --scrollbar-thumb: #3b82f6;
+            --page-bg: #0a0e17;
+            --page-text: #cbd5e1;
+            --scrollbar-thumb: #6366f1;
         }
 
-        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .card-hover:hover { transform: translateY(-3px); box-shadow: 0 16px 32px -12px rgba(0, 0, 0, 0.55); }
 
         /* Interaktywne inputy w tabeli */
-        .table-input:focus { background-color: #f0f9ff; }
-        .table-input:not(:placeholder-shown) { background-color: #ecfdf5; border-color: #10b981; }
+        .table-input:focus { background-color: rgba(99, 102, 241, 0.12); }
+        .table-input:not(:placeholder-shown) { background-color: rgba(16, 185, 129, 0.12); border-color: #10b981; }
 
         /* Checkbox styling hack */
         .method-checkbox:checked + div {
-            background-color: #eff6ff;
-            border-color: #3b82f6;
-            color: #1d4ed8;
+            background-color: rgba(99, 102, 241, 0.15);
+            border-color: #6366f1;
+            color: #a5b4fc;
         }
 
         /* Stylizacja Lejków */
-        .funnel-step { margin: 0 auto; text-align: center; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.70rem; font-weight: bold; margin-bottom: 4px; border-radius: 4px; transition: all 0.3s; padding: 0 4px; line-height: 1.1; }
+        .funnel-step { margin: 0 auto; text-align: center; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.70rem; font-weight: 600; margin-bottom: 4px; border-radius: 8px; transition: all 0.3s; padding: 0 4px; line-height: 1.1; }
         .funnel-step:hover { transform: scale(1.02); }
     </style>
 </head>
 <body class="h-screen flex flex-col relative">
 
     <!-- EKRAN LOBBY -->
-    <div id="lobby-screen" class="absolute inset-0 bg-slate-900 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
+    <div id="lobby-screen" class="absolute inset-0 bg-slate-950 z-50 flex flex-col items-center justify-start p-4 transition-transform duration-500 overflow-y-auto scroller">
         <div class="w-full max-w-5xl">
-            <header class="rounded-2xl bg-slate-800 text-white shadow-2xl overflow-hidden relative">
-                <div class="h-2 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
-                <div class="absolute inset-0 opacity-10 pointer-events-none">
-                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <circle cx="0" cy="100" r="40" fill="white"></circle>
-                        <circle cx="100" cy="0" r="60" fill="white"></circle>
-                    </svg>
-                </div>
-                <div class="p-5 md:p-8">
-                    <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight font-serif">1. Wstęp do Metodologii</h1>
+            <header class="rounded-[28px] bg-slate-900 border border-slate-800 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)] overflow-hidden relative">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(99,102,241,0.35),transparent_55%),radial-gradient(circle_at_85%_100%,rgba(56,189,248,0.25),transparent_55%)] pointer-events-none"></div>
+                <div class="h-[3px] bg-gradient-to-r from-indigo-500 via-blue-500 to-sky-400 relative"></div>
+                <div class="p-6 md:p-10 relative">
+                    <h1 class="mt-2 text-3xl md:text-4xl font-bold leading-tight tracking-tight text-white font-serif">1. Wstęp do Metodologii</h1>
                 </div>
             </header>
 
-            <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-lg overflow-hidden">
-                <div class="p-5 md:p-6">
-                    <h2 class="text-xl font-bold text-slate-800 mb-4">Wybierz moduł</h2>
-                    <div class="grid grid-cols-1 gap-4" id="tech-list"></div>
+            <div class="mt-4 rounded-[28px] bg-slate-900 border border-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.3)] overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-5">Wybierz moduł</h2>
+                    <div class="grid grid-cols-1 gap-3" id="tech-list"></div>
                 </div>
             </div>
-            <footer class="lesson-footer">Filip Liebersbach</footer>
+            <footer class="lesson-footer">
+                <div class="footer-content">
+                    <div class="social-icons">
+                        <a href="https://www.youtube.com/@lieberfilip" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://www.linkedin.com/in/liebersbach-filip/" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="https://www.researchgate.net/profile/Filip-Liebersbach-2?ev=hdr_xprf" target="_blank" rel="noopener"><i class="fa-brands fa-researchgate"></i></a>
+                    </div>
+                    <div class="contact-info">
+                        <a href="mailto:kontakt@lieberfilip.pl">kontakt@lieberfilip.pl</a>
+                    </div>
+                    <div class="copyright">© 2025–2026 Filip Liebersbach. Wszelkie prawa zastrzeżone.</div>
+                </div>
+            </footer>
         </div>
     </div>
     <div id="app-screen" class="flex-1 flex flex-col h-full transition-opacity duration-500 opacity-0 pointer-events-none">
-        
+
         <!-- Header -->
-        <div class="bg-white border-b border-slate-200 p-4 shadow-sm z-20 flex flex-col sm:flex-row justify-between items-center px-6 shrink-0 h-auto sm:h-20 gap-4">
+        <div class="bg-slate-900/95 backdrop-blur border-b border-slate-800 p-4 z-20 flex flex-col sm:flex-row justify-between items-center px-6 shrink-0 h-auto sm:h-20 gap-4">
             <div class="flex items-center gap-4 w-full sm:w-auto">
-                <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-2xl shadow-sm border border-blue-100" id="header-icon">📘</div>
+                <div class="w-11 h-11 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center text-xl border border-indigo-500/20" id="header-icon">📘</div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-800 leading-tight" id="header-title">...</h1>
-                    <button onclick="showLobby()" class="text-xs text-blue-600 hover:text-blue-800 hover:underline font-bold uppercase tracking-wide mt-1 block flex items-center gap-1">
+                    <h1 class="text-base font-bold text-slate-100 leading-tight" id="header-title">...</h1>
+                    <button onclick="showLobby()" class="text-xs text-slate-500 hover:text-indigo-400 font-semibold uppercase tracking-wide mt-1 inline-flex items-center gap-1 transition-colors">
                         ← Powrót do menu
                     </button>
                 </div>
             </div>
-            
-            <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 w-full sm:w-auto justify-center">
-                <button onclick="setStep(1)" id="tab-1" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all bg-white text-blue-700 shadow-sm">1. Kontekst</button>
-                <button onclick="setStep(2)" id="tab-2" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">2. Porównanie</button>
-                <button onclick="setStep(3)" id="tab-3" class="flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-white/60">3. Wnioski</button>
+
+            <div class="flex bg-slate-800/70 p-1 rounded-xl border border-slate-700 w-full sm:w-auto justify-center">
+                <button onclick="setStep(1)" id="tab-1" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all bg-slate-950 text-indigo-400 shadow-sm border border-slate-700/60">1. Kontekst</button>
+                <button onclick="setStep(2)" id="tab-2" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:bg-slate-700/40">2. Porównanie</button>
+                <button onclick="setStep(3)" id="tab-3" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:bg-slate-700/40">3. Wnioski</button>
             </div>
         </div>
 
         <!-- Content Area -->
-        <div class="flex-1 relative overflow-hidden bg-white flex flex-col">
-            <div id="step-1" class="step-content active p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-theory"></div></div>
-            <div id="step-2" class="step-content p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-method"></div></div>
-            <div id="step-3" class="step-content p-4 sm:p-8 scroller"><div class="max-w-5xl mx-auto" id="content-result"></div></div>
+        <div class="flex-1 relative overflow-hidden bg-slate-950 flex flex-col">
+            <div id="step-1" class="step-content active p-5 sm:p-10 scroller"><div class="max-w-5xl mx-auto" id="content-theory"></div></div>
+            <div id="step-2" class="step-content p-5 sm:p-10 scroller"><div class="max-w-5xl mx-auto" id="content-method"></div></div>
+            <div id="step-3" class="step-content p-5 sm:p-10 scroller"><div class="max-w-5xl mx-auto" id="content-result"></div></div>
         </div>
     </div>
 
@@ -96,178 +104,178 @@
                 icon: "🌍",
                 color: "blue",
                 theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Gdzie są badania psychologiczne?</h2>
+                    <div class="mb-6 border-b pb-4 border-slate-800">
+                        <h2 class="text-3xl font-serif font-bold text-slate-100">Gdzie są badania psychologiczne?</h2>
                     </div>
-                    <p class="text-lg text-slate-700 mb-8">Badania psychologiczne to nie tylko kozetka terapeuty. Są one kluczowe w wielu sektorach gospodarki i życia społecznego.</p>
-                    
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 card-hover transition-all">
-                            <div class="text-3xl mb-3">👔</div>
-                            <h3 class="font-bold text-blue-900 mb-1">HR i Biznes</h3>
-                            <p class="text-xs text-blue-800 opacity-80">Rekrutacja, ocena kompetencji, badanie satysfakcji, doradztwo zawodowe.</p>
+                    <p class="text-lg text-slate-400 mb-8">Badania psychologiczne to nie tylko kozetka terapeuty. Są one kluczowe w wielu sektorach gospodarki i życia społecznego.</p>
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 card-hover transition-all duration-200">
+                            <div class="w-11 h-11 flex items-center justify-center rounded-xl bg-blue-500/15 text-xl mb-4">👔</div>
+                            <h3 class="font-bold text-slate-100 mb-1">HR i Biznes</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">Rekrutacja, ocena kompetencji, badanie satysfakcji, doradztwo zawodowe.</p>
                         </div>
-                        <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 card-hover transition-all">
-                            <div class="text-3xl mb-3">🏥</div>
-                            <h3 class="font-bold text-indigo-900 mb-1">Klinika i Zdrowie</h3>
-                            <p class="text-xs text-indigo-800 opacity-80">Diagnoza zaburzeń (osobowość, intelekt), neuropsychologia, orzecznictwo.</p>
+                        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 card-hover transition-all duration-200">
+                            <div class="w-11 h-11 flex items-center justify-center rounded-xl bg-indigo-500/15 text-xl mb-4">🏥</div>
+                            <h3 class="font-bold text-slate-100 mb-1">Klinika i Zdrowie</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">Diagnoza zaburzeń (osobowość, intelekt), neuropsychologia, orzecznictwo.</p>
                         </div>
-                        <div class="bg-sky-50 p-5 rounded-xl border border-sky-100 card-hover transition-all">
-                            <div class="text-3xl mb-3">⚖️</div>
-                            <h3 class="font-bold text-sky-900 mb-1">Sądownictwo</h3>
-                            <p class="text-xs text-sky-800 opacity-80">Opinie dla sądu, profilowanie kryminalne, wiarygodność świadków, biegli sądowi.</p>
+                        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 card-hover transition-all duration-200">
+                            <div class="w-11 h-11 flex items-center justify-center rounded-xl bg-sky-500/15 text-xl mb-4">⚖️</div>
+                            <h3 class="font-bold text-slate-100 mb-1">Sądownictwo</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">Opinie dla sądu, profilowanie kryminalne, wiarygodność świadków, biegli sądowi.</p>
                         </div>
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 card-hover transition-all">
-                            <div class="text-3xl mb-3">🚗</div>
-                            <h3 class="font-bold text-slate-900 mb-1">Transport</h3>
-                            <p class="text-xs text-slate-700 opacity-80">Psychotechnika, badania kierowców, operatorów maszyn, bezpieczeństwo ruchu.</p>
+                        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 card-hover transition-all duration-200">
+                            <div class="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-700/40 text-xl mb-4">🚗</div>
+                            <h3 class="font-bold text-slate-100 mb-1">Transport</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">Psychotechnika, badania kierowców, operatorów maszyn, bezpieczeństwo ruchu.</p>
                         </div>
-                        <div class="bg-orange-50 p-5 rounded-xl border border-orange-100 card-hover transition-all">
-                            <div class="text-3xl mb-3">🏅</div>
-                            <h3 class="font-bold text-orange-900 mb-1">Sport</h3>
-                            <p class="text-xs text-orange-800 opacity-80">Trening mentalny, radzenie sobie ze stresem, motywacja, koncentracja.</p>
+                        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 card-hover transition-all duration-200">
+                            <div class="w-11 h-11 flex items-center justify-center rounded-xl bg-orange-500/15 text-xl mb-4">🏅</div>
+                            <h3 class="font-bold text-slate-100 mb-1">Sport</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">Trening mentalny, radzenie sobie ze stresem, motywacja, koncentracja.</p>
                         </div>
-                        <div class="bg-teal-50 p-5 rounded-xl border border-teal-100 card-hover transition-all">
-                            <div class="text-3xl mb-3">📊</div>
-                            <h3 class="font-bold text-teal-900 mb-1">Marketing</h3>
-                            <p class="text-xs text-teal-800 opacity-80">Badania preferencji konsumenckich, UX/UI, psychologia reklamy.</p>
+                        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 card-hover transition-all duration-200">
+                            <div class="w-11 h-11 flex items-center justify-center rounded-xl bg-teal-500/15 text-xl mb-4">📊</div>
+                            <h3 class="font-bold text-slate-100 mb-1">Marketing</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">Badania preferencji konsumenckich, UX/UI, psychologia reklamy.</p>
                         </div>
                     </div>
                 `,
                 method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Metody Badań Psychologicznych</h2>
-                    <p class="text-slate-600 mb-6">Psychologia dysponuje szerokim wachlarzem narzędzi. Wybór metody zależy od celu badania.</p>
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Metody Badań Psychologicznych</h2>
+                    <p class="text-slate-400 mb-6">Psychologia dysponuje szerokim wachlarzem narzędzi. Wybór metody zależy od celu badania.</p>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">🕵️</span> Studium przypadku
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">🕵️</span> Studium przypadku
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">📜</span> Metoda biograficzna
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">📜</span> Metoda biograficzna
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">🎤</span> Wywiad
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">🎤</span> Wywiad
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">🏺</span> Analiza wytworów działania
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">🏺</span> Analiza wytworów działania
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">👁️</span> Obserwacja
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">👁️</span> Obserwacja
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">🧪</span> Eksperyment psychologiczny
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">🧪</span> Eksperyment psychologiczny
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">🧩</span> Test psychologiczny
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">🧩</span> Test psychologiczny
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">🎨</span> Techniki projekcyjne
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">🎨</span> Techniki projekcyjne
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">📝</span> Ankieta
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">📝</span> Ankieta
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">🧠</span> Kwestionariusz
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">🧠</span> Kwestionariusz
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">🔗</span> Socjometria
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">🔗</span> Socjometria
                         </div>
-                        <div class="bg-white p-3 border border-slate-200 rounded-lg flex items-center gap-3 hover:bg-blue-50 transition">
-                            <span class="text-2xl">🌳</span> Genogram
+                        <div class="bg-slate-900 p-3.5 border border-slate-800 rounded-xl flex items-center gap-3 text-slate-300 hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-colors">
+                            <span class="text-xl">🌳</span> Genogram
                         </div>
                     </div>
                 `,
                 result: `
                     <div class="max-w-2xl mx-auto">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Ćwiczenie 1</h2>
+                        <h2 class="text-2xl font-bold text-slate-100 mb-2">Ćwiczenie 1</h2>
                         <p class="text-slate-500 mb-6">Zaprojektuj wstępnie badanie. Określ cel i dobierz odpowiednie narzędzia z poznanej listy.</p>
 
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                        <div class="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-800 space-y-6">
                             <div>
-                                <label class="block text-sm font-bold text-blue-900 mb-2">Cel Badania</label>
-                                <textarea class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm transition" rows="3" placeholder="Np. Zbadanie poziomu stresu u pracowników korporacji..."></textarea>
+                                <label class="block text-sm font-bold text-blue-300 mb-2">Cel Badania</label>
+                                <textarea class="w-full p-3 bg-slate-800/60 border border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-slate-200 placeholder-slate-500 transition" rows="3" placeholder="Np. Zbadanie poziomu stresu u pracowników korporacji..."></textarea>
                             </div>
-                            
+
                             <div>
-                                <label class="block text-sm font-bold text-blue-900 mb-2">Dobór Metod</label>
+                                <label class="block text-sm font-bold text-blue-300 mb-2">Dobór Metod</label>
                                 <p class="text-xs text-slate-500 mb-3">Zaznacz 2-3 metody, które najlepiej sprawdzą się w tym celu:</p>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>🕵️</span> Studium przypadku
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>📜</span> Metoda biograficzna
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>🎤</span> Wywiad
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>🏺</span> Analiza wytworów
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>👁️</span> Obserwacja
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>🧪</span> Eksperyment
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>🧩</span> Test psychologiczny
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>🎨</span> Techniki projekcyjne
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>📝</span> Ankieta
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>🧠</span> Kwestionariusz
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>🔗</span> Socjometria
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
                                         <input type="checkbox" class="method-checkbox sr-only">
-                                        <div class="p-3 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2">
+                                        <div class="p-3 border border-slate-700 rounded-xl text-sm text-slate-400 hover:bg-slate-800/60 transition-colors flex items-center gap-2">
                                             <span>🌳</span> Genogram
                                         </div>
                                     </label>
                                 </div>
                             </div>
 
-                            <button class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Zapisz Projekt</button>
+                            <button class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-sm hover:shadow-[0_8px_24px_-8px_rgba(37,99,235,0.5)]">Zapisz Projekt</button>
                         </div>
                     </div>
                 `
@@ -279,53 +287,53 @@
                 icon: "📝",
                 color: "indigo",
                 theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Dwa światy pytań</h2>
+                    <div class="mb-6 border-b pb-4 border-slate-800">
+                        <h2 class="text-3xl font-serif font-bold text-slate-100">Dwa światy pytań</h2>
                     </div>
-                    <p class="text-lg text-slate-700 mb-8">Choć oba narzędzia wyglądają podobnie, w psychologii metodologicznej to dwa różne byty.</p>
+                    <p class="text-lg text-slate-400 mb-8">Choć oba narzędzia wyglądają podobnie, w psychologii metodologicznej to dwa różne byty.</p>
 
-                    <div class="grid md:grid-cols-2 gap-0 border border-slate-200 rounded-2xl overflow-hidden shadow-lg">
+                    <div class="grid md:grid-cols-2 gap-4">
                         <!-- Ankieta -->
-                        <div class="bg-slate-50 p-8 border-b md:border-b-0 md:border-r border-slate-200 group hover:bg-slate-100 transition-colors">
+                        <div class="bg-slate-900 p-8 rounded-2xl border border-slate-800 hover:border-slate-700 transition-colors">
                             <div class="text-center mb-6">
-                                <span class="bg-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Opinia</span>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-2">Ankieta</h3>
-                                <div class="text-4xl mt-4 opacity-50 grayscale group-hover:grayscale-0 transition-all">🗣️</div>
+                                <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Opinia</span>
+                                <h3 class="text-2xl font-bold text-slate-100 mt-3">Ankieta</h3>
+                                <div class="text-4xl mt-4 opacity-60">🗣️</div>
                             </div>
-                            <ul class="space-y-4 text-sm text-slate-600">
+                            <ul class="space-y-4 text-sm text-slate-400">
                                 <li class="flex items-start gap-2">
                                     <span class="text-red-500 font-bold">✕</span>
                                     <span><strong>Brak norm:</strong> Wyniki nie są odnoszone do populacji.</span>
                                 </li>
                                 <li class="flex items-start gap-2">
-                                    <span class="text-slate-400">●</span>
+                                    <span class="text-slate-600">●</span>
                                     <span>Pyta o opinie, fakty, preferencje.</span>
                                 </li>
                                 <li class="flex items-start gap-2">
-                                    <span class="text-slate-400">●</span>
+                                    <span class="text-slate-600">●</span>
                                     <span>Dziedzina: Socjologia, Marketing.</span>
                                 </li>
                             </ul>
                         </div>
 
                         <!-- Kwestionariusz -->
-                        <div class="bg-indigo-50 p-8 group hover:bg-indigo-100 transition-colors">
+                        <div class="bg-slate-900 p-8 rounded-2xl border-2 border-indigo-500/40 hover:border-indigo-500/60 transition-colors">
                             <div class="text-center mb-6">
-                                <span class="bg-indigo-200 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Diagnoza</span>
-                                <h3 class="text-2xl font-bold text-indigo-900 mt-2">Kwestionariusz</h3>
-                                <div class="text-4xl mt-4 text-indigo-600">🧠</div>
+                                <span class="bg-indigo-500/15 text-indigo-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Diagnoza</span>
+                                <h3 class="text-2xl font-bold text-indigo-200 mt-3">Kwestionariusz</h3>
+                                <div class="text-4xl mt-4 text-indigo-400">🧠</div>
                             </div>
-                            <ul class="space-y-4 text-sm text-indigo-900">
+                            <ul class="space-y-4 text-sm text-indigo-100">
                                 <li class="flex items-start gap-2">
-                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-emerald-400 font-bold">✓</span>
                                     <span><strong>Standaryzacja & Obiektywność</strong></span>
                                 </li>
                                 <li class="flex items-start gap-2">
-                                    <span class="text-green-600 font-bold">✓</span>
+                                    <span class="text-emerald-400 font-bold">✓</span>
                                     <span><strong>Normy:</strong> Porównanie do tła społecznego.</span>
                                 </li>
                                 <li class="flex items-start gap-2">
-                                    <span class="text-indigo-400">●</span>
+                                    <span class="text-indigo-500">●</span>
                                     <span>Dziedzina: Psychologia kliniczna.</span>
                                 </li>
                             </ul>
@@ -333,73 +341,73 @@
                     </div>
                 `,
                 method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Kryteria Dobroci Testu (Psychometria)</h2>
-                    <p class="text-slate-600 mb-6">Aby narzędzie było profesjonalnym testem psychologicznym (kwestionariuszem), musi spełniać kryteria psychometryczne.</p>
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Kryteria Dobroci Testu (Psychometria)</h2>
+                    <p class="text-slate-400 mb-6">Aby narzędzie było profesjonalnym testem psychologicznym (kwestionariuszem), musi spełniać kryteria psychometryczne.</p>
 
-                    <div class="space-y-4">
-                        <div class="bg-white p-4 rounded-lg border-l-4 border-indigo-500 shadow-sm hover:shadow-md transition">
-                            <strong class="text-indigo-900 block mb-1">1. Standaryzacja</strong>
-                            <p class="text-sm text-slate-600">Jednolita procedura badania dla wszystkich (instrukcja, czas, warunki).</p>
+                    <div class="space-y-3">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 border-l-4 border-l-indigo-500 hover:bg-indigo-500/10 transition-colors">
+                            <strong class="text-indigo-300 block mb-1">1. Standaryzacja</strong>
+                            <p class="text-sm text-slate-400">Jednolita procedura badania dla wszystkich (instrukcja, czas, warunki).</p>
                         </div>
-                        <div class="bg-white p-4 rounded-lg border-l-4 border-indigo-500 shadow-sm hover:shadow-md transition">
-                            <strong class="text-indigo-900 block mb-1">2. Obiektywność</strong>
-                            <p class="text-sm text-slate-600">Niezależność wyniku od osoby badającej (klucz odpowiedzi).</p>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 border-l-4 border-l-indigo-500 hover:bg-indigo-500/10 transition-colors">
+                            <strong class="text-indigo-300 block mb-1">2. Obiektywność</strong>
+                            <p class="text-sm text-slate-400">Niezależność wyniku od osoby badającej (klucz odpowiedzi).</p>
                         </div>
-                        <div class="bg-white p-4 rounded-lg border-l-4 border-indigo-500 shadow-sm hover:shadow-md transition">
-                            <strong class="text-indigo-900 block mb-1">3. Rzetelność (Reliability)</strong>
-                            <p class="text-sm text-slate-600">Dokładność pomiaru. Czy waga pokazuje to samo 3 razy z rzędu?</p>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 border-l-4 border-l-indigo-500 hover:bg-indigo-500/10 transition-colors">
+                            <strong class="text-indigo-300 block mb-1">3. Rzetelność (Reliability)</strong>
+                            <p class="text-sm text-slate-400">Dokładność pomiaru. Czy waga pokazuje to samo 3 razy z rzędu?</p>
                         </div>
-                        <div class="bg-white p-4 rounded-lg border-l-4 border-indigo-500 shadow-sm hover:shadow-md transition">
-                            <strong class="text-indigo-900 block mb-1">4. Trafność (Validity)</strong>
-                            <p class="text-sm text-slate-600">Czy test mierzy to, co ma mierzyć? (np. czy linijka mierzy wagę?)</p>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 border-l-4 border-l-indigo-500 hover:bg-indigo-500/10 transition-colors">
+                            <strong class="text-indigo-300 block mb-1">4. Trafność (Validity)</strong>
+                            <p class="text-sm text-slate-400">Czy test mierzy to, co ma mierzyć? (np. czy linijka mierzy wagę?)</p>
                         </div>
-                        <div class="bg-white p-4 rounded-lg border-l-4 border-indigo-500 shadow-sm hover:shadow-md transition">
-                            <strong class="text-indigo-900 block mb-1">5. Normalizacja</strong>
-                            <p class="text-sm text-slate-600">Posiadanie norm (np. skala stenowa) dla konkretnej populacji.</p>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 border-l-4 border-l-indigo-500 hover:bg-indigo-500/10 transition-colors">
+                            <strong class="text-indigo-300 block mb-1">5. Normalizacja</strong>
+                            <p class="text-sm text-slate-400">Posiadanie norm (np. skala stenowa) dla konkretnej populacji.</p>
                         </div>
                     </div>
                 `,
                 result: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Porównanie Cech</h2>
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Porównanie Cech</h2>
                     <p class="text-slate-500 mb-4">Uzupełnij tabelę, aby utrwalić różnice między Ankietą a Kwestionariuszem.</p>
-                    
-                    <div class="overflow-x-auto bg-white rounded-xl shadow border border-slate-200">
-                        <table class="w-full text-sm text-left text-slate-600">
-                            <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+
+                    <div class="overflow-x-auto bg-slate-900 rounded-2xl border border-slate-800">
+                        <table class="w-full text-sm text-left text-slate-400">
+                            <thead class="text-xs text-slate-300 uppercase bg-slate-800/60">
                                 <tr>
-                                    <th class="px-6 py-3 border-b border-slate-200">Cecha</th>
-                                    <th class="px-6 py-3 text-center bg-blue-50 text-blue-800 border-b border-blue-100">Ankieta</th>
-                                    <th class="px-6 py-3 text-center bg-indigo-50 text-indigo-800 border-b border-indigo-100">Kwestionariusz</th>
+                                    <th class="px-6 py-3 border-b border-slate-800">Cecha</th>
+                                    <th class="px-6 py-3 text-center bg-blue-500/10 text-blue-300 border-b border-slate-800">Ankieta</th>
+                                    <th class="px-6 py-3 text-center bg-indigo-500/10 text-indigo-300 border-b border-slate-800">Kwestionariusz</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="border-b border-slate-100 hover:bg-slate-50">
-                                    <td class="px-6 py-4 font-bold text-slate-800">
-                                        <input type="text" class="table-input border-b border-slate-300 focus:border-slate-500 outline-none w-full bg-transparent p-1 transition rounded" placeholder="Cel Badania">
+                                <tr class="border-b border-slate-800 hover:bg-slate-800/40">
+                                    <td class="px-6 py-4 font-bold text-slate-200">
+                                        <input type="text" class="table-input border-b border-slate-700 focus:border-slate-500 outline-none w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Cel Badania">
                                     </td>
-                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-blue-300 focus:border-blue-500 outline-none text-center w-full bg-transparent p-1 transition rounded" placeholder="Opinia publiczna..."></td>
-                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-indigo-300 focus:border-indigo-500 outline-none text-center w-full bg-transparent p-1 transition rounded" placeholder="Diagnoza..."></td>
+                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-blue-500/40 focus:border-blue-500 outline-none text-center w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Opinia publiczna..."></td>
+                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-indigo-500/40 focus:border-indigo-500 outline-none text-center w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Diagnoza..."></td>
                                 </tr>
-                                <tr class="border-b border-slate-100 hover:bg-slate-50">
-                                    <td class="px-6 py-4 font-bold text-slate-800">
-                                        <input type="text" class="table-input border-b border-slate-300 focus:border-slate-500 outline-none w-full bg-transparent p-1 transition rounded" placeholder="Standaryzacja">
+                                <tr class="border-b border-slate-800 hover:bg-slate-800/40">
+                                    <td class="px-6 py-4 font-bold text-slate-200">
+                                        <input type="text" class="table-input border-b border-slate-700 focus:border-slate-500 outline-none w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Standaryzacja">
                                     </td>
-                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-blue-300 focus:border-blue-500 outline-none text-center w-full bg-transparent p-1 transition rounded" placeholder="Niska / Brak"></td>
-                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-indigo-300 focus:border-indigo-500 outline-none text-center w-full bg-transparent p-1 transition rounded" placeholder="Wysoka / Procedury"></td>
+                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-blue-500/40 focus:border-blue-500 outline-none text-center w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Niska / Brak"></td>
+                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-indigo-500/40 focus:border-indigo-500 outline-none text-center w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Wysoka / Procedury"></td>
                                 </tr>
-                                <tr class="border-b border-slate-100 hover:bg-slate-50">
-                                    <td class="px-6 py-4 font-bold text-slate-800">
-                                        <input type="text" class="table-input border-b border-slate-300 focus:border-slate-500 outline-none w-full bg-transparent p-1 transition rounded" placeholder="Obiektywność">
+                                <tr class="border-b border-slate-800 hover:bg-slate-800/40">
+                                    <td class="px-6 py-4 font-bold text-slate-200">
+                                        <input type="text" class="table-input border-b border-slate-700 focus:border-slate-500 outline-none w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Obiektywność">
                                     </td>
-                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-blue-300 focus:border-blue-500 outline-none text-center w-full bg-transparent p-1 transition rounded" placeholder="Średnia / Niska"></td>
-                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-indigo-300 focus:border-indigo-500 outline-none text-center w-full bg-transparent p-1 transition rounded" placeholder="Wysoka / Niezależna"></td>
+                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-blue-500/40 focus:border-blue-500 outline-none text-center w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Średnia / Niska"></td>
+                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-indigo-500/40 focus:border-indigo-500 outline-none text-center w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Wysoka / Niezależna"></td>
                                 </tr>
-                                <tr class="hover:bg-slate-50">
-                                    <td class="px-6 py-4 font-bold text-slate-800">
-                                        <input type="text" class="table-input border-b border-slate-300 focus:border-slate-500 outline-none w-full bg-transparent p-1 transition rounded" placeholder="Psychometria (Rzetelność)">
+                                <tr class="hover:bg-slate-800/40">
+                                    <td class="px-6 py-4 font-bold text-slate-200">
+                                        <input type="text" class="table-input border-b border-slate-700 focus:border-slate-500 outline-none w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Psychometria (Rzetelność)">
                                     </td>
-                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-blue-300 focus:border-blue-500 outline-none text-center w-full bg-transparent p-1 transition rounded" placeholder="Nieznana"></td>
-                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-indigo-300 focus:border-indigo-500 outline-none text-center w-full bg-transparent p-1 transition rounded" placeholder="Sprawdzona / Wysoka"></td>
+                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-blue-500/40 focus:border-blue-500 outline-none text-center w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Nieznana"></td>
+                                    <td class="px-6 py-4 text-center"><input type="text" class="table-input border-b border-indigo-500/40 focus:border-indigo-500 outline-none text-center w-full bg-transparent p-1 text-slate-200 placeholder-slate-600 transition rounded-lg" placeholder="Sprawdzona / Wysoka"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -413,48 +421,48 @@
                 icon: "❓",
                 color: "sky",
                 theory: `
-                    <div class="mb-6 border-b pb-4 border-slate-100">
-                        <h2 class="text-3xl font-serif font-bold text-slate-800">Rodzaje Pytań</h2>
+                    <div class="mb-6 border-b pb-4 border-slate-800">
+                        <h2 class="text-3xl font-serif font-bold text-slate-100">Rodzaje Pytań</h2>
                         <p class="text-slate-500 mb-4 text-sm">Podział na poprawne i błędne konstrukcje.</p>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Dobre -->
                         <div class="space-y-3">
-                            <h3 class="text-green-700 font-bold uppercase text-xs tracking-wider border-b border-green-200 pb-1 mb-2">Poprawne</h3>
-                            
-                            <div class="bg-white p-3 rounded border border-slate-200 shadow-sm flex gap-3 items-start hover:border-green-300 transition">
+                            <h3 class="text-emerald-400 font-bold uppercase text-xs tracking-wider border-b border-emerald-500/30 pb-1 mb-2">Poprawne</h3>
+
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 border-l-4 border-l-emerald-400 flex gap-3 items-start hover:bg-emerald-500/10 transition-colors">
                                 <span class="text-xl">📖</span>
                                 <div>
-                                    <strong class="text-slate-700 text-sm block">Otwarte</strong>
+                                    <strong class="text-slate-200 text-sm block">Otwarte</strong>
                                     <em class="text-xs text-slate-500">"Co sądzisz o X?"</em>
                                 </div>
                             </div>
-                            <div class="bg-white p-3 rounded border border-slate-200 shadow-sm flex gap-3 items-start hover:border-green-300 transition">
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 border-l-4 border-l-emerald-400 flex gap-3 items-start hover:bg-emerald-500/10 transition-colors">
                                 <span class="text-xl">🔒</span>
                                 <div>
-                                    <strong class="text-slate-700 text-sm block">Zamknięte</strong>
+                                    <strong class="text-slate-200 text-sm block">Zamknięte</strong>
                                     <em class="text-xs text-slate-500">"Tak/Nie"</em>
                                 </div>
                             </div>
-                            <div class="bg-white p-3 rounded border border-slate-200 shadow-sm flex gap-3 items-start hover:border-green-300 transition">
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 border-l-4 border-l-emerald-400 flex gap-3 items-start hover:bg-emerald-500/10 transition-colors">
                                 <span class="text-xl">🗣️</span>
                                 <div>
-                                    <strong class="text-slate-700 text-sm block">Wprost</strong>
+                                    <strong class="text-slate-200 text-sm block">Wprost</strong>
                                     <em class="text-xs text-slate-500">"Czy lubisz lody?"</em>
                                 </div>
                             </div>
-                            <div class="bg-white p-3 rounded border border-slate-200 shadow-sm flex gap-3 items-start hover:border-green-300 transition">
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 border-l-4 border-l-emerald-400 flex gap-3 items-start hover:bg-emerald-500/10 transition-colors">
                                 <span class="text-xl">🕵️</span>
                                 <div>
-                                    <strong class="text-slate-700 text-sm block">Nie wprost</strong>
+                                    <strong class="text-slate-200 text-sm block">Nie wprost</strong>
                                     <em class="text-xs text-slate-500">"Co ludzie sądzą o lodach?"</em>
                                 </div>
                             </div>
-                            <div class="bg-white p-3 rounded border border-slate-200 shadow-sm flex gap-3 items-start hover:border-green-300 transition">
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 border-l-4 border-l-emerald-400 flex gap-3 items-start hover:bg-emerald-500/10 transition-colors">
                                 <span class="text-xl">🎭</span>
                                 <div>
-                                    <strong class="text-slate-700 text-sm block">Projekcyjne</strong>
+                                    <strong class="text-slate-200 text-sm block">Projekcyjne</strong>
                                     <em class="text-xs text-slate-500">"Dokończ: Lody to..."</em>
                                 </div>
                             </div>
@@ -462,40 +470,40 @@
 
                         <!-- Złe -->
                         <div class="space-y-3">
-                            <h3 class="text-red-700 font-bold uppercase text-xs tracking-wider border-b border-red-200 pb-1 mb-2">Błędne (Unikać!)</h3>
-                            
-                            <div class="bg-red-50 p-3 rounded border border-red-100 shadow-sm flex gap-3 items-start hover:border-red-300 transition">
+                            <h3 class="text-rose-400 font-bold uppercase text-xs tracking-wider border-b border-rose-500/30 pb-1 mb-2">Błędne (Unikać!)</h3>
+
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 border-l-4 border-l-rose-400 flex gap-3 items-start hover:bg-rose-500/10 transition-colors">
                                 <span class="text-xl">⚠️</span>
                                 <div>
-                                    <strong class="text-red-800 text-sm block">Sugerujące</strong>
-                                    <em class="text-xs text-red-600">"Czy nie uważasz, że X jest złe?"</em>
+                                    <strong class="text-rose-300 text-sm block">Sugerujące</strong>
+                                    <em class="text-xs text-rose-400">"Czy nie uważasz, że X jest złe?"</em>
                                 </div>
                             </div>
-                            <div class="bg-red-50 p-3 rounded border border-red-100 shadow-sm flex gap-3 items-start hover:border-red-300 transition">
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 border-l-4 border-l-rose-400 flex gap-3 items-start hover:bg-rose-500/10 transition-colors">
                                 <span class="text-xl">➿</span>
                                 <div>
-                                    <strong class="text-red-800 text-sm block">Podwójne</strong>
-                                    <em class="text-xs text-red-600">"Czy lubisz kawę i pijesz ją rano?"</em>
+                                    <strong class="text-rose-300 text-sm block">Podwójne</strong>
+                                    <em class="text-xs text-rose-400">"Czy lubisz kawę i pijesz ją rano?"</em>
                                 </div>
                             </div>
-                            <div class="bg-red-50 p-3 rounded border border-red-100 shadow-sm flex gap-3 items-start hover:border-red-300 transition">
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 border-l-4 border-l-rose-400 flex gap-3 items-start hover:bg-rose-500/10 transition-colors">
                                 <span class="text-xl">☁️</span>
                                 <div>
-                                    <strong class="text-red-800 text-sm block">Niejasne</strong>
-                                    <em class="text-xs text-red-600">"Czy często bywasz w mieście?"</em>
+                                    <strong class="text-rose-300 text-sm block">Niejasne</strong>
+                                    <em class="text-xs text-rose-400">"Czy często bywasz w mieście?"</em>
                                 </div>
                             </div>
                         </div>
                     </div>
                 `,
                 method: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Strategie (Lejki)</h2>
-                    
-                    <div class="grid md:grid-cols-2 gap-8">
+                    <h2 class="text-2xl font-bold text-slate-100 mb-6">Strategie (Lejki)</h2>
+
+                    <div class="grid md:grid-cols-2 gap-6">
                         <!-- Lejek -->
-                        <div class="bg-sky-50 p-6 rounded-xl border border-sky-100 flex flex-col items-center">
-                            <h3 class="font-bold text-sky-900 mb-4 text-center">Metoda Lejka <br><span class="text-xs font-normal opacity-70">(Od ogółu do szczegółu)</span></h3>
-                            
+                        <div class="bg-sky-500/10 p-6 rounded-2xl border border-sky-500/30 flex flex-col items-center">
+                            <h3 class="font-bold text-sky-300 mb-4 text-center">Metoda Lejka <br><span class="text-xs font-normal opacity-70">(Od ogółu do szczegółu)</span></h3>
+
                             <div class="w-full flex flex-col items-center gap-1">
                                 <div class="funnel-step bg-sky-300 w-full h-10">"Jak oceniasz swoje zdrowie?"</div>
                                 <div class="funnel-step bg-sky-400 w-3/4 h-10">"Cierpisz na choroby przewlekłe?"</div>
@@ -505,9 +513,9 @@
                         </div>
 
                         <!-- Odwrócony Lejek -->
-                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col items-center">
-                            <h3 class="font-bold text-slate-900 mb-4 text-center">Odwrócony Lejek <br><span class="text-xs font-normal opacity-70">(Od szczegółu do ogółu)</span></h3>
-                            
+                        <div class="bg-slate-800/40 p-6 rounded-2xl border border-slate-700 flex flex-col items-center">
+                            <h3 class="font-bold text-slate-200 mb-4 text-center">Odwrócony Lejek <br><span class="text-xs font-normal opacity-70">(Od szczegółu do ogółu)</span></h3>
+
                             <div class="w-full flex flex-col items-center gap-1">
                                 <div class="funnel-step bg-slate-600 w-1/4 h-10">"Co jadłeś wczoraj na obiad?"</div>
                                 <div class="funnel-step bg-slate-500 w-2/4 h-10">"Często jesz warzywa?"</div>
@@ -518,29 +526,29 @@
                     </div>
                 `,
                 result: `
-                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Zadanie: Twoje Pytania</h2>
-                    <p class="text-slate-600 mb-6">Spróbuj sformułować po jednym przykładzie pytania.</p>
-                    
+                    <h2 class="text-2xl font-bold text-slate-100 mb-4">Zadanie: Twoje Pytania</h2>
+                    <p class="text-slate-400 mb-6">Spróbuj sformułować po jednym przykładzie pytania.</p>
+
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Pytanie Otwarte</label>
-                            <input type="text" class="w-full p-3 border border-slate-300 rounded focus:border-sky-500 outline-none text-sm transition focus:ring-1 focus:ring-sky-500" placeholder="Wpisz przykład...">
+                            <input type="text" class="w-full p-3 bg-slate-800/60 border border-slate-700 rounded-xl focus:border-sky-500 outline-none text-sm text-slate-200 placeholder-slate-500 transition focus:ring-1 focus:ring-sky-500" placeholder="Wpisz przykład...">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Pytanie Zamknięte</label>
-                            <input type="text" class="w-full p-3 border border-slate-300 rounded focus:border-sky-500 outline-none text-sm transition focus:ring-1 focus:ring-sky-500" placeholder="Wpisz przykład...">
+                            <input type="text" class="w-full p-3 bg-slate-800/60 border border-slate-700 rounded-xl focus:border-sky-500 outline-none text-sm text-slate-200 placeholder-slate-500 transition focus:ring-1 focus:ring-sky-500" placeholder="Wpisz przykład...">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Pytanie Nie wprost</label>
-                            <input type="text" class="w-full p-3 border border-slate-300 rounded focus:border-sky-500 outline-none text-sm transition focus:ring-1 focus:ring-sky-500" placeholder="Wpisz przykład...">
+                            <input type="text" class="w-full p-3 bg-slate-800/60 border border-slate-700 rounded-xl focus:border-sky-500 outline-none text-sm text-slate-200 placeholder-slate-500 transition focus:ring-1 focus:ring-sky-500" placeholder="Wpisz przykład...">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Pytanie Projekcyjne</label>
-                            <input type="text" class="w-full p-3 border border-slate-300 rounded focus:border-sky-500 outline-none text-sm transition focus:ring-1 focus:ring-sky-500" placeholder="Wpisz przykład...">
+                            <input type="text" class="w-full p-3 bg-slate-800/60 border border-slate-700 rounded-xl focus:border-sky-500 outline-none text-sm text-slate-200 placeholder-slate-500 transition focus:ring-1 focus:ring-sky-500" placeholder="Wpisz przykład...">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-red-400 mb-1">Pytanie Sugerujące (Błąd)</label>
-                            <input type="text" class="w-full p-3 border border-red-200 bg-red-50 rounded focus:border-red-500 outline-none text-sm text-red-800 transition focus:ring-1 focus:ring-red-500" placeholder="Wpisz błędne pytanie...">
+                            <label class="block text-xs font-bold uppercase text-rose-400 mb-1">Pytanie Sugerujące (Błąd)</label>
+                            <input type="text" class="w-full p-3 border border-rose-500/30 bg-rose-500/10 rounded-xl focus:border-rose-400 outline-none text-sm text-rose-200 placeholder-rose-400/60 transition focus:ring-1 focus:ring-rose-400" placeholder="Wpisz błędne pytanie...">
                         </div>
                     </div>
                 `
@@ -554,22 +562,22 @@
             list.innerHTML = '';
             modules.forEach(mod => {
                 const btn = document.createElement('button');
-                btn.className = `group p-6 bg-white border border-slate-200 rounded-xl hover:border-${mod.color}-500 hover:shadow-lg transition-all text-left flex items-center gap-6 w-full`;
+                btn.className = `group w-full flex items-center gap-5 p-5 bg-slate-900 border border-slate-800 rounded-2xl hover:border-${mod.color}-500/50 hover:shadow-[0_10px_28px_-14px_rgba(0,0,0,0.6)] transition-all duration-200 text-left`;
                 btn.onclick = () => loadModule(mod);
-                
+
                 const colorClasses = {
-                    blue: 'group-hover:text-blue-600 group-hover:bg-blue-50',
-                    indigo: 'group-hover:text-indigo-600 group-hover:bg-indigo-50',
-                    sky: 'group-hover:text-sky-600 group-hover:bg-sky-50'
+                    blue: 'bg-blue-500/15 text-blue-400',
+                    indigo: 'bg-indigo-500/15 text-indigo-400',
+                    sky: 'bg-sky-500/15 text-sky-400'
                 };
 
                 btn.innerHTML = `
-                    <div class="text-4xl bg-slate-50 w-20 h-20 flex items-center justify-center rounded-2xl shadow-sm transition-colors ${colorClasses[mod.color]}">${mod.icon}</div>
-                    <div>
-                        <div class="font-bold text-slate-800 text-xl mb-1">${mod.title}</div>
-                        <div class="text-sm text-slate-500 font-medium">${mod.subtitle}</div>
-                        <div class="mt-2 text-xs font-bold uppercase tracking-wider text-slate-300 group-hover:text-${mod.color}-500 transition-colors">Otwórz moduł →</div>
+                    <div class="text-3xl w-14 h-14 shrink-0 flex items-center justify-center rounded-xl ${colorClasses[mod.color]} transition-transform duration-200 group-hover:scale-105">${mod.icon}</div>
+                    <div class="min-w-0 flex-1">
+                        <div class="font-bold text-slate-100 text-base md:text-lg">${mod.title}</div>
+                        <div class="text-sm text-slate-500 mt-0.5">${mod.subtitle}</div>
                     </div>
+                    <div class="shrink-0 self-center text-[11px] font-bold uppercase tracking-wider text-slate-600 group-hover:text-${mod.color}-400 transition-colors whitespace-nowrap hidden sm:block">Otwórz moduł →</div>
                 `;
                 list.appendChild(btn);
             });
@@ -577,7 +585,7 @@
 
         function loadModule(mod) {
             currentModule = mod;
-            document.getElementById('header-title').innerHTML = `<span class="block text-xs text-slate-400 uppercase tracking-wider">${mod.subtitle}</span>${mod.title}`;
+            document.getElementById('header-title').innerHTML = `<span class="block text-xs text-slate-500 uppercase tracking-wider">${mod.subtitle}</span>${mod.title}`;
             document.getElementById('header-icon').innerText = mod.icon;
 
             document.getElementById('content-theory').innerHTML = mod.theory;
@@ -590,7 +598,7 @@
             app.classList.add('opacity-100');
 
             setStep(1);
-            
+
             // Dostosowanie nazw tabów dla modułu Pytania
             if (mod.id === 'pytania') {
                 document.getElementById('tab-1').innerText = '1. Rodzaje';
@@ -616,23 +624,17 @@
         function setStep(stepId) {
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`step-${stepId}`).classList.add('active');
-            
-            const btnDefault = "flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all text-slate-500 hover:bg-slate-50";
-            const btnActive = `flex-1 sm:flex-none px-6 py-2 rounded-md text-sm font-bold transition-all shadow-md bg-white text-${currentModule ? currentModule.color : 'blue'}-700 border border-slate-100 transform scale-105`;
-            
-            for(let i=1; i<=3; i++) { 
+
+            const btnDefault = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:bg-slate-700/40";
+            const btnActive = `flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-slate-950 text-${currentModule ? currentModule.color : 'blue'}-400 border border-slate-700/60`;
+
+            for(let i=1; i<=3; i++) {
                 const btn = document.getElementById(`tab-${i}`);
                 btn.className = (i === stepId) ? btnActive : btnDefault;
             }
         }
-        
+
         initLobby();
     </script>
 </body>
 </html>
-
-
-
-
-
-
