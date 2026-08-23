@@ -85,7 +85,7 @@ body::-webkit-scrollbar-track,
 }
 
 #lobby-screen {
-  overflow: hidden !important;
+  overflow-y: auto !important;
   padding: clamp(1rem, 4vh, 3rem) var(--lesson-padding) !important;
 }
 
@@ -95,9 +95,8 @@ body::-webkit-scrollbar-track,
   justify-content: flex-start;
   width: 100%;
   max-width: 72rem;
-  height: 100%;
-  max-height: 100%;
-  min-height: 0;
+  height: auto;
+  min-height: 100%;
 }
 
 #lobby-screen > .w-full > header {
@@ -121,13 +120,12 @@ body::-webkit-scrollbar-track,
   letter-spacing: -0.01em;
 }
 
-#lobby-screen > .w-full > div.mt-6 {
+#lobby-screen > .w-full > header + div {
   flex: 0 0 auto;
-  min-height: 0;
   margin-top: var(--lesson-gap) !important;
 }
 
-#lobby-screen > .w-full > div.mt-6 > div {
+#lobby-screen > .w-full > header + div > div {
   height: auto;
   min-height: 0;
   padding: clamp(0.9rem, 2vh, 1.35rem) !important;
@@ -288,7 +286,7 @@ body::-webkit-scrollbar-track,
 }
 
 .lesson-static-content > div + div {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #1e293b;
 }
 
 .lesson-static-content .space-y-3 {
@@ -318,11 +316,11 @@ body::-webkit-scrollbar-track,
     min-height: 100%;
   }
 
-  #lobby-screen > .w-full > div.mt-6 {
+  #lobby-screen > .w-full > header + div {
     flex: none;
   }
 
-  #lobby-screen > .w-full > div.mt-6 > div {
+  #lobby-screen > .w-full > header + div > div {
     height: auto;
   }
 
