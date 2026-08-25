@@ -1,0 +1,59 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject secrets
+        env:
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          if [ -z "$FIREBASE_API_KEY" ]; then
+            echo "::error::Missing repository secret FIREBASE_API_KEY"
+            exit 1
+          fi
+          if [ -z "$ADMIN_PASSWORD" ]; then
+            echo "::error::Missing repository secret ADMIN_PASSWORD"
+            exit 1
+          fi
+          grep -rl '__FIREBASE_API_KEY__\|__ADMIN_PASSWORD__' --include="*.html" . \
+            | xargs sed -i \
+                -e "s/__FIREBASE_API_KEY__/${FIREBASE_API_KEY}/g" \
+                -e "s/__ADMIN_PASSWORD__/${ADMIN_PASSWORD}/g"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
