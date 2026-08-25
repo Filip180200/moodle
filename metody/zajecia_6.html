@@ -31,7 +31,7 @@
 
     <script type="text/babel" data-type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithPopup, signOut, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp, query, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // --- 1. TWOJA KONFIGURACJA ---
@@ -46,7 +46,7 @@
 
         // --- 2. USTAWIENIA ---
         const COLLECTION_NAME = 'zajecia_6_extended'; // Nowa kolekcja dla nowej struktury danych
-        const ADMIN_PASSWORD = "__ADMIN_PASSWORD__";
+        const ADMIN_EMAIL = "lieberfilip@gmail.com";
 
         const IMAGES = [
             { id: 1, src: "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Normalized_Rorschach_blot_01.jpg&width=800" },
@@ -204,8 +204,6 @@
             };
 
             const clearDB = async () => {
-                const inputPass = prompt("Podaj hasło administratora:");
-                if (inputPass !== ADMIN_PASSWORD) { alert("Błędne hasło."); return; }
                 if(!confirm("Czy na pewno usunąć WSZYSTKIE wyniki?")) return;
                 const q = query(collection(dbInstance, COLLECTION_NAME));
                 const snap = await getDocs(q);
@@ -287,6 +285,7 @@
             const [progress, setProgress] = React.useState(0);
             const [loadingText, setLoadingText] = React.useState("Inicjalizacja...");
             const [dbInstance, setDbInstance] = React.useState(null);
+            const [authInstance, setAuthInstance] = React.useState(null);
             const [user, setUser] = React.useState(null);
             const [isSaving, setIsSaving] = React.useState(false);
 
@@ -297,6 +296,7 @@
                         const auth = getAuth(app);
                         const db = getFirestore(app);
                         setDbInstance(db);
+                        setAuthInstance(auth);
                         const userCred = await signInAnonymously(auth);
                         setUser(userCred.user);
                     } catch (err) { alert("Błąd połączenia: " + err.message); }
@@ -304,10 +304,22 @@
                 initFirebase();
             }, []);
 
-            const handleAdminLogin = () => {
-                const pass = prompt("Podaj hasło administratora:");
-                if (pass === ADMIN_PASSWORD) setStep('dashboard');
-                else if (pass) alert("Błędne hasło.");
+            const handleAdminLogin = async () => {
+                if (!authInstance) return;
+                try {
+                    const result = await signInWithPopup(authInstance, new GoogleAuthProvider());
+                    if (result.user.email === ADMIN_EMAIL) {
+                        setUser(result.user);
+                        setStep('dashboard');
+                    } else {
+                        alert("To konto Google nie ma uprawnień administratora.");
+                        await signOut(authInstance);
+                        const anonCred = await signInAnonymously(authInstance);
+                        setUser(anonCred.user);
+                    }
+                } catch (err) {
+                    if (err.code !== 'auth/popup-closed-by-user') alert("Błąd logowania: " + err.message);
+                }
             };
 
             const nextImage = () => {

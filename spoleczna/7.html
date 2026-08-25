@@ -29,7 +29,7 @@
 
     <script type="text/babel" data-type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithPopup, signOut, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp, query, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // --- KONFIGURACJA ---
@@ -43,7 +43,7 @@
         };
 
         const COLLECTION_NAME = 'workshop_v5_final';
-        const ADMIN_PASSWORD = "__ADMIN_PASSWORD__";
+        const ADMIN_EMAIL = "lieberfilip@gmail.com";
 
         // --- DANE: PULA CECH ---
         const TRAITS_POOL = [
@@ -155,7 +155,6 @@
             }, [data]);
 
             const handleClear = async () => {
-                if(prompt("Hasło:") !== ADMIN_PASSWORD) return;
                 if(!confirm("Usunąć WSZYSTKIE dane grupy?")) return;
                 const snap = await getDocs(collection(dbInstance, COLLECTION_NAME));
                 snap.forEach(d => deleteDoc(d.ref));
@@ -315,10 +314,13 @@
             const [voteQueue, setVoteQueue] = React.useState([]);
             const [localUserVotes, setLocalUserVotes] = React.useState([]);
             const [dbInstance, setDbInstance] = React.useState(null);
+            const [authInstance, setAuthInstance] = React.useState(null);
 
             React.useEffect(() => {
                 const app = initializeApp(firebaseConfig);
-                signInAnonymously(getAuth(app));
+                const auth = getAuth(app);
+                setAuthInstance(auth);
+                signInAnonymously(auth);
                 setDbInstance(getFirestore(app));
             }, []);
 
@@ -327,12 +329,19 @@
                 setPhase('traits');
             }
 
-            const handleAdminLogin = () => {
-                const pass = prompt("Podaj hasło administratora:");
-                if (pass === ADMIN_PASSWORD) {
-                    setPhase('dashboard');
-                } else if (pass) {
-                    alert("Błędne hasło");
+            const handleAdminLogin = async () => {
+                if (!authInstance) return;
+                try {
+                    const result = await signInWithPopup(authInstance, new GoogleAuthProvider());
+                    if (result.user.email === ADMIN_EMAIL) {
+                        setPhase('dashboard');
+                    } else {
+                        alert("To konto Google nie ma uprawnień administratora.");
+                        await signOut(authInstance);
+                        await signInAnonymously(authInstance);
+                    }
+                } catch (err) {
+                    if (err.code !== 'auth/popup-closed-by-user') alert("Błąd logowania: " + err.message);
                 }
             }
 
